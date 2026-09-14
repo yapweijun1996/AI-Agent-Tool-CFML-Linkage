@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const DEFAULT_EXTENSIONS = Object.freeze([".cfm", ".cfml", ".cfc", ".html", ".htm", ".js", ".mjs", ".css"]);
-const DEFAULT_IGNORED_DIRECTORY_NAMES = Object.freeze([".git", "node_modules", "vendor", "generated", "cache", "secrets"]);
+const DEFAULT_IGNORED_DIRECTORY_NAMES = Object.freeze([".git", "node_modules", "vendor", "generated", "cache", "secrets", ".agent-cfml-linkage-cache"]);
 const DEFAULT_LIMITS = Object.freeze({
   maxFiles: 10_000,
   maxFileBytes: 10 * 1024 * 1024,

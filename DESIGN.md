@@ -1,6 +1,6 @@
 # Design: agent-cfml-linkage Analysis Pipeline
 
-> **Status: PROPOSED / M1 PARTIAL.** This document describes the intended architecture; only the safe root-guard, byte-snapshot, and strict-decoder foundation has runtime evidence.
+> **Status: PROPOSED / M2 NOT STARTED.** This document describes the intended architecture; the M1 root-guard, byte-snapshot, strict-decoder, private CLI, and cache foundation has runtime evidence.
 
 | Field | Value |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Graph/Fact/config contract checks and 21 root-guard/snapshot/decoder/CLI tests pass locally; runtime stages below remain unimplemented proposals |
+| Verification | Graph/Fact/config contract checks and 26 root-guard/snapshot/decoder/CLI/cache tests pass locally; runtime stages below remain unimplemented proposals |
 | Limitations | Parser choice, language coverage, performance, and engine compatibility remain unknown |
 
 ## 1. Design goals
@@ -48,7 +48,7 @@ The planned stage resolves the canonical root, rejects traversal and symlink esc
 
 ### Stage 1 — Snapshot and discovery
 
-The implemented M1 snapshot walks supported source files deterministically, records root-relative POSIX path, canonical path, bytes, mtime, and content SHA-256, and sorts before later stages. It skips symlinks, reports drift/limits explicitly, and calculates a content-based project fingerprint. A changed file will later invalidate its facts and dependent resolution products; root, configuration, or parser changes invalidate wider scopes.
+The implemented M1 snapshot walks supported source files deterministically, records root-relative POSIX path, canonical path, bytes, mtime, and content SHA-256, and sorts before later stages. It skips symlinks, reports drift/limits explicitly, and calculates a content-based project fingerprint. The disposable M1 cache consumes that fingerprint with configuration/parser/extractor/resolver fingerprints and never becomes source of truth. A changed file will later invalidate its facts and dependent resolution products; root, configuration, or parser changes invalidate wider scopes.
 
 ### Stage 2 — Decode and source map
 
@@ -161,12 +161,12 @@ Correctness comes first. Parse with bounded worker concurrency and merge facts i
 
 ## 7. Proposed implementation sequence
 
-The sequence is dependency-aware but not a schedule. M0's contract gate and T-010–T-013 are verified; T-014 remains before parser and resolver implementation.
+The sequence is dependency-aware but not a schedule. M0's contract gate and T-010–T-014 are verified; parser and resolver implementation remain open.
 
 | Milestone | Content | Current status |
 | --- | --- | --- |
 | M0 | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and golden-fixture contract | Verified — T-001–T-006 |
-| M1 | Safe root guard, snapshot, decoder, discovery, cache skeleton, CLI envelope | In progress — T-010–T-013 verified |
+| M1 | Safe root guard, snapshot, decoder, discovery, cache skeleton, CLI envelope | Verified — T-010–T-014 |
 | M2 | Parser adapter and normalized extraction | Not started |
 | M3 | Basic path/Application/include linkage and graph validation | Not started |
 | M4 | CFC mappings, inheritance, instantiation, and method linkage | Not started |

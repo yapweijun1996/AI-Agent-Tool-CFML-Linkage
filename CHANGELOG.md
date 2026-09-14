@@ -32,9 +32,10 @@
 - Deterministic byte snapshot/discovery, focused tests, and ADR-006 for T-011.
 - Strict UTF-8 decoding, byte/line/column source maps, focused tests, and ADR-007 for T-012.
 - Private CLI JSON envelope, stderr diagnostics, exit-code handling, focused tests, and ADR-008 for T-013.
+- Disposable metadata cache, invalidation fingerprints, corruption handling, focused tests, and ADR-009 for T-014.
 
 ### Not claimed
 
 - No analyzer implementation has been added.
-- No parser, resolver, full CLI orchestration/public library API, cache, query engine, CI workflow, public package, or release has been added; the private foundation and focused root-guard/snapshot/decoder/CLI tests are the only runtime slice.
+- No parser, resolver, full CLI orchestration/public library API, query engine, CI workflow, public package, or release has been added; the private root-guard/snapshot/decoder/CLI/cache foundation and focused tests are the only runtime slice.
 - No Lucee, Adobe ColdFusion, browser, database, or network verification has been performed.

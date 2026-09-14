@@ -1,6 +1,6 @@
 # Epic: Build the CFML-first linkage evidence provider
 
-> **Status: PROPOSED / M1 IN PROGRESS.** This epic is planning material; only the safe root-guard/snapshot/decoder/private CLI foundation is implemented.
+> **Status: PROPOSED / M2 NOT STARTED.** This epic is planning material; the M1 root-guard/snapshot/decoder/private CLI/cache foundation is verified.
 
 | Field | Value |
 | --- | --- |
@@ -11,7 +11,7 @@
 | Lifecycle | Planning / pre-prototype |
 | Source of truth | This epic for outcome and milestones; `SPEC.md` for the contract; Git history for actual completion |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | M0 contract checks and 21 root-guard/snapshot/decoder/CLI tests pass; no CI or linkage verification exists |
+| Verification | M0 contract checks and 26 root-guard/snapshot/decoder/CLI/cache tests pass; no CI or linkage verification exists |
 | Limitations | Estimates, sequencing, parser choice, and compatibility are not validated |
 
 ## 1. Problem
@@ -43,7 +43,7 @@ Out of scope: source execution, runtime network/database access, browser automat
 | Milestone | Outcome | Dependencies | Status |
 | --- | --- | --- | --- |
 | M0 Contracts | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and fixture rules | None | Verified — T-001–T-006 |
-| M1 Safe foundation | Root guard, snapshot, decoding/source maps, discovery, CLI envelope, cache skeleton | M0 | In progress — T-010–T-013 verified |
+| M1 Safe foundation | Root guard, snapshot, decoding/source maps, discovery, CLI envelope, cache skeleton | M0 | Verified — T-010–T-014 |
 | M2 Parser/extractor | Adapter and normalized facts for priority syntax | M1 | Not started |
 | M3 Basic linkage | Paths, includes, Application governance, unresolved model, graph validator, reverse callers | M2 | Not started |
 | M4 CFC linkage | Mappings, inheritance, instantiation, `cfinvoke`, and conservative method resolution | M3 | Not started |
@@ -68,7 +68,7 @@ The epic is complete only when all of the following are evidenced:
 
 ## 6. Risks and blockers
 
-Current status: M0 contract work and T-010–T-013 are verified. The root-guard/snapshot/decoder/private CLI foundation is the only runtime slice; T-014 remains before parser work, while parser strategy and supported syntax remain an M2 decision.
+Current status: M0 contract work and T-010–T-014 are verified. The root-guard/snapshot/decoder/private CLI/cache foundation is the only runtime slice; parser strategy and supported syntax remain an M2 decision.
 
 Known technical risks include runtime-computed Application mappings, dynamic `evaluate` and generated names, ambiguous components/method receivers, shared-scope semantics, embedded JavaScript/SQL parsing, and resource exhaustion. These are release risks, not reasons to guess.
 

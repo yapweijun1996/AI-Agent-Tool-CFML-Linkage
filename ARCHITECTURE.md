@@ -1,6 +1,6 @@
 # Architecture: agent-cfml-linkage
 
-> **Status: PROPOSED / M1 PARTIAL.** The root-guard, byte-snapshot, decoder, and private CLI-envelope components exist; the remaining architecture is not implemented.
+> **Status: PROPOSED / M2 NOT STARTED.** The M1 root-guard, byte-snapshot, decoder, private CLI-envelope, and disposable-cache components exist; the remaining architecture is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Scope | Component boundaries, data flow, ownership, and failure behavior |
 | Source of truth | This document for proposed architecture; Git history for current code facts |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Root-guard/snapshot/decoder/CLI tests pass locally; remaining architecture is unverified |
+| Verification | Root-guard/snapshot/decoder/CLI/cache tests pass locally; remaining architecture is unverified |
 | Limitations | Parser feasibility, runtime compatibility, resource costs, and public package compatibility are unknown; M1 uses Node built-ins only |
 
 ## 1. Boundary

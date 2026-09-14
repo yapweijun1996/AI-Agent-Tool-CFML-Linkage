@@ -9,7 +9,7 @@
 | Scope | Ordered delivery of the planned linkage analyzer |
 | Source of truth | This roadmap for sequencing; Git history and tests for completion evidence |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | M0 contract gate and T-010–T-013 foundation tests are verified; later milestones have no evidence |
+| Verification | M0 contract gate and T-010–T-014 foundation tests are verified; later milestones have no evidence |
 | Limitations | Dates, estimates, parser selection, and release targets are intentionally not committed |
 
 ## Current state
@@ -20,14 +20,14 @@
 | Source implementation | M1 root guard/snapshot/decoder/private CLI envelope implemented; linkage runtime not started | `src/`, `bin/`, focused tests |
 | Contracts/schema | Graph IR, Fact IR, identity/order, confidence/completeness, and configuration artifacts implemented and validated; runtime producers still absent | `schema/`, `examples/`, `SPEC.md`, ADR-002–ADR-004 |
 | Fixture layout/manifest | Implemented and validated | `fixtures/` and `fixtures/manifest-v0.1.json`; source/golden outputs still pending |
-| Focused tests | T-010–T-013 verified | `npm test`: 21 passed |
+| Focused tests | T-010–T-014 verified | `npm test`: 26 passed |
 | CI/package/release | Private package/CLI foundation only; CI/release not started | `package.json`, `bin/`; no workflow, tag, or release |
 | Runtime compatibility | Unknown | No local analyzer exists |
 | Core SSOT documentation | Synchronized planning baseline | `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`, `GOAL_PROMPT.md` |
 
 ## Delivery sequence
 
-The current pass advances M0 to a verified gate and M1/T-010–T-013 to verified, but does not complete M1 or advance M2–M9. It records the prototype foundation and makes T-014 the next safe-foundation task in `PROGRESS.md`.
+The current pass advances M0 to a verified gate and completes M1/T-010–T-014, but does not advance M2–M9. It records the verified safety foundation and makes T-020 the next parser task in `PROGRESS.md`.
 
 ### Phase 0 — Contract and safety foundation
 
