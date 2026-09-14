@@ -10,15 +10,16 @@ The bounded Graph IR now contains deterministic nodes, edges, unresolved records
 
 ## Decision
 
-Implement `src/graph-query.js` with two read-only entry points:
+Implement `src/graph-query.js` with three read-only entry points:
 
 1. `createGraphSnapshot(graph)` deep-copies and freezes a validated Graph IR document. Query code reads only this immutable snapshot and never reads project source or executes CFML, JavaScript, SQL, or application code.
 2. `queryGraph(snapshotOrGraph, request)` supports bounded `related`, `callers`, `callees`, `includes`, `included-by`, `trace`, `scope-flow`, `tables`, `routes`, `unresolved`, `explain-edge`, `impact-evidence`, and `stats` operations.
-3. Node selectors are exact IDs or exact path, canonical name, or name values with an optional kind filter. Ambiguous selectors return no target and a diagnostic; no filename similarity or target ranking is used. `explain-edge` requires an exact edge ID.
-4. Traversal is cycle-safe and deterministic. `max_results`, `max_depth`, and `max_visited` cap query work; exhausted limits emit diagnostics, retain the bounded result, and set query `complete=false`.
-5. Results contain bounded node/edge/unresolved evidence slices. `explain-edge` uses a deterministic template over the recorded relation, confidence, metadata, span, and evidence. It is not an LLM-generated explanation and does not promote confidence.
+3. `validateQueryRequest(request)` validates and normalizes the operation, exact selectors, edge-type list, direction, and traversal bounds without reading a graph.
+4. Node selectors are exact IDs or exact path, canonical name, or name values with an optional kind filter. Ambiguous selectors return no target and a diagnostic; no filename similarity or target ranking is used. `explain-edge` requires an exact edge ID.
+5. Traversal is cycle-safe and deterministic. `max_results`, `max_depth`, and `max_visited` cap query work; exhausted limits emit diagnostics, retain the bounded result, and set query `complete=false`.
+6. Results contain bounded node/edge/unresolved evidence slices. `explain-edge` uses a deterministic template over the recorded relation, confidence, metadata, span, and evidence. It is not an LLM-generated explanation and does not promote confidence.
 
-The query envelope is `agent-cfml-linkage-query/v0.1`. T-045 wires the bounded query commands to fresh analysis graphs; graph persistence and a released public library remain separate tasks.
+The query envelope is `agent-cfml-linkage-query/v0.1`. T-045 wires the bounded query commands to fresh analysis graphs, and T-046 reuses request validation from the private CLI configuration boundary; graph persistence and a released public library remain separate tasks.
 
 ## Consequences
 
@@ -30,7 +31,7 @@ The query envelope is `agent-cfml-linkage-query/v0.1`. T-045 wires the bounded q
 ## Verification
 
 - `test/graph-query.test.js` exercises immutable snapshots, exact selectors, all declared operations, evidence slices, deterministic explanations, unresolved filtering, traversal/result/depth/visited limits, ambiguity, invalid options, and result immutability.
-- `npm test` reports 74 passed; the query module re-copies even snapshot-shaped input before freezing, is syntax-checked, and uses no third-party dependency or runtime/service access.
+- `npm test` reports 74 passed; the query module re-copies even snapshot-shaped input before freezing, validates bounded request arrays, is syntax-checked, and uses no third-party dependency or runtime/service access.
 
 ## Limitations
 

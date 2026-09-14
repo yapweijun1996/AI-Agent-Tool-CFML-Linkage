@@ -34,7 +34,7 @@ The intended output is a deterministic Graph IR/JSON document that agents can qu
 
 ## What exists today
 
-The repository has completed its verified M1 safety foundation and advanced M2 with bounded CFML/web scanners and Fact extraction behind the parser adapter. Graph IR/Fact IR/configuration contracts, the M1 foundation, bounded structural Fact extraction, immutable indexes, literal/CFC/scope/web-flow resolution, dynamic/generated/SQL evidence preservation, bounded SQL/queryExecute extraction, structural repository/action resolution, bounded Graph construction, and bounded graph queries/evidence explanations are implemented/verified; full grammar coverage and broader resolver runtime remain absent. The following remain **planned**, not available:
+The repository has completed its verified M1 safety foundation and advanced M2 with bounded CFML/web scanners and Fact extraction behind the parser adapter. Graph IR/Fact IR/configuration contracts, the M1 foundation, bounded structural Fact extraction, immutable indexes, literal/CFC/scope/web-flow resolution, dynamic/generated/SQL evidence preservation, bounded SQL/queryExecute extraction, structural repository/action resolution, bounded Graph construction, bounded graph queries/evidence explanations, and complete v0.1 private-CLI configuration validation are implemented/verified; full grammar coverage and broader resolver runtime remain absent. The following remain **planned**, not available:
 
 - full parser/extractor runtime beyond the fixture-backed bounded Fact IR subset
 - broader multi-pass resolvers (bounded literal path/Application, CFC, scope, SQL, and repository resolution are now implemented internally)
@@ -47,7 +47,7 @@ A related external project, `agent-cfml-check`, is separate bounded single-file 
 
 ## CLI
 
-The private CLI accepts `capabilities`, `analyze`, `index`, and bounded query commands. Query selectors and limits are placed in the optional `query` object in the JSON configuration:
+The private CLI accepts `capabilities`, `analyze`, `index`, and bounded query commands. Before root admission, it strictly validates the v0.1 configuration shape/value contract; this does not claim library-wide enforcement of every configured budget. Query selectors and limits are placed in the optional `query` object in the JSON configuration:
 
 ```json
 {

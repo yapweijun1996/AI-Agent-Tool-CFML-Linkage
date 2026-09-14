@@ -1,6 +1,6 @@
 # ADR-008: Keep the CLI envelope stable and fail closed
 
-> **Status: PROVISIONAL / M1/T-036/T-045 BOUNDED.** The private CLI boundary is implemented and tested; bounded `analyze`/`index` and query commands exist, while graph persistence and release/public API remain open.
+> **Status: PROVISIONAL / M1/T-036/T-045/T-046 BOUNDED.** The private CLI boundary is implemented and tested; bounded `analyze`/`index` and query commands exist, while graph persistence and release/public API remain open.
 
 | Field | Value |
 | --- | --- |
@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | CLI arguments, JSON stdout, stderr diagnostics, exit codes, and current capability reporting |
 | Source of truth | `src/cli.js`, `bin/agent-cfml-linkage.js`, `test/cli.test.js`, this ADR, and `SPEC.md` |
-| Evidence | `npm test`: 74 passed, including capabilities, invalid input, config, root rejection, bounded analysis, query command mapping/validation, output limits, and no-execution cases |
+| Evidence | `npm test`: 74 passed, including capabilities, invalid input, complete config shape/value validation, root rejection, bounded analysis, query command mapping/validation, output limits, and no-execution cases |
 | Verification | Local Node subprocess tests pass; package-install, cross-platform, and released CLI checks remain unverified |
 | Limitations | Query commands analyze the root afresh and do not persist or accept a prior graph; bounded orchestration uses the explicit mixed structural scanner and remains private/unreleased |
 

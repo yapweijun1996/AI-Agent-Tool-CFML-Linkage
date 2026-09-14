@@ -65,4 +65,4 @@ T-044 has a bounded local audit of the product source at baseline commit `428feb
 
 ## Current release state
 
-**Unreleased.** A private package manifest/export, bounded `analyzeProject` library entry, bounded CLI `analyze`/`index` commands, and bounded query commands over fresh analysis graphs exist; graph persistence remains absent. Local package self-import, offline packed-artifact consumer smoke, `npm pack --dry-run`, CLI smoke, and bounded Node host evidence pass, but there is no public artifact, CI, tag, or release to verify.
+**Unreleased.** A private package manifest/export, bounded `analyzeProject` library entry, bounded CLI `analyze`/`index` commands, bounded query commands over fresh analysis graphs, and complete v0.1 CLI configuration shape/value validation exist; graph persistence remains absent. Local package self-import, offline packed-artifact consumer smoke, `npm pack --dry-run`, CLI smoke, and bounded Node host evidence pass, but there is no public artifact, CI, tag, or release to verify.

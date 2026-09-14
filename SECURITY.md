@@ -63,7 +63,7 @@ Before release, test:
 - cache isolation, corruption handling, and stale-data invalidation;
 - plugin rejection or containment if plugins exist.
 
-The root-admission, non-execution, dynamic-evidence, SQL, repository/action, bounded query, validated/copied snapshots, composed-orchestration, recognized query-command mapping/validation, serialized output-byte bound, and adversarial safe-failure boundaries are verified by focused Node tests. T-044 records a bounded local credential/file/documentation audit in `docs/audits/release-security-parity-v0.1.json`; no complete analyzer security review, dependency audit, runtime instrumentation, or public release security verification exists.
+The root-admission, non-execution, dynamic-evidence, SQL, repository/action, bounded query, validated/copied snapshots, composed-orchestration, recognized query-command mapping/validation, complete v0.1 CLI configuration shape/value validation, serialized output-byte bound, and adversarial safe-failure boundaries are verified by focused Node tests. T-044 records a bounded local credential/file/documentation audit in `docs/audits/release-security-parity-v0.1.json`; no complete analyzer security review, dependency audit, runtime instrumentation, or public release security verification exists.
 
 ## Reporting
 

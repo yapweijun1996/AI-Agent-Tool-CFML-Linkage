@@ -9,7 +9,7 @@
 | Scope | Ordered delivery of the planned linkage analyzer |
 | Source of truth | This roadmap for sequencing; Git history and tests for completion evidence |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation, bounded extractors, indexes, resolvers, and Graph builder |
-| Verification | M0 contract gate, T-010–T-014/T-020–T-036/T-040/T-041/T-045 foundation/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query tests, T-042 bounded contract/check/package smoke, T-043 bounded Node host compatibility, and produced Fact/Graph/analysis IR schema validation are verified; later milestones have no evidence |
+| Verification | M0 contract gate, T-010–T-014/T-020–T-036/T-040/T-041/T-045/T-046 foundation/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query/configuration tests, T-042 bounded contract/check/package smoke, T-043 bounded Node host compatibility, and produced Fact/Graph/analysis IR schema validation are verified; later milestones have no evidence |
 | Limitations | Dates, estimates, parser selection, and release targets are intentionally not committed |
 
 ## Current state
@@ -17,17 +17,17 @@
 | Area | State | Evidence |
 | --- | --- | --- |
 | Repository | Private prototype with verified foundation and bounded extractors | Git `main` at the current local commit; no remote publication |
-| Source implementation | M1 foundation, M2 parser-adapter/bounded CFML/web scanner/Fact extractors, M3 immutable indexes/literal resolver/bounded Graph builder, M4 bounded CFC resolver, M5 bounded scope/web-flow resolvers, M6 bounded dynamic/SQL/repository linkage, M7 bounded graph query/evidence engine and query-command CLI, M8 bounded adversarial safe-failure fixtures, and M9 bounded check/package smoke/Node host evidence implemented; broader Graph runtime not started | `src/`, `bin/`, focused tests |
+| Source implementation | M1 foundation, M2 parser-adapter/bounded CFML/web scanner/Fact extractors, M3 immutable indexes/literal resolver/bounded Graph builder, M4 bounded CFC resolver, M5 bounded scope/web-flow resolvers, M6 bounded dynamic/SQL/repository linkage, M7 bounded graph query/evidence engine and query-command CLI, M8 bounded adversarial safe-failure fixtures, and M9 bounded check/package smoke/Node host evidence plus T-046 CLI configuration enforcement implemented; broader Graph runtime not started | `src/`, `bin/`, focused tests |
 | Contracts/schema | Graph IR, Fact IR, identity/order, confidence/completeness, and configuration artifacts implemented and validated; broader runtime producers remain absent | `schema/`, `examples/`, `SPEC.md`, ADR-002–ADR-004 |
 | Fixture layout/manifest | Implemented and validated | `fixtures/`, `fixtures/manifest-v0.1.json`, inert golden/negative/adversarial inputs, and bounded expectations |
-| Focused tests | T-010–T-014/T-020–T-036/T-040/T-041/T-045 verified | `npm test`: 74 passed |
+| Focused tests | T-010–T-014/T-020–T-036/T-040/T-041/T-045/T-046 verified | `npm test`: 74 passed |
 | CI/package/release | Private package/CLI foundation only; CI/release not started | `package.json`, `bin/`; no workflow, tag, or release |
 | Runtime compatibility | Partial | Node `v25.2.1` on `win32`/`x64` is evidenced for the bounded test suite; Lucee/Adobe/browser/database/network/application-runtime compatibility remains unknown |
 | Core SSOT documentation | Synchronized planning baseline | `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`, `GOAL_PROMPT.md` |
 
 ## Delivery sequence
 
-The current pass advances M0 to a verified gate, completes M1/T-010–T-014, verifies bounded M2 parser/scanner/Fact extraction at T-020–T-022, M3 index/literal resolution/Graph IR boundaries at T-023–T-025, bounded M4 CFC resolution at T-030, M5 scope/web-flow resolution at T-031–T-032, M6 dynamic-evidence preservation at T-033 and bounded SQL/repository linkage at T-034, M7 bounded graph queries/evidence explanations at T-035, bounded analysis orchestration/private entry points at T-036, and query-command CLI at T-045, and M8 bounded robustness and adversarial safe-failure evidence at T-040/T-041, and M9 bounded checks/package smoke at T-042 plus bounded Node host compatibility at T-043; it does not establish full grammar coverage or advance broader compatibility/release work. T-037–T-039 remain reserved without executable definitions.
+The current pass advances M0 to a verified gate, completes M1/T-010–T-014, verifies bounded M2 parser/scanner/Fact extraction at T-020–T-022, M3 index/literal resolution/Graph IR boundaries at T-023–T-025, bounded M4 CFC resolution at T-030, M5 scope/web-flow resolution at T-031–T-032, M6 dynamic-evidence preservation at T-033 and bounded SQL/repository linkage at T-034, M7 bounded graph queries/evidence explanations at T-035, bounded analysis orchestration/private entry points at T-036, and query-command CLI at T-045 plus CLI configuration enforcement at T-046, and M8 bounded robustness and adversarial safe-failure evidence at T-040/T-041, and M9 bounded checks/package smoke at T-042 plus bounded Node host compatibility at T-043; it does not establish full grammar coverage or advance broader compatibility/release work. T-037–T-039 remain reserved without executable definitions.
 
 ### Phase 0 — Contract and safety foundation
 
@@ -56,14 +56,14 @@ The current pass advances M0 to a verified gate, completes M1/T-010–T-014, ver
 ### Phase 3 — SQL, repository, and query interface
 
 - M6: preserve dynamic/generated/SQL-dynamic evidence first, then add statically visible `cfquery`/`queryExecute` table/datasource and structural repository/action edges (T-033/T-034 verified; broader SQL semantics remain open).
-- M7: bounded `related`, `callers`, `callees`, `includes`, `included-by`, `trace`, `scope-flow`, `tables`, `routes`, `unresolved`, `explain-edge`, `impact-evidence`, and `stats` queries plus composed analysis output; T-035/T-036/T-045 are verified for the immutable query engine, bounded private composition, and query-command CLI.
+- M7: bounded `related`, `callers`, `callees`, `includes`, `included-by`, `trace`, `scope-flow`, `tables`, `routes`, `unresolved`, `explain-edge`, `impact-evidence`, and `stats` queries plus composed analysis output; T-035/T-036/T-045/T-046 are verified for the immutable query engine, bounded private composition, query-command CLI, and CLI configuration contract.
 
 **Exit evidence:** query contract tests, evidence explanations backed by spans, traversal bounds, cycles, and SQL limitation tests; `test/graph-query.test.js` provides the bounded query evidence.
 
 ### Phase 4 — Incremental operation and release
 
 - M8: cache invalidation, bounded concurrency, hard resource limits, repeatability, and snapshot drift handling; T-040/T-041 verify the bounded repeat/drift/cache/cycle/limit and adversarial safe-failure subset, and the private CLI enforces serialized output limits, while library output and wall-time budgets remain open.
-- M9: package/library/CLI smoke, golden and adversarial suites, documentation synchronization, and separately evidenced Lucee/Adobe compatibility; T-042 verifies local checks/package smoke, T-043 records Node host evidence, and T-036/T-045 provide bounded composition and query-command integration, while broader compatibility and graph persistence remain open; T-037–T-039 remain reserved without executable definitions.
+- M9: package/library/CLI smoke, golden and adversarial suites, documentation synchronization, and separately evidenced Lucee/Adobe compatibility; T-042 verifies local checks/package smoke, T-043 records Node host evidence, and T-036/T-045/T-046 provide bounded composition, query-command integration, and CLI configuration enforcement, while broader compatibility and graph persistence remain open; T-037–T-039 remain reserved without executable definitions.
 
 **Exit evidence:** release checklist in `RELEASE.md`, reproducible artifact readback, CI results, and a versioned release note.
 

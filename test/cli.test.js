@@ -185,10 +185,33 @@ test("rejects malformed JSON and unsafe configuration before analysis", () => {
     assert.equal(result.exitCode, 2);
     assert.equal(result.stdout.diagnostics[0].code, "INVALID_CONFIG");
 
+    writeConfig(root, { query: { edge_types: ["NOT_AN_EDGE"] } });
+    result = runCli(["stats", "--config", "config.json"], root);
+    assert.equal(result.exitCode, 2);
+    assert.equal(result.stdout.diagnostics[0].code, "INVALID_CONFIG");
+
     writeConfig(root, { query: { path: "index.cfm" } });
     result = runCli(["analyze", "--config", "config.json"], root);
     assert.equal(result.exitCode, 2);
     assert.equal(result.stdout.diagnostics[0].code, "INVALID_CONFIG");
+
+    writeConfig(root);
+    const invalidMutations = [
+      (config) => { config.extra = true; },
+      (config) => { delete config.analysis.languages; },
+      (config) => { config.analysis.languages = ["ruby"]; },
+      (config) => { config.limits.max_workers = 0; },
+      (config) => { config.exit_codes.completed = 1; },
+      (config) => { config.output.include_raw_evidence = "all"; },
+    ];
+    for (const mutate of invalidMutations) {
+      const invalidConfig = JSON.parse(fs.readFileSync(path.join(root, "config.json"), "utf8"));
+      mutate(invalidConfig);
+      fs.writeFileSync(path.join(root, "config.json"), JSON.stringify(invalidConfig), "utf8");
+      result = runCli(["analyze", "--config", "config.json"], root);
+      assert.equal(result.exitCode, 2);
+      assert.equal(result.stdout.diagnostics[0].code, "INVALID_CONFIG");
+    }
 
     writeConfig(root);
     const invalidOutputConfig = JSON.parse(fs.readFileSync(path.join(root, "config.json"), "utf8"));

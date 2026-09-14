@@ -128,5 +128,6 @@ test("does not guess an ambiguous exact node selector and rejects invalid query 
   assert.equal(result.diagnostics.some((item) => item.code === "QUERY_TARGET_AMBIGUOUS"), true);
   assert.throws(() => queryGraph(snapshot, { operation: "related", node_id: PAGE, max_results: 0 }), /max_results/u);
   assert.throws(() => queryGraph(snapshot, { operation: "related", node_id: PAGE, edge_types: ["NOT_AN_EDGE"] }), /edge_types/u);
+  assert.throws(() => queryGraph(snapshot, { operation: "related", node_id: PAGE, edge_types: ["INCLUDES", "INCLUDES"] }), /duplicate/u);
   assert.throws(() => queryGraph(snapshot, { operation: "unknown" }), /Unsupported graph query operation/u);
 });

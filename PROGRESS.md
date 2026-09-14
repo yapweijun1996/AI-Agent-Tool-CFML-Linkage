@@ -1,6 +1,6 @@
 # Progress: agent-cfml-linkage
 
-> **Status: DOCUMENTATION SYNC VERIFIED / M1 FOUNDATION VERIFIED / M2–M9 BOUNDED IMPLEMENTATION PARTIAL.** This report is evidence-based and intentionally separates plan from product state.
+> **Status: CLI CONFIGURATION CONTRACT VERIFIED / M1 FOUNDATION VERIFIED / M2–M9 BOUNDED IMPLEMENTATION PARTIAL.** This report is evidence-based and intentionally separates plan from product state.
 
 | Field | Value |
 | --- | --- |
@@ -15,7 +15,7 @@
 ## Project classification
 
 - **Type:** planned hybrid of NPM/library, CLI, and AI-agent evidence provider.
-- **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction partial, M3 bounded literal resolution/Graph IR, M4 bounded CFC, M5 bounded scope/web-flow, M6 bounded dynamic/SQL/repository linkage, M7 bounded graph queries, T-036 bounded orchestration, and T-045 bounded query CLI, M8 bounded robustness/adversarial evidence, and M9 bounded verification/package smoke/Node compatibility partial; T-037–T-039 remain undefined; broader resolver not started.
+- **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction partial, M3 bounded literal resolution/Graph IR, M4 bounded CFC, M5 bounded scope/web-flow, M6 bounded dynamic/SQL/repository linkage, M7 bounded graph queries, T-036 bounded orchestration, and T-045 bounded query CLI, M8 bounded robustness/adversarial evidence, and M9 bounded verification/package smoke/Node compatibility plus T-046 bounded CLI configuration enforcement partial; T-037–T-039 remain undefined; broader resolver not started.
 - **Current product boundary:** one planned static linkage analyzer with implemented root-guard, snapshot, decoder, bounded CLI, private library entry (`src/index.js`/`src/analyzer.js`), cache, bounded parser/scanners, Fact extractor, indexes, literal resolver, Graph builder/validator, reverse adjacency, CFC resolver, scope resolver, web-flow resolver, repository resolver, graph query engine, query-command CLI, and dynamic/generated/SQL-dynamic evidence handling; package publication remains private/unreleased.
 - **Runtime/browser state:** not applicable yet. No product can be started or inspected, and no browser journey exists.
 
@@ -28,7 +28,7 @@
 | Fact IR JSON Schema/example | Yes | Yes | Yes | No | `schema/agent-cfml-linkage-fact-v0.1.schema.json`, `examples/facts-v0.1.json`, local validation |
 | Identity/order contract | Yes | Yes | Yes | No | ADR-002, `examples/identity-order-v0.1.json`, deterministic reference check |
 | Confidence/completeness policy | Yes | Yes | Yes | No | ADR-003, `examples/confidence-v0.1.json`, policy invariant check |
-| Root/configuration/limits contract | Yes | Yes | Yes | No | ADR-004, config schema/example, policy invariant check |
+| Root/configuration/limits contract | Yes | Yes | Yes | No | ADR-004, config schema/example, `src/cli.js`, `test/cli.test.js`, and policy invariant check; the private CLI rejects schema-shape and value violations before root admission, while library-wide limit enforcement remains open |
 | Staged architecture | Yes | Partial | Partial | No | `DESIGN.md`, `ARCHITECTURE.md`, ADR-024, `src/analyzer.js`; bounded composition and query-command execution are implemented, while full parser/release stages remain open |
 | Root guard | Yes | Yes | Yes | No | `src/root-guard.js`, `test/root-guard.test.js`, 6 focused cases; suite 74/74 |
 | Snapshot/discovery | Yes | Yes | Yes | No | `src/snapshot.js`, `test/snapshot.test.js`, deterministic/drift/limit/symlink checks |
@@ -53,7 +53,7 @@
 
 ## Progress basis
 
-The implementation roadmap has 10 milestones, M0–M9. **M0 contract gate: verified (T-001–T-006). M1: T-010–T-014 verified. M2: T-020–T-022 bounded parser/scanner/Fact subset verified; M3: T-023–T-025 bounded indexes, literal resolution, and Graph IR verified; M4: T-030 bounded CFC resolution verified; M5: T-031/T-032 bounded scope and web-flow/condition resolution verified; M6: T-033 bounded dynamic/generated/SQL-dynamic evidence preservation and T-034 bounded SQL/repository linkage verified; M7: T-035 bounded graph queries/evidence explanations, T-036 bounded analysis orchestration/private library/CLI entry points, and T-045 bounded query-command CLI verified; M8: T-040/T-041 bounded determinism/cache/cycle/limit robustness and inert adversarial safe-failure fixtures verified; M9: T-042 bounded checks/package-CLI smoke, T-043 bounded Node host compatibility, and T-044 bounded release/security/parity audit verified; T-037–T-039 remain undefined. M3 started at T-023; M4 started at T-030; M5 started at T-031; M6 started at T-033; M7 started at T-035; M8 started at T-040; M9 started at T-042.** Runtime milestone completion is 1/9 (M1); M2–M9 remain partial and the bounded implementation is not a full linkage resolver.
+The implementation roadmap has 10 milestones, M0–M9. **M0 contract gate: verified (T-001–T-006). M1: T-010–T-014 verified. M2: T-020–T-022 bounded parser/scanner/Fact subset verified; M3: T-023–T-025 bounded indexes, literal resolution, and Graph IR verified; M4: T-030 bounded CFC resolution verified; M5: T-031/T-032 bounded scope and web-flow/condition resolution verified; M6: T-033 bounded dynamic/generated/SQL-dynamic evidence preservation and T-034 bounded SQL/repository linkage verified; M7: T-035 bounded graph queries/evidence explanations, T-036 bounded analysis orchestration/private library/CLI entry points, and T-045 bounded query-command CLI verified; M8: T-040/T-041 bounded determinism/cache/cycle/limit robustness and inert adversarial safe-failure fixtures verified; M9: T-042 bounded checks/package-CLI smoke, T-043 bounded Node host compatibility, and T-044 bounded release/security/parity audit plus T-046 bounded CLI configuration enforcement verified; T-037–T-039 remain undefined. M3 started at T-023; M4 started at T-030; M5 started at T-031; M6 started at T-033; M7 started at T-035; M8 started at T-040; M9 started at T-042.** Runtime milestone completion is 1/9 (M1); M2–M9 remain partial and the bounded implementation is not a full linkage resolver.
 
 Core documentation coverage is now the current work product: goal, design, specification, epic, roadmap, task register, progress report, autonomous goal prompt, architecture, test plan, security, release policy, changelog, and ADR.
 
@@ -64,9 +64,10 @@ Core documentation coverage is now the current work product: goal, design, speci
 - Confirmed no complete linkage implementation or product runtime is available; the root-guard/snapshot/decoder/bounded CLI/library/cache/scanner/Fact foundation is runnable.
 - Synchronized the Core SSOT documents while retaining proposed status for unimplemented runtime stages.
 - Added and validated the Graph IR v0.1, Fact IR v0.1, identity/order, confidence/completeness, root/configuration, and fixture-layout artifacts for T-001–T-006.
-- Implemented and verified the Node root guard, deterministic snapshot/discovery, strict decoder/source map, bounded CLI envelope and `analyze`/`index` composition, private library entry, disposable cache, fail-closed parser adapter, bounded CFML/web scanners, fixture-backed Fact extractor, immutable indexes, bounded literal/CFC/scope/web-flow/repository resolvers, dynamic/generated/SQL-dynamic evidence handling, bounded Graph IR builder/validator/reverse adjacency, immutable graph query/evidence explanation engine, inert adversarial safe-failure fixtures, vanished-snapshot-target rejection, bounded CLI output enforcement, bounded check/package smoke evidence, and Node host compatibility evidence for T-010–T-014/T-020–T-036/T-040–T-045; no full parser grammar or broad linkage resolution exists.
+- Implemented and verified the Node root guard, deterministic snapshot/discovery, strict decoder/source map, bounded CLI envelope and `analyze`/`index` composition, private library entry, disposable cache, fail-closed parser adapter, bounded CFML/web scanners, fixture-backed Fact extractor, immutable indexes, bounded literal/CFC/scope/web-flow/repository resolvers, dynamic/generated/SQL-dynamic evidence handling, bounded Graph IR builder/validator/reverse adjacency, immutable graph query/evidence explanation engine, inert adversarial safe-failure fixtures, vanished-snapshot-target rejection, bounded CLI output enforcement, complete v0.1 CLI configuration validation, bounded check/package smoke evidence, and Node host compatibility evidence for T-010–T-014/T-020–T-036/T-040–T-046; no full parser grammar or broad linkage resolution exists.
 - Preserved the boundary with external `agent-cfml-check`, `agent-code-slice`, `agent-change-impact`, and `agent-test-scope` work.
 - Audited ADR verification counts and bounded-status statements after T-045; synchronized the remaining historical suite references to the current 74-test evidence without changing runtime scope.
+- Implemented T-046: the private CLI now enforces the complete v0.1 configuration object shape and bounded value contract, including query-request validation, before root admission/analysis; library-wide budget enforcement remains open.
 
 ## Blockers and unresolved decisions
 
@@ -93,7 +94,7 @@ These are documented planning blockers, not reasons to claim failure. No externa
 | Markdown metadata/trailing-whitespace check | Passed | Documentation-only check |
 | GOAL_PROMPT character limit | Passed (under 2,000 characters) | Enforced at 2,000 characters |
 | Local Markdown link check | Passed | Does not validate external links |
-| Build/type/lint/unit/integration/E2E | Partial: `npm test` passed 74 foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query tests | No broader Graph linkage build/type/lint/integration/E2E suite exists |
+| Build/type/lint/unit/integration/E2E | Partial: `npm test` passed 74 foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query/configuration tests | No broader Graph linkage build/type/lint/integration/E2E suite exists |
 | Package/import/CLI smoke | Passed (bounded) | Private package self-reference/import, offline packed-artifact consumer analysis, CLI capabilities/version/analyze, and `npm pack --dry-run` pass; package remains private and unpublished |
 | Node host compatibility | Passed (bounded) | `docs/compatibility/node-v25.2.1-win32-x64.json`; only Node `v25.2.1` on `win32`/`x64` is evidenced |
 | Browser/accessibility/runtime linkage/security probes | Unrun | No user-facing product or complete analyzer exists |

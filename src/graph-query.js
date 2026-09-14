@@ -237,8 +237,10 @@ function normalizeRequest(request = {}) {
   if (["stats", "explain-edge"].includes(operation) && selectors.length > 0) throw new TypeError(`${operation} does not accept a node selector`);
   if (request.kind !== undefined && request.name === undefined && request.path === undefined && request.canonical_name === undefined && request.node_id === undefined) throw new TypeError("kind requires a node selector");
   if (request.edge_types !== undefined) {
-    if (!Array.isArray(request.edge_types) || request.edge_types.length === 0) throw new TypeError("edge_types must be a non-empty array");
-    output.edge_types = [...new Set(request.edge_types.map((value) => normalizeString(value, "edge_types entry")))].sort(compareStrings);
+    if (!Array.isArray(request.edge_types) || request.edge_types.length === 0 || request.edge_types.length > 64) throw new TypeError("edge_types must contain between 1 and 64 entries");
+    const normalizedEdgeTypes = request.edge_types.map((value) => normalizeString(value, "edge_types entry"));
+    if (new Set(normalizedEdgeTypes).size !== normalizedEdgeTypes.length) throw new TypeError("edge_types must not contain duplicate entries");
+    output.edge_types = normalizedEdgeTypes.sort(compareStrings);
     if (output.edge_types.some((value) => !KNOWN_EDGE_TYPES.has(value))) throw new TypeError("edge_types contains an unsupported edge type");
   }
   if (request.direction !== undefined && !["incoming", "outgoing", "both"].includes(request.direction)) throw new TypeError("direction must be incoming, outgoing, or both");
@@ -447,6 +449,16 @@ function queryStats(graph, resultCount, visitedNodeCount, visitedEdgeCount) {
     visited_node_count: visitedNodeCount,
     visited_edge_count: visitedEdgeCount,
   };
+}
+
+/**
+ * Validate and normalize a graph query request without reading a graph.
+ *
+ * @param {object} request query operation and bounded selector/options
+ * @returns {object} deterministic normalized request
+ */
+export function validateQueryRequest(request = {}) {
+  return normalizeRequest(request);
 }
 
 /**

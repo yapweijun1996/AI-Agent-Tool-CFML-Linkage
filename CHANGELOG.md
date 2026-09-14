@@ -56,6 +56,7 @@
 - Hardened literal path resolution to require current root-contained target existence, preserving vanished snapshot targets as unresolved evidence.
 - Hardened `createGraphSnapshot` to validate and deep-copy snapshot-shaped input instead of trusting caller mutability.
 - Synchronized ADR verification-count and bounded-status references with the current 74-test suite after T-045; no broader compatibility or release claim was added.
+- Implemented bounded T-046 CLI configuration validation: the complete v0.1 object shape/value contract and query-request options are rejected before root admission/analysis; library-wide budget enforcement remains open.
 
 ### Not claimed
 

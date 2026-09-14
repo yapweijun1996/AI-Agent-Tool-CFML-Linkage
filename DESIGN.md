@@ -9,7 +9,7 @@
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
-| Verification | Graph/Fact/config/analysis checks, produced Fact/Graph/analysis IR schema validation, and 74 foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query tests pass locally; broader runtime stages below remain unimplemented proposals |
+| Verification | Graph/Fact/config/analysis checks, produced Fact/Graph/analysis IR schema validation, and 74 foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query/configuration tests pass locally; broader runtime stages below remain unimplemented proposals |
 | Limitations | Parser choice, language coverage, performance, and engine compatibility remain unknown |
 
 ## 1. Design goals
@@ -44,7 +44,7 @@ Every stage has a typed input/output boundary. Stages may emit diagnostics but n
 
 ### Stage 0 — Root guard and policy
 
-The planned stage resolves the canonical root, rejects traversal and symlink escapes, loads the explicit v0.1 configuration (`schema/agent-cfml-linkage-config-v0.1.schema.json`), applies mappings and limits, and freezes the `AnalysisContext`. The implemented M1 root-guard slice covers canonicalization and containment in `src/root-guard.js`; adjacent snapshot and decoder slices are covered by focused tests. Configuration loading, policy freezing, and mapping application remain open. No database, network, or CFML execution is permitted. Globe3-specific mappings are configuration rather than hardcoded rules.
+The planned stage resolves the canonical root, rejects traversal and symlink escapes, loads the explicit v0.1 configuration (`schema/agent-cfml-linkage-config-v0.1.schema.json`), applies mappings and limits, and freezes the `AnalysisContext`. The implemented M1 root-guard slice covers canonicalization and containment in `src/root-guard.js`; adjacent snapshot and decoder slices are covered by focused tests. The private CLI now validates the complete v0.1 configuration shape/value contract before root admission; policy freezing and mapping application remain open. No database, network, or CFML execution is permitted. Globe3-specific mappings are configuration rather than hardcoded rules.
 
 ### Stage 1 — Snapshot and discovery
 
@@ -173,7 +173,7 @@ The sequence is dependency-aware but not a schedule. M0's contract gate, M1 foun
 | M4 | CFC mappings, inheritance, instantiation, and method linkage | In progress — T-030 bounded resolver verified; broader type inference open |
 | M5 | Shared scope, AJAX/fetch, conditional routers | In progress — T-031/T-032 bounded scope and web-flow/condition resolvers verified; broader flow open |
 | M6 | Dynamic/generated/SQL-dynamic evidence and SQL/repository linkage | In progress — T-033 preservation and bounded T-034 SQL/repository linkage verified; broader SQL semantics remain open |
-| M7 | Query engine and bounded impact evidence | In progress — T-035 bounded query/evidence engine, T-036 bounded analysis composition/private entry points, and T-045 bounded query-command CLI verified |
+| M7 | Query engine and bounded impact evidence | In progress — T-035 bounded query/evidence engine, T-036 bounded analysis composition/private entry points, and T-045 bounded query-command CLI and T-046 bounded CLI configuration enforcement verified |
 | M8 | Incremental invalidation, workers, budgets, repeatability | In progress — T-040/T-041 bounded robustness/adversarial safe-failure evidence and private CLI output-budget enforcement; library output and wall-time budgets remain open |
 | M9 | Golden suite, adversarial tests, package/CLI smoke, and separately evidenced engine checks | In progress — T-042 checks/package smoke, T-043 Node host evidence, and T-044 bounded release/security/parity audit; broader compatibility/public release remains open |
 

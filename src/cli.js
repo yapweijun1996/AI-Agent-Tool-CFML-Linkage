@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { analyzeProject } from "./analyzer.js";
-import { queryGraph } from "./graph-query.js";
+import { queryGraph, validateQueryRequest } from "./graph-query.js";
 import { createMixedStructuralScannerBackend } from "./web-scanner.js";
 import { createRootGuard, RootGuardError } from "./root-guard.js";
 
@@ -28,11 +28,43 @@ const QUERY_OPERATIONS = Object.freeze({
   explain: "explain-edge",
   stats: "stats",
 });
-const QUERY_OPTION_KEYS = new Set(["node_id", "path", "canonical_name", "name", "kind", "edge_id", "relation_type", "reason_code", "edge_types", "direction", "max_results", "max_depth", "max_visited"]);
 const COMMANDS = Object.freeze(["capabilities", "analyze", "index", ...QUERY_COMMANDS]);
 
 function diagnostic(code, severity, message, details = {}) {
   return Object.freeze({ code, severity, message, ...details });
+}
+
+function invalidConfig(message) {
+  throw diagnostic("INVALID_CONFIG", "error", message);
+}
+
+function requireConfigObject(value, name, requiredKeys, allowedKeys) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) invalidConfig(`${name} must be an object.`);
+  for (const key of requiredKeys) {
+    if (!Object.hasOwn(value, key)) invalidConfig(`${name}.${key} is required.`);
+  }
+  for (const key of Object.keys(value)) {
+    if (allowedKeys !== null && !allowedKeys.has(key)) invalidConfig(`${name}.${key} is not supported.`);
+  }
+}
+
+function requireConfigString(value, name, maxLength = Infinity) {
+  if (typeof value !== "string" || value.trim() === "") invalidConfig(`${name} must be a non-empty string.`);
+  if (value.length > maxLength) invalidConfig(`${name} exceeds ${maxLength} characters.`);
+}
+
+function requireConfigArray(value, name, { minItems = 0, maxItems = Infinity, itemMaxLength = Infinity } = {}) {
+  if (!Array.isArray(value) || value.length < minItems || value.length > maxItems) invalidConfig(`${name} has an invalid item count.`);
+  const seen = new Set();
+  for (const item of value) {
+    requireConfigString(item, `${name} entry`, itemMaxLength);
+    if (seen.has(item)) invalidConfig(`${name} must not contain duplicate entries.`);
+    seen.add(item);
+  }
+}
+
+function requireConfigPositiveInteger(value, name) {
+  if (!Number.isSafeInteger(value) || value <= 0) invalidConfig(`${name} must be a positive safe integer.`);
 }
 
 function envelope(command, status, diagnostics = [], data = null) {
@@ -141,40 +173,42 @@ function readConfig(configPath, cwd) {
 }
 
 function validateConfig(config) {
-  if (!config || typeof config !== "object" || Array.isArray(config)) {
-    throw diagnostic("INVALID_CONFIG", "error", "Configuration must be a JSON object.");
-  }
-  if (config.schema_version !== "agent-cfml-linkage-config/v0.1") {
-    throw diagnostic("INVALID_CONFIG", "error", "Unsupported or missing configuration schema_version.");
-  }
-  if (typeof config.root !== "string" || config.root.trim() === "") {
-    throw diagnostic("INVALID_CONFIG", "error", "Configuration root must be a non-empty path.");
-  }
-  const requiredObjects = ["path_policy", "ignore", "analysis", "limits", "output", "prohibited_actions", "exit_codes"];
-  for (const key of requiredObjects) {
-    if (!config[key] || typeof config[key] !== "object" || Array.isArray(config[key])) {
-      throw diagnostic("INVALID_CONFIG", "error", `Configuration object is missing: ${key}.`);
-    }
-  }
-  const prohibited = config.prohibited_actions;
+  requireConfigObject(config, "config", ["schema_version", "root", "path_policy", "ignore", "analysis", "limits", "output", "prohibited_actions", "exit_codes"], new Set(["schema_version", "root", "path_policy", "ignore", "analysis", "limits", "query", "output", "prohibited_actions", "exit_codes"]));
+  if (config.schema_version !== "agent-cfml-linkage-config/v0.1") invalidConfig("Unsupported or missing configuration schema_version.");
+  requireConfigString(config.root, "Configuration root", 4096);
+
+  requireConfigObject(config.path_policy, "path_policy", ["reject_outside_root", "follow_symlinks", "allow_absolute_references", "case_collision_policy"], new Set(["reject_outside_root", "follow_symlinks", "allow_absolute_references", "case_collision_policy"]));
+  if (config.path_policy.reject_outside_root !== true || config.path_policy.follow_symlinks !== false || config.path_policy.allow_absolute_references !== false) invalidConfig("Unsafe path policy flags do not satisfy the v0.1 contract.");
+  if (!["diagnostic", "reject"].includes(config.path_policy.case_collision_policy)) invalidConfig("path_policy.case_collision_policy is invalid.");
+
+  requireConfigObject(config.ignore, "ignore", ["globs", "hidden_files", "generated_files"], new Set(["globs", "hidden_files", "generated_files"]));
+  requireConfigArray(config.ignore.globs, "ignore.globs", { maxItems: 256, itemMaxLength: 512 });
+  if (!["include", "ignore"].includes(config.ignore.hidden_files) || !["include", "ignore"].includes(config.ignore.generated_files)) invalidConfig("ignore file policies are invalid.");
+
+  requireConfigObject(config.analysis, "analysis", ["languages", "mappings", "enabled_plugins"], new Set(["languages", "mappings", "enabled_plugins"]));
+  requireConfigArray(config.analysis.languages, "analysis.languages", { minItems: 1 });
+  if (config.analysis.languages.some((language) => !["cfml", "html", "javascript", "css", "sql"].includes(language))) invalidConfig("analysis.languages contains an unsupported language.");
+  requireConfigObject(config.analysis.mappings, "analysis.mappings", [], null);
+  for (const [key, value] of Object.entries(config.analysis.mappings)) requireConfigString(value, `analysis.mappings.${key}`);
+  requireConfigArray(config.analysis.enabled_plugins, "analysis.enabled_plugins", { maxItems: 32 });
+
+  const limitKeys = ["max_files", "max_file_bytes", "max_total_bytes", "max_facts", "max_edges", "max_evidence", "max_traversal_depth", "max_output_bytes", "max_wall_time_ms", "max_workers"];
+  requireConfigObject(config.limits, "limits", limitKeys, new Set(limitKeys));
+  for (const key of limitKeys) requireConfigPositiveInteger(config.limits[key], `limits.${key}`);
+  if (config.limits.max_output_bytes < MIN_OUTPUT_BYTES) invalidConfig(`limits.max_output_bytes must be at least ${MIN_OUTPUT_BYTES} bytes.`);
+
+  requireConfigObject(config.output, "output", ["format", "diagnostics_stream", "include_raw_evidence"], new Set(["format", "diagnostics_stream", "include_raw_evidence"]));
+  if (config.output.format !== "json" || config.output.diagnostics_stream !== "stderr") invalidConfig("Output must be JSON with diagnostics on stderr.");
+  if (!["never", "bounded"].includes(config.output.include_raw_evidence)) invalidConfig("output.include_raw_evidence is invalid.");
+
+  requireConfigObject(config.prohibited_actions, "prohibited_actions", ["execute_source", "network", "database", "shell", "browser"], new Set(["execute_source", "network", "database", "shell", "browser"]));
   for (const key of ["execute_source", "network", "database", "shell", "browser"]) {
-    if (prohibited[key] !== false) {
-      throw diagnostic("INVALID_CONFIG", "error", `prohibited_actions.${key} must be false.`);
-    }
+    if (config.prohibited_actions[key] !== false) invalidConfig(`prohibited_actions.${key} must be false.`);
   }
-  if (config.path_policy.follow_symlinks !== false || config.path_policy.allow_absolute_references !== false || config.path_policy.reject_outside_root !== true) {
-    throw diagnostic("INVALID_CONFIG", "error", "Unsafe path policy flags do not satisfy the v0.1 contract.");
-  }
-  if (config.output.format !== "json" || config.output.diagnostics_stream !== "stderr") {
-    throw diagnostic("INVALID_CONFIG", "error", "Output must be JSON with diagnostics on stderr.");
-  }
-  for (const key of Object.keys(DEFAULT_EXIT_CODES)) {
-    if (!Number.isSafeInteger(config.exit_codes[key]) || config.exit_codes[key] < 0) {
-      throw diagnostic("INVALID_CONFIG", "error", `exit_codes.${key} must be a non-negative safe integer.`);
-    }
-  }
-  if (!Number.isSafeInteger(config.limits.max_output_bytes) || config.limits.max_output_bytes < MIN_OUTPUT_BYTES) {
-    throw diagnostic("INVALID_CONFIG", "error", `limits.max_output_bytes must be at least ${MIN_OUTPUT_BYTES} bytes.`);
+
+  requireConfigObject(config.exit_codes, "exit_codes", Object.keys(DEFAULT_EXIT_CODES), new Set(Object.keys(DEFAULT_EXIT_CODES)));
+  for (const [key, value] of Object.entries(DEFAULT_EXIT_CODES)) {
+    if (config.exit_codes[key] !== value) invalidConfig(`exit_codes.${key} must equal ${value}.`);
   }
   return config;
 }
@@ -187,8 +221,13 @@ function validateQueryConfig(config, command) {
   if (!config.query || typeof config.query !== "object" || Array.isArray(config.query)) {
     throw diagnostic("INVALID_CONFIG", "error", "Configuration query must be an object.");
   }
-  for (const key of Object.keys(config.query)) {
-    if (!QUERY_OPTION_KEYS.has(key)) throw diagnostic("INVALID_CONFIG", "error", `Unsupported query option: ${key}.`);
+  if (Object.hasOwn(config.query, "operation")) {
+    throw diagnostic("INVALID_CONFIG", "error", "Configuration query must not contain operation; the command selects it.");
+  }
+  try {
+    validateQueryRequest({ ...config.query, operation: QUERY_OPERATIONS[command] });
+  } catch (error) {
+    throw diagnostic("INVALID_CONFIG", "error", `Query configuration is invalid: ${error?.message ?? "unknown"}.`);
   }
 }
 

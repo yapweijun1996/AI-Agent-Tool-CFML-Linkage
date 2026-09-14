@@ -1,6 +1,6 @@
 # Task Register: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M9 IN PROGRESS.** T-001–T-006, T-010–T-014, T-020–T-036, and T-040–T-045 have bounded implementation and verification evidence; T-037–T-039 are reserved and undefined, and broader linkage remains open.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** T-001–T-006, T-010–T-014, T-020–T-036, and T-040–T-046 have bounded implementation and verification evidence; T-037–T-039 are reserved and undefined, and broader linkage remains open.
 
 | Field | Value |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Scope | Executable work required to implement and verify the planned analyzer |
 | Source of truth | This register for planned work; repository source, tests, runtime checks, and release evidence for actual status |
 | Evidence | Initial `HEAD` `1b29c0b`; current local HEAD includes the foundation, bounded extractors, fixtures, tests, and bounded package/compatibility evidence |
-| Verification | T-001–T-006 contract checks, produced Fact/Graph/analysis IR schema validation, T-010–T-014/T-020–T-036/T-040–T-041/T-045 foundation/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query tests (74/74), and bounded Node host compatibility evidence pass locally |
+| Verification | T-001–T-006 contract checks, produced Fact/Graph/analysis IR schema validation, T-010–T-014/T-020–T-036/T-040–T-041/T-045/T-046 foundation/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query/configuration tests (74/74), and bounded Node host compatibility evidence pass locally |
 | Limitations | Owners, dates, package/runtime choices, and estimates are not assigned |
 
 ## Status and completion rules
@@ -64,6 +64,7 @@ This blocks full-grammar and cross-file resolution tasks; bounded extraction, qu
 | T-043 | Verify only documented engine/platform compatibility | P1 | Verified (bounded) | T-042 | `docs/compatibility/node-v25.2.1-win32-x64.json` and ADR-023 retain Node `v25.2.1`/`win32`/`x64` evidence with `npm test` 74/74; Node versions other than the observed host, Lucee, Adobe ColdFusion, browser, database, network, application-runtime, and public-package compatibility remain unclaimed |
 | T-044 | Complete release traceability, security review, and documentation parity | P0 | Verified (bounded) | T-042/T-043 | `docs/audits/release-security-parity-v0.1.json` and `RELEASE.md`; source commit, dry-run package identity, security/file checks, documentation parity, and remaining release gates are retained. No publication, CI, packed-artifact install, or public release is claimed
 | T-045 | Wire bounded CLI query commands over the analyzed Graph IR | P1 | Verified (bounded) | T-035/T-036 | `src/cli.js`, `schema/agent-cfml-linkage-config-v0.1.schema.json`, `test/cli.test.js`, and query CLI contract documentation; `related`, `callers`, `callees`, `trace`, `unresolved`, `explain`, and `stats` run a fresh bounded analysis, map to the immutable query engine, preserve query diagnostics/results, reject unsupported query options, and enforce the configured serialized output cap. No graph persistence or public release is claimed. |
+| T-046 | Enforce the v0.1 configuration contract at the private CLI boundary | P0 | Verified (bounded) | T-005/T-045 | `src/cli.js`, `schema/agent-cfml-linkage-config-v0.1.schema.json`, and `test/cli.test.js`; top-level/nested shape, required fields, enums, safe action flags, positive limits, fixed exit codes, query options, and unknown properties are rejected before root admission/analysis, while valid base/query configurations pass. Library-wide budget enforcement remains open. |
 
 ## Milestone mapping
 
@@ -71,6 +72,6 @@ This blocks full-grammar and cross-file resolution tasks; bounded extraction, qu
 - **M1:** T-010–T-014 — safe foundation.
 - **M2–M3:** T-020–T-025 — extraction and basic linkage.
 - **M4–M7:** T-030–T-035 and T-045 — linkage depth and queries.
-- **M8–M9:** T-040–T-044 — verification and release.
+- **M8–M9:** T-040–T-044 and T-046 — verification, robustness, release evidence, and CLI configuration enforcement.
 
-T-001–T-006, T-010–T-014, T-020–T-036, and T-040–T-045 are Verified for their bounded scopes. T-037–T-039 remain Planned / unspecified; full grammar coverage, broader cross-file resolution, CI, and public release remain open.
+T-001–T-006, T-010–T-014, T-020–T-036, and T-040–T-046 are Verified for their bounded scopes. T-037–T-039 remain Planned / unspecified; full grammar coverage, broader cross-file resolution, CI, and public release remain open.
