@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Version | 0.1 |
-| Last updated | 2026-09-14 |
+| Last updated | 2026-09-15 |
 | Scope | Threat boundaries for local static analysis |
 | Source of truth | This document for proposed security requirements; implementation and tests for actual controls |
 | Evidence | Current local source contains root guard, snapshot, decoder, parser/scanner, Fact extraction, bounded resolvers, dynamic-evidence, SQL, repository/action, query, orchestration, and adversarial safe-failure controls; full runtime code does not exist |
-| Verification | Root-guard containment/symlink, snapshot no-execution and configured ignore-glob/hidden-file handling, strict-decoding, CLI safety, recognized query-command mapping/validation behavior, serialized output-byte bounds, cache path/corruption, parser/scanner no-execution, bounded Fact extraction, dynamic/generated/SQL-dynamic preservation, bounded SQL/repository linkage, vanished-snapshot-target rejection, validated/copied immutable query snapshots, query bounds, composed orchestration, re-admission, parser-time drift, library edge/evidence budgets, and diagnostic-bound tests pass; the prompt-to-artifact audit records the evidence boundaries; broader security test suite does not exist |
+| Verification | Root-guard containment/symlink, snapshot no-execution and configured ignore-glob/hidden-file handling, strict-decoding, CLI safety, recognized query-command mapping/validation behavior, serialized output-byte bounds, cache path/corruption, parser/scanner no-execution, bounded Fact extraction, dynamic/generated/SQL-dynamic preservation, bounded SQL/repository linkage, vanished-snapshot-target rejection, validated/copied immutable query snapshots, query bounds, composed orchestration, re-admission, parser-time drift, library edge/evidence budgets, and diagnostic-bound tests pass; the prompt-to-artifact audit, refreshed against audited source baseline `3de60e2`, records the evidence boundaries; broader security test suite does not exist |
 | Limitations | Threat model, platform sandbox, dependency policy, and disclosure process require implementation-specific review |
 
 ## Security objectives

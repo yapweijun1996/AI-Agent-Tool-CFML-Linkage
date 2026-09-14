@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Version | 0.1 planning baseline |
-| Last updated | 2026-09-14 |
+| Last updated | 2026-09-15 |
 | Scope | Versioning, release gates, artifact traceability, and compatibility claims |
 | Source of truth | Git commit, validated artifacts, tests, and this release policy |
 | Evidence | `package.json` is private with Node `>=20`; `.github/workflows/ci.yml` defines a read-only test matrix, but no hosted run, public package artifact, tag, or release exists |
@@ -65,7 +65,7 @@ T-044 has a bounded local audit of the product source at baseline commit `428feb
 
 ## Prompt-to-artifact audit
 
-`docs/audits/prompt-to-artifact-v0.1.json` is the current completion audit. It maps every explicit execution-loop item, Core SSOT file, named deliverable, check, gate, and measurable goal criterion to repository evidence. Its decision is intentionally `not_achieved`: bounded local evidence exists, but full parser/resolver coverage, library output/time enforcement, hosted CI, broader compatibility, public packaging, and release gates remain open.
+`docs/audits/prompt-to-artifact-v0.1.json` is the current completion audit. It maps every explicit execution-loop item, Core SSOT file, named deliverable, check, gate, and measurable goal criterion to repository evidence. Its audited source baseline is local commit `3de60e2`. Its decision is intentionally `not_achieved`: bounded local evidence exists, but full parser/resolver coverage, library output/time enforcement, hosted CI, broader compatibility, public packaging, and release gates remain open.
 
 ## Current release state
 

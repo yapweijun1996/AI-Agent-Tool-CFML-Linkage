@@ -3,10 +3,10 @@
   "audit_status": "incomplete",
   "goal_achieved": false,
   "audited_source": {
-    "head": "e9aa6c6",
+    "head": "3de60e2",
     "branch": "main",
     "worktree": "clean before audit",
-    "remote_state": "main is 24 commits ahead of origin/main and no local tag is present; remote publication and pull-request state was not queried because network access is prohibited"
+    "remote_state": "main is 26 commits ahead of origin/main and no local tag is present; remote publication and pull-request state was not queried because network access is prohibited"
   },
   "objective": {
     "summary": "Advance the CFML-first static linkage library/CLI/evidence provider through the smallest dependency-ready task, with deterministic bounded non-executing behavior, evidence-backed verification, synchronized documentation, and one focused local commit.",

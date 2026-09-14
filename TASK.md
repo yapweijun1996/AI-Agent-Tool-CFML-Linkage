@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Version | 0.1 |
-| Last updated | 2026-09-14 |
+| Last updated | 2026-09-15 |
 | Scope | Executable work required to implement and verify the planned analyzer |
 | Source of truth | This register for planned work; repository source, tests, runtime checks, and release evidence for actual status |
 | Evidence | Initial `HEAD` `1b29c0b`; current local HEAD includes the foundation, bounded extractors, fixtures, tests, and bounded package/compatibility evidence |
@@ -70,7 +70,7 @@ This blocks full-grammar and cross-file resolution tasks; bounded extraction, qu
 | T-049 | Enforce the configured library Graph edge budget | P1 | Verified (bounded) | T-025/T-036/T-046 | `src/analyzer.js`, `src/graph.js`, and `src/cli.js` apply `max_edges` to the final Graph edge set in deterministic order, retain valid nodes/unresolved evidence and reverse adjacency, mark capped results incomplete, and emit `RESOURCE_LIMIT` details; `test/analyzer.test.js` and ADR-026 cover the boundary, with `npm test` 79/79. |
 | T-050 | Apply configured ignore globs during deterministic discovery | P1 | Verified (bounded) | T-005/T-011/T-036 | `src/snapshot.js`, `src/analyzer.js`, `src/cli.js`, `test/snapshot.test.js`, `test/analyzer.test.js`, `test/cli.test.js`, and ADR-027 apply bounded root-relative `*`/`?`/`**` matching before reads/hashing/parsing; `npm test` 79/79 passes. |
 | T-051 | Enforce the configured hidden-file discovery policy | P1 | Verified (bounded) | T-005/T-011/T-036 | `src/snapshot.js` applies `hiddenFilePolicy` to dot-prefixed files/directories before reads/hashing/parsing; `src/analyzer.js` forwards `config.ignore.hidden_files`, CLI configuration remains validated, and the combined policy tests/ADR-028 pass within `npm test` 79/79. |
-| T-052 | Complete the prompt-to-artifact completion audit | P0 | Verified (incomplete product) | T-042/T-044/T-051 | `docs/audits/prompt-to-artifact-v0.1.json` maps the explicit execution loop, Core SSOT files, named deliverables, commands/checks, success criteria, gates, and blockers; it records that the overall goal is not achieved and identifies the required unblock inputs. |
+| T-052 | Complete the prompt-to-artifact completion audit | P0 | Verified (incomplete product) | T-042/T-044/T-051 | `docs/audits/prompt-to-artifact-v0.1.json` maps the explicit execution loop, Core SSOT files, named deliverables, commands/checks, success criteria, gates, and blockers; its audited source baseline is local commit `3de60e2`, it records that the overall goal is not achieved, and it identifies the required unblock inputs. |
 
 ## Milestone mapping
 

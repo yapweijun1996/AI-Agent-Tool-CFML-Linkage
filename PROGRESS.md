@@ -5,10 +5,10 @@
 | Field | Value |
 | --- | --- |
 | Version | 0.1 |
-| Last updated | 2026-09-14 |
+| Last updated | 2026-09-15 |
 | Scope | Current repository, implementation, verification, release, blockers, and next action |
 | Source of truth | Git history/worktree, executable checks, and release readback; planning intent is in `GOAL.md`/`SPEC.md` |
-| Evidence | Initial `HEAD` `1b29c0b`; current local HEAD includes the verified foundation, bounded extractors, fixtures, tests, package/CLI smoke evidence, and the prompt-to-artifact audit at `docs/audits/prompt-to-artifact-v0.1.json` |
+| Evidence | Initial `HEAD` `1b29c0b`; the pre-refresh local source baseline was `3de60e2`; the current local tree includes the verified foundation, bounded extractors, fixtures, tests, package/CLI smoke evidence, and the prompt-to-artifact audit at `docs/audits/prompt-to-artifact-v0.1.json` |
 | Verification | Prompt-to-artifact audit, contract/fixture checks, produced Fact/Graph IR/analysis schema validation, and retained `npm test` foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/evidence-budget/edge-budget/ignore-policy/hidden-file-policy evidence passed (79/79); broader implementation checks remain unavailable |
 | Limitations | No full parser/broader resolver, public release API, hosted CI verification, runtime linkage, package artifact, tag, deployment, or release exists; a least-privilege CI workflow is implemented, and bounded analysis/library orchestration and query-command CLI remain private |
 
@@ -60,6 +60,7 @@ Core documentation coverage is now the current work product: goal, design, speci
 ## Completed in this pass
 
 - Completed the required prompt-to-artifact audit in `docs/audits/prompt-to-artifact-v0.1.json`; it maps the explicit loop, Core SSOT files, named deliverables, checks, gates, success criteria, and blockers, and deliberately records `goal_achieved: false` because full product and release requirements remain unmet.
+- Refreshed the prompt-to-artifact audit against the clean pre-refresh source baseline `3de60e2` and the observed local branch distance of 26 commits; the refresh changes audit metadata only and does not alter product or release status.
 
 - Inspected repository rules and found the repository `AGENTS.md`; no repository `CLAUDE.md` or `CONTRIBUTING.md` exists.
 - Inspected tracked tree, Git status/history, configuration, manifests, dependencies, source, entry points, tests, scripts, CI, release files, and docs.
