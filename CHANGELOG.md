@@ -53,6 +53,7 @@
 - Implemented bounded T-036 analysis orchestration, private library exports, composed-analysis schema, CLI `analyze`/`index` wiring, parser-time drift checks, and offline packed-artifact consumer smoke; full grammar and query-command integration remain open.
 - Hardened the private CLI so recognized but unimplemented query commands return bounded `UNIMPLEMENTED_COMMAND` evidence instead of running the analysis command.
 - Added private CLI serialized-output enforcement for `limits.max_output_bytes`, with an explicit `OUTPUT_LIMIT` incomplete result and a documented minimum envelope size.
+- Hardened literal path resolution to require current root-contained target existence, preserving vanished snapshot targets as unresolved evidence.
 
 ### Not claimed
 

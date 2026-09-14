@@ -58,7 +58,7 @@ Each fixture should assert nodes, edges, confidence, evidence spans, conditions,
 - ignored dependency, generated, cache, and secret-like paths;
 - unreadable or invalidly encoded files;
 - include and graph cycles;
-- snapshot mutation during analysis, including parser-time source drift;
+- snapshot mutation during analysis, including parser-time source drift and a target disappearing before resolution;
 - corrupt, stale, or version-mismatched cache;
 - file/byte/fact/edge/evidence/traversal/output/time limits and query result/depth/visited-node limits; the private CLI serialized `max_output_bytes` cap is verified, while library output/time caps remain open;
 - bounded evidence that does not copy full source files;

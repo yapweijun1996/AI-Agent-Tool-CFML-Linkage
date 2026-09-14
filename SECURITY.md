@@ -9,7 +9,7 @@
 | Scope | Threat boundaries for local static analysis |
 | Source of truth | This document for proposed security requirements; implementation and tests for actual controls |
 | Evidence | Current local source contains root guard, snapshot, decoder, parser/scanner, Fact extraction, bounded resolvers, dynamic-evidence, SQL, repository/action, query, orchestration, and adversarial safe-failure controls; full runtime code does not exist |
-| Verification | Root-guard containment/symlink, snapshot no-execution, strict-decoding, CLI safety, recognized query-command fail-closed behavior, serialized output-byte bounds, cache path/corruption, parser/scanner no-execution, bounded Fact extraction, dynamic/generated/SQL-dynamic preservation, bounded SQL/repository linkage, immutable query snapshots, query bounds, composed orchestration, re-admission, parser-time drift, and diagnostic-bound tests pass; broader security test suite does not exist |
+| Verification | Root-guard containment/symlink, snapshot no-execution, strict-decoding, CLI safety, recognized query-command fail-closed behavior, serialized output-byte bounds, cache path/corruption, parser/scanner no-execution, bounded Fact extraction, dynamic/generated/SQL-dynamic preservation, bounded SQL/repository linkage, vanished-snapshot-target rejection, immutable query snapshots, query bounds, composed orchestration, re-admission, parser-time drift, and diagnostic-bound tests pass; broader security test suite does not exist |
 | Limitations | Threat model, platform sandbox, dependency policy, and disclosure process require implementation-specific review |
 
 ## Security objectives
@@ -32,7 +32,7 @@ CFML, JavaScript, CSS, SQL, comments, strings, and generated content must be tre
 
 ### Filesystem containment
 
-Canonicalize the requested root and every discovered/reference path. Reject traversal, symlink escapes, and out-of-root targets. Ignore dependency, generated, cache, and secret-like paths by explicit policy. Path rejection must be distinguishable from an unresolved dynamic relationship.
+Canonicalize the requested root and every discovered/reference path. Reject traversal, symlink escapes, and out-of-root targets, and do not confirm a target that disappears after snapshot admission. Ignore dependency, generated, cache, and secret-like paths by explicit policy. Path rejection must be distinguishable from an unresolved dynamic relationship.
 
 ### Resource exhaustion
 

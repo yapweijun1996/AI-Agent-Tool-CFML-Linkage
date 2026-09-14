@@ -137,7 +137,7 @@ The orchestrator currently applies configured language and file/fact/resolver/tr
 
 ## 5. Resolution rules
 
-1. **Path resolver:** resolve literal normalized paths for includes, custom tags, form actions, redirects, AJAX, and `fetch`; enforce root containment.
+1. **Path resolver:** resolve literal normalized paths for includes, custom tags, form actions, redirects, AJAX, and `fetch`; require the admitted target to still exist and remain root-contained before confirming an edge.
 2. **Application resolver:** identify the nearest governing `Application.cfc`/`Application.cfm` when statically recoverable; preserve conditional filename exceptions.
 3. **CFC resolver:** resolve explicit imports/mappings, component paths, `extends`, `implements`, `cfobject`, and `cfinvoke` conservatively; bounded T-030 does not claim `new`, `createObject`, or runtime type inference.
 4. **Method resolver:** infer receiver types only from bounded evidence such as explicit types, instantiation, properties, arguments, and unique inheritance chains.

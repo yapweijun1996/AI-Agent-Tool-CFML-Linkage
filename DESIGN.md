@@ -101,7 +101,7 @@ resolve(fact, indexes, context) -> Resolution[] | UnresolvedRecord[]
 
 They do not mutate indexes. Planned order:
 
-1. **Path:** `src/path-resolver.js` resolves unique literal includes, custom tags, form actions, redirects, AJAX, `fetch`, and CSS asset paths; normalize relative paths and roots while retaining ambiguity, external, missing, and dynamic states.
+1. **Path:** `src/path-resolver.js` resolves unique literal includes, custom tags, form actions, redirects, AJAX, `fetch`, and CSS asset paths; require an admitted target to exist at resolution time, normalize relative paths and roots, and retain ambiguity, external, missing, vanished, and dynamic states.
 2. **Application:** find nearest governing `Application.cfc`/`Application.cfm` and statically applicable request hooks.
 3. **CFC type:** resolve `extends`, `implements`, `new`, `createObject`, `cfobject`, `cfinvoke`, imports, and component mappings.
 4. **Method:** infer receiver types from explicit types, instantiated locals, properties, arguments, and unique inheritance chains.

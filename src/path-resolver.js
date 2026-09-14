@@ -171,13 +171,13 @@ function resolvePathTarget({ fact, expression, rootGuard, knownPaths }) {
   for (const base of target.values) {
     for (const candidate of extensionCandidates(base)) {
       try {
-        const canonical = rootGuard.resolve(candidate);
+        const canonical = rootGuard.resolve(candidate, { mustExist: true });
         const relative = relativePath(rootGuard.rootPath, canonical);
         if (knownPaths.includes(relative) && !matches.some((item) => item.path === relative)) {
           matches.push({ path: relative, kind: candidate === base ? "exact" : "extension-fallback" });
         }
       } catch (error) {
-        if (error?.code === "PATH_TRAVERSAL" || error?.code === "ABSOLUTE_REFERENCE" || error?.code === "OUTSIDE_ROOT") continue;
+        if (error?.code === "REFERENCE_NOT_FOUND" || error?.code === "PATH_TRAVERSAL" || error?.code === "ABSOLUTE_REFERENCE" || error?.code === "OUTSIDE_ROOT") continue;
         accessError = error;
       }
     }

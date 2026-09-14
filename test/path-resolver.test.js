@@ -95,6 +95,13 @@ test("keeps dynamic, external, missing, and unsafe paths unresolved", () => {
     assert.equal(result.complete, true);
     assert.deepEqual(result.unresolved.map((item) => item.reason), ["EXTERNAL_TARGET", "DYNAMIC_EXPRESSION", "PATH_NOT_FOUND", "OUTSIDE_ROOT"]);
     assert.equal(result.resolutions.length, 0);
+
+    facts.push(fact({ fact_id: "deleted", kind: "INCLUDE", file: "app/page.cfm", expression: "orders.cfm", attributes: { template: "orders.cfm" }, line: 5 }));
+    fs.rmSync(path.join(root, "app", "orders.cfm"));
+    const staleFactBundle = { ...factBundle, facts };
+    const staleResult = resolveLiteralPaths({ factBundle: staleFactBundle, indexes: buildProjectIndexes({ factBundle: staleFactBundle }), rootGuard: createRootGuard(root) });
+    assert.equal(staleResult.resolutions.length, 0);
+    assert.equal(staleResult.unresolved.some((item) => item.source_fact_id === "deleted" && item.reason === "PATH_NOT_FOUND"), true);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
