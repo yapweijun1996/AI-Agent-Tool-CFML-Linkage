@@ -1,6 +1,6 @@
 # agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M7 IN PROGRESS.** The repository contains verified M1 safety and bounded M2–M7 parser/scanner/Fact/resolution/query slices; the full linkage analyzer, public API, and release are not complete.
+> **Status: PROPOSED / M2–M8 IN PROGRESS.** The repository contains verified M1 safety and bounded M2–M8 parser/scanner/Fact/resolution/query/robustness slices; the full linkage analyzer, public API, and release are not complete.
 
 | Field | Value |
 | --- | --- |
@@ -15,8 +15,8 @@
 ## Classification
 
 - **Project type:** planned hybrid NPM/library + CLI + AI-agent evidence provider.
-- **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction, M3 bounded resolution/Graph IR, M4 bounded CFC, M5 scope/web-flow, M6 bounded dynamic/SQL/repository linkage, and M7 bounded graph queries in progress; broader resolver not started.
-- **Current state:** M0 contracts, the complete M1 foundation, bounded M2 parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, and M7 graph query/evidence slices are implemented/verified; no full parser grammar, broader resolver, public API, or released package exists.
+- **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction, M3 bounded resolution/Graph IR, M4 bounded CFC, M5 scope/web-flow, M6 bounded dynamic/SQL/repository linkage, M7 bounded graph queries, and M8 bounded robustness evidence in progress; broader resolver not started.
+- **Current state:** M0 contracts, the complete M1 foundation, bounded M2 parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, M7 graph query/evidence slices, and M8 robustness evidence are implemented/verified; no full parser grammar, broader resolver, public API, or released package exists.
 
 ## Purpose
 

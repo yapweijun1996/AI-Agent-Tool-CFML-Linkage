@@ -1,6 +1,6 @@
 # Task Register: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M7 IN PROGRESS.** T-001–T-006, T-010–T-014, and T-020–T-035 have bounded implementation and verification evidence; broader linkage remains open.
+> **Status: PROPOSED / M2–M8 IN PROGRESS.** T-001–T-006, T-010–T-014, T-020–T-035, and T-040 have bounded implementation and verification evidence; broader linkage remains open.
 
 | Field | Value |
 | --- | --- |
@@ -56,7 +56,7 @@ This blocks full-grammar and cross-file resolution tasks; bounded extraction and
 | T-033 | Preserve dynamic/generated/SQL-dynamic relationships as unresolved/candidate | P0 | Verified (bounded) | T-025 | `src/cfml-scanner.js`, `src/web-scanner.js`, `src/fact-extractor.js`, `src/graph.js`, `test/dynamic-evidence.test.js`, `fixtures/adversarial/dynamic-and-generated/`, ADR-019; generated/dynamic facts, interpolated SQL identifiers/datasources, deterministic unresolved reasons, no guessed SQL edges, and comment/string filtering pass within `npm test` 65/65 |
 | T-034 | Resolve SQL table/datasource and structural repository/action edges | P1 | Verified (bounded) | T-022/T-025/T-030 | `src/web-scanner.js`, `src/fact-extractor.js`, `src/repository-resolver.js`, `src/graph.js`, `schema/agent-cfml-linkage-fact-v0.1.schema.json`, `test/repository-resolver.test.js`, `fixtures/golden/sql-and-repository/`, ADR-020; literal `cfquery`/`queryExecute` tables and datasources, structural CFC-method repository actions, repeatability, bounds, and filename-only non-evidence pass within `npm test` 65/65 |
 | T-035 | Implement bounded graph queries and evidence explanations | P1 | Verified (bounded) | T-025/T-030–T-034 | `src/graph-query.js`, `test/graph-query.test.js`, ADR-021; exact selectors, all declared query operations, immutable snapshots, evidence explanations, traversal bounds, ambiguity, and invalid-input behavior pass within `npm test` 65/65 |
-| T-040 | Add repeat, drift, cache, cycle, and resource-limit tests | P0 | Planned | T-014/T-025 | Determinism and robustness evidence |
+| T-040 | Add repeat, drift, cache, cycle, and resource-limit tests | P0 | Verified (bounded) | T-014/T-025 | `test/snapshot.test.js` repeat/content-drift/file-limit cases, `test/cache.test.js` source/config/parser/cache invalidation and corruption cases, `test/graph-query.test.js` repeat/cycle/query-limit cases, and resolver/scanner limit tests; bounded determinism and robustness evidence passes within `npm test` 65/65 |
 | T-041 | Add adversarial strings/comments, malformed, ambiguity, escape, and dynamic fixtures | P0 | Planned | T-020–T-033 | Safe failure evidence |
 | T-042 | Run focused/full tests, contract checks, lint/type checks, and package smoke | P0 | Planned | T-040/T-041 | Reproducible command output |
 | T-043 | Verify only documented engine/platform compatibility | P1 | Planned | T-042 | Environment-specific retained results |
@@ -70,4 +70,4 @@ This blocks full-grammar and cross-file resolution tasks; bounded extraction and
 - **M4–M7:** T-030–T-035 — linkage depth and queries.
 - **M8–M9:** T-040–T-044 — verification and release.
 
-T-001–T-006, T-010–T-014, and T-020–T-035 are Verified for their bounded scopes. T-036+ remain Planned; full grammar coverage and broader cross-file resolution remain open.
+T-001–T-006, T-010–T-014, T-020–T-035, and T-040 are Verified for their bounded scopes. T-036–T-039 and T-041+ remain Planned; full grammar coverage and broader cross-file resolution remain open.

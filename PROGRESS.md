@@ -1,6 +1,6 @@
 # Progress: agent-cfml-linkage
 
-> **Status: DOCUMENTATION SYNC VERIFIED / M1 FOUNDATION VERIFIED / M2–M7 BOUNDED IMPLEMENTATION PARTIAL.** This report is evidence-based and intentionally separates plan from product state.
+> **Status: DOCUMENTATION SYNC VERIFIED / M1 FOUNDATION VERIFIED / M2–M8 BOUNDED IMPLEMENTATION PARTIAL.** This report is evidence-based and intentionally separates plan from product state.
 
 | Field | Value |
 | --- | --- |
@@ -9,13 +9,13 @@
 | Scope | Current repository, implementation, verification, release, blockers, and next action |
 | Source of truth | Git history/worktree, executable checks, and release readback; planning intent is in `GOAL.md`/`SPEC.md` |
 | Evidence | Initial `HEAD` `1b29c0b`; current local HEAD includes the verified foundation, bounded extractors, fixtures, and tests |
-| Verification | Contract/fixture checks, produced Fact/Graph IR schema validation, and `npm test` foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query tests passed (65/65); broader implementation checks remain unavailable |
+| Verification | Contract/fixture checks, produced Fact/Graph IR schema validation, and `npm test` foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness tests passed (65/65); broader implementation checks remain unavailable |
 | Limitations | No full parser/broader resolver, full CLI orchestration, public analysis API, third-party dependencies, CI, runtime linkage, package artifact, tag, deployment, or release exists; graph query API is bounded and internal |
 
 ## Project classification
 
 - **Type:** planned hybrid of NPM/library, CLI, and AI-agent evidence provider.
-- **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction partial, M3 bounded literal resolution/Graph IR, M4 bounded CFC, M5 bounded scope/web-flow, M6 bounded dynamic/SQL/repository linkage, and M7 bounded graph queries partial; broader resolver not started.
+- **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction partial, M3 bounded literal resolution/Graph IR, M4 bounded CFC, M5 bounded scope/web-flow, M6 bounded dynamic/SQL/repository linkage, M7 bounded graph queries, and M8 bounded robustness evidence partial; broader resolver not started.
 - **Current product boundary:** one planned static linkage analyzer with implemented internal root-guard, snapshot, decoder, private CLI, cache, bounded parser/scanners, Fact extractor, indexes, literal resolver, Graph builder/validator, reverse adjacency, CFC resolver, scope resolver, web-flow resolver, repository resolver, graph query engine, and dynamic/generated/SQL-dynamic evidence handling; no public package boundary exists.
 - **Runtime/browser state:** not applicable yet. No product can be started or inspected, and no browser journey exists.
 
@@ -44,6 +44,7 @@
 | Dynamic/generated/SQL evidence | Yes | Partial | Partial | No | `src/cfml-scanner.js`, `src/web-scanner.js`, `src/fact-extractor.js`, `src/graph.js`, `test/dynamic-evidence.test.js`, ADR-019; dynamic/generated facts, interpolated SQL identifiers/datasources, deterministic unresolved reasons, and no-guessed-target checks pass |
 | SQL/repository linkage | Yes | Partial | Partial | No | `src/web-scanner.js`, `src/fact-extractor.js`, `src/repository-resolver.js`, `src/graph.js`, `test/repository-resolver.test.js`, `fixtures/golden/sql-and-repository/`, ADR-020; literal SQL/queryExecute table/datasource nodes and structural repository/action edges pass; broader SQL semantics remain open |
 | Graph queries/evidence explanations | Yes | Partial | Partial | No | `src/graph-query.js`, `test/graph-query.test.js`, ADR-021; immutable snapshots, exact selectors, declared bounded operations, deterministic explanations, traversal limits, and ambiguity behavior pass; CLI orchestration remains open |
+| Determinism/cache/cycle/limit robustness | Yes | Partial | Partial | No | `test/snapshot.test.js`, `test/cache.test.js`, `test/graph-query.test.js`, and resolver/scanner limit cases; repeatability, content drift, cache invalidation/corruption, cycle safety, and bounded-result evidence pass; in-read mutation and full orchestration remain open |
 | CLI/library/API | Yes | Yes | Yes | No | Private CLI envelope/capabilities entry; no public analysis API or released artifact |
 | Disposable cache | Yes | Yes | Yes | No | `src/cache.js`, `test/cache.test.js`, invalidation/corruption/path checks |
 | Fixture layout/manifest | Yes | Yes | Yes | No | `fixtures/manifest-v0.1.json`, category/case directories, inert web inputs/expectations, invariant check |
@@ -52,7 +53,7 @@
 
 ## Progress basis
 
-The implementation roadmap has 10 milestones, M0–M9. **M0 contract gate: verified (T-001–T-006). M1: T-010–T-014 verified. M2: T-020–T-022 bounded parser/scanner/Fact subset verified; M3: T-023–T-025 bounded indexes, literal resolution, and Graph IR verified; M4: T-030 bounded CFC resolution verified; M5: T-031/T-032 bounded scope and web-flow/condition resolution verified; M6: T-033 bounded dynamic/generated/SQL-dynamic evidence preservation and T-034 bounded SQL/repository linkage verified; M7: T-035 bounded graph queries/evidence explanations verified; T-036+ remain open. M3 started at T-023; M4 started at T-030; M5 started at T-031; M6 started at T-033; M7 started at T-035; M8–M9 not started.** Runtime milestone completion is 1/9 (M1); M2–M7 remain partial and the bounded implementation is not a full linkage resolver.
+The implementation roadmap has 10 milestones, M0–M9. **M0 contract gate: verified (T-001–T-006). M1: T-010–T-014 verified. M2: T-020–T-022 bounded parser/scanner/Fact subset verified; M3: T-023–T-025 bounded indexes, literal resolution, and Graph IR verified; M4: T-030 bounded CFC resolution verified; M5: T-031/T-032 bounded scope and web-flow/condition resolution verified; M6: T-033 bounded dynamic/generated/SQL-dynamic evidence preservation and T-034 bounded SQL/repository linkage verified; M7: T-035 bounded graph queries/evidence explanations verified; M8: T-040 bounded determinism/cache/cycle/limit robustness evidence verified; T-036+ remain open. M3 started at T-023; M4 started at T-030; M5 started at T-031; M6 started at T-033; M7 started at T-035; M8 started at T-040; M9 not started.** Runtime milestone completion is 1/9 (M1); M2–M8 remain partial and the bounded implementation is not a full linkage resolver.
 
 Core documentation coverage is now the current work product: goal, design, specification, epic, roadmap, task register, progress report, autonomous goal prompt, architecture, test plan, security, release policy, changelog, and ADR.
 
@@ -74,9 +75,10 @@ Core documentation coverage is now the current work product: goal, design, speci
 4. **M5 partial:** T-031/T-032 bounded ordered scope and web-flow/condition resolution are verified; full CFML scope, browser routing, and broader flow semantics remain open.
 5. **M6 partial:** T-033 preserves dynamic/generated/SQL-dynamic evidence and T-034 resolves bounded visible SQL/repository structure; SQL semantics, runtime mappings, and target inference remain open.
 6. **M7 partial:** T-035 provides bounded immutable graph queries and deterministic evidence explanations; CLI wiring, broad output integration, and query contract release remain open.
-7. **T-031/T-032/T-033/T-034 boundary:** Scope uses bounded literal include order and lexical references; web-flow uses supplied literal targets and explicit conditions; dynamic evidence preserves bounded expressions; repository actions require query evidence inside a uniquely resolved CFC method. Do not claim runtime behavior.
-8. **Public package/runtime contract:** Node `>=20`, a private package manifest, and a private CLI entry are established for the foundation; public exports, full CLI commands, CI matrix, and release metadata remain unknown.
-9. **Compatibility evidence:** Lucee/Adobe/browser/runtime claims cannot be made until environments and fixtures exist.
+7. **M8 partial:** T-040 verifies bounded repeatability, content drift, cache invalidation/corruption, cycle safety, and resource-limit evidence; in-read mutation, full output/time budgets, and orchestration remain open.
+8. **T-031/T-032/T-033/T-034 boundary:** Scope uses bounded literal include order and lexical references; web-flow uses supplied literal targets and explicit conditions; dynamic evidence preserves bounded expressions; repository actions require query evidence inside a uniquely resolved CFC method. Do not claim runtime behavior.
+9. **Public package/runtime contract:** Node `>=20`, a private package manifest, and a private CLI entry are established for the foundation; public exports, full CLI commands, CI matrix, and release metadata remain unknown.
+10. **Compatibility evidence:** Lucee/Adobe/browser/runtime claims cannot be made until environments and fixtures exist.
 
 These are documented planning blockers, not reasons to claim failure. No external credential, permission, or production dependency blocks this local implementation pass.
 
@@ -95,4 +97,4 @@ These are documented planning blockers, not reasons to claim failure. No externa
 
 ## Next task / resume point
 
-**Next task: M8 / T-040 — add repeat, drift, cache, cycle, and resource-limit tests.** Preserve unresolved records and do not claim full parser coverage.
+**Next task: M9 / T-041 — add adversarial strings/comments, malformed, ambiguity, escape, and dynamic fixtures.** Preserve unresolved records and do not claim full parser coverage.

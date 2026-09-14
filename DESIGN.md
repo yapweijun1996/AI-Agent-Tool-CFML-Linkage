@@ -1,6 +1,6 @@
 # Design: agent-cfml-linkage Analysis Pipeline
 
-> **Status: PROPOSED / M2–M7 IN PROGRESS.** This document describes the intended architecture; the M1 foundation, bounded M2 parser/scanner/Fact slices, and bounded M3 resolution/Graph, M4 CFC, M5 scope/web-flow, M6 SQL/repository, and M7 graph-query slices have runtime evidence.
+> **Status: PROPOSED / M2–M8 IN PROGRESS.** This document describes the intended architecture; the M1 foundation, bounded M2 parser/scanner/Fact slices, and bounded M3 resolution/Graph, M4 CFC, M5 scope/web-flow, M6 SQL/repository, M7 graph-query, and M8 robustness-test slices have runtime evidence.
 
 | Field | Value |
 | --- | --- |
@@ -174,7 +174,7 @@ The sequence is dependency-aware but not a schedule. M0's contract gate, M1 foun
 | M5 | Shared scope, AJAX/fetch, conditional routers | In progress — T-031/T-032 bounded scope and web-flow/condition resolvers verified; broader flow open |
 | M6 | Dynamic/generated/SQL-dynamic evidence and SQL/repository linkage | In progress — T-033 preservation and bounded T-034 SQL/repository linkage verified; broader SQL semantics remain open |
 | M7 | Query engine and bounded impact evidence | Verified — T-035 bounded query/evidence engine |
-| M8 | Incremental invalidation, workers, budgets, repeatability | Not started |
+| M8 | Incremental invalidation, workers, budgets, repeatability | In progress — T-040 bounded robustness evidence; orchestration remains open |
 | M9 | Golden suite, adversarial tests, package/CLI smoke, and separately evidenced engine checks | Not started |
 
 ## 8. Design risks

@@ -9,7 +9,7 @@
 | Scope | Changes in this repository |
 | Source of truth | Git history and this changelog |
 | Evidence | Initial commit `1b29c0b`; documentation baseline and M1 foundation commits follow |
-| Verification | Documentation consistency checks and `npm test` foundation checks are run during this pass |
+| Verification | Documentation consistency checks, bounded query/robustness checks, and `npm test` (65/65) are run during this pass |
 | Limitations | No parser/resolver release runtime, public package, CI, or release exists |
 
 ## Unreleased
@@ -45,6 +45,7 @@
 - Bounded dynamic/generated/SQL-dynamic evidence preservation for `evaluate`, generated names, interpolated SQL identifiers, dynamic datasources, focused adversarial fixtures/tests, and ADR-019 for T-033.
 - Bounded `cfquery`/literal-`queryExecute` table and datasource extraction plus structural repository/action Facts, resolutions, Graph edges, filename-only negative evidence, fixtures/tests, and ADR-020 for T-034.
 - Bounded immutable GraphSnapshot queries, exact selector handling, deterministic evidence explanations, traversal/result limits, focused tests, and ADR-021 for T-035.
+- Consolidated bounded repeatability, content-drift, cache invalidation/corruption, cycle-safety, and resource-limit evidence for T-040; no full orchestration or in-read mutation proof is claimed.
 
 ### Not claimed
 

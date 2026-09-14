@@ -1,6 +1,6 @@
 # Roadmap: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M7 IN PROGRESS.** The roadmap describes intended delivery and records verified bounded slices; it is not a release plan.
+> **Status: PROPOSED / M2–M8 IN PROGRESS.** The roadmap describes intended delivery and records verified bounded slices; it is not a release plan.
 
 | Field | Value |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Scope | Ordered delivery of the planned linkage analyzer |
 | Source of truth | This roadmap for sequencing; Git history and tests for completion evidence |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation, bounded extractors, indexes, resolvers, and Graph builder |
-| Verification | M0 contract gate, T-010–T-014/T-020–T-035 foundation/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query tests, and produced Fact/Graph IR schema validation are verified; later milestones have no evidence |
+| Verification | M0 contract gate, T-010–T-014/T-020–T-035 and T-040 foundation/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness tests, and produced Fact/Graph IR schema validation are verified; later milestones have no evidence |
 | Limitations | Dates, estimates, parser selection, and release targets are intentionally not committed |
 
 ## Current state
@@ -20,14 +20,14 @@
 | Source implementation | M1 foundation, M2 parser-adapter/bounded CFML/web scanner/Fact extractors, M3 immutable indexes/literal resolver/bounded Graph builder, M4 bounded CFC resolver, M5 bounded scope/web-flow resolvers, M6 bounded dynamic/SQL/repository linkage, and M7 bounded graph query/evidence engine implemented; broader Graph runtime not started | `src/`, `bin/`, focused tests |
 | Contracts/schema | Graph IR, Fact IR, identity/order, confidence/completeness, and configuration artifacts implemented and validated; broader runtime producers remain absent | `schema/`, `examples/`, `SPEC.md`, ADR-002–ADR-004 |
 | Fixture layout/manifest | Implemented and validated | `fixtures/`, `fixtures/manifest-v0.1.json`, inert golden inputs, and bounded Fact expectations |
-| Focused tests | T-010–T-014/T-020–T-035 verified | `npm test`: 65 passed |
+| Focused tests | T-010–T-014/T-020–T-035/T-040 verified | `npm test`: 65 passed |
 | CI/package/release | Private package/CLI foundation only; CI/release not started | `package.json`, `bin/`; no workflow, tag, or release |
 | Runtime compatibility | Unknown | No local analyzer exists |
 | Core SSOT documentation | Synchronized planning baseline | `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`, `GOAL_PROMPT.md` |
 
 ## Delivery sequence
 
-The current pass advances M0 to a verified gate, completes M1/T-010–T-014, verifies bounded M2 parser/scanner/Fact extraction at T-020–T-022, M3 index/literal resolution/Graph IR boundaries at T-023–T-025, bounded M4 CFC resolution at T-030, M5 scope/web-flow resolution at T-031–T-032, M6 dynamic-evidence preservation at T-033 and bounded SQL/repository linkage at T-034, and M7 bounded graph queries/evidence explanations at T-035; it does not establish full grammar coverage or advance broader M8–M9 work. T-036+ remain open.
+The current pass advances M0 to a verified gate, completes M1/T-010–T-014, verifies bounded M2 parser/scanner/Fact extraction at T-020–T-022, M3 index/literal resolution/Graph IR boundaries at T-023–T-025, bounded M4 CFC resolution at T-030, M5 scope/web-flow resolution at T-031–T-032, M6 dynamic-evidence preservation at T-033 and bounded SQL/repository linkage at T-034, M7 bounded graph queries/evidence explanations at T-035, and M8 bounded robustness evidence at T-040; it does not establish full grammar coverage or advance broader M9 work. T-036+ remain open.
 
 ### Phase 0 — Contract and safety foundation
 
@@ -62,7 +62,7 @@ The current pass advances M0 to a verified gate, completes M1/T-010–T-014, ver
 
 ### Phase 4 — Incremental operation and release
 
-- M8: cache invalidation, bounded concurrency, hard resource limits, repeatability, and snapshot drift handling.
+- M8: cache invalidation, bounded concurrency, hard resource limits, repeatability, and snapshot drift handling; T-040 verifies the bounded repeat/drift/cache/cycle/limit subset, while orchestration and in-read mutation evidence remain open.
 - M9: package/library/CLI smoke, golden and adversarial suites, documentation synchronization, and separately evidenced Lucee/Adobe compatibility.
 
 **Exit evidence:** release checklist in `RELEASE.md`, reproducible artifact readback, CI results, and a versioned release note.
