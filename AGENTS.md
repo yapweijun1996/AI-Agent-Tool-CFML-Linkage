@@ -9,7 +9,7 @@
 | Scope | Repository-specific documentation and implementation rules |
 | Source of truth | This file for local project conventions; higher-priority host instructions still apply |
 | Evidence | Initial `HEAD` contained only `.gitattributes`; current local HEAD includes the verified foundation and bounded extractors plus this guidance |
-| Verification | Guidance is exercised by the private M1 foundation, bounded M2 extraction, bounded M3–M6 resolvers/Graph dynamic-evidence boundary, bounded SQL/repository resolver, and 62 focused Node tests; full analyzer verification is absent |
+| Verification | Guidance is exercised by the private M1 foundation, bounded M2 extraction, bounded M3–M7 resolvers/Graph/query dynamic-evidence boundary, bounded SQL/repository resolver, and 65 focused Node tests; full analyzer verification is absent |
 | Limitations | Parser/resolver, public package/API, CI, and released-runtime conventions are not yet established |
 
 ## Project boundary
@@ -34,7 +34,7 @@
 ## Source changes
 
 - Preserve stable IDs, evidence spans, confidence classes, unresolved records, deterministic ordering, root containment, and explicit completeness semantics.
-- Keep parser adapters, fact extraction, indexes, resolvers, graph construction, validation, cache, query, and CLI responsibilities separate.
+- Keep parser adapters, fact extraction, indexes, resolvers, graph construction, validation, cache, query, and CLI responsibilities separate; bounded query implementation must consume immutable GraphSnapshot data only.
 - Edit generated artifacts through their source/generator once those exist.
 - Avoid unrelated refactors, dependency changes, formatting churn, or scope expansion.
 - Use English for source code, identifiers, comments, schemas, and technical documentation.

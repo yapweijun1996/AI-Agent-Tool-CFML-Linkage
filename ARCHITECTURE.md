@@ -1,6 +1,6 @@
 # Architecture: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M6 IN PROGRESS.** The M1 foundation and bounded M2–M6 parser/scanner/Fact/resolver slices exist; the remaining architecture is not implemented.
+> **Status: PROPOSED / M2–M7 IN PROGRESS.** The M1 foundation and bounded M2–M7 parser/scanner/Fact/resolver/query slices exist; the remaining architecture is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -14,7 +14,7 @@
 
 ## 1. Boundary
 
-The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1–M6 bounded slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, a private CLI envelope, bounded parser scanners, Fact evidence, immutable indexes, conservative literal resolution, dynamic/generated/SQL-dynamic preservation, bounded SQL/queryExecute extraction, and structural repository/action resolution; bounded Graph IR production/validation is implemented in `src/graph.js`, bounded CFC resolution is implemented in `src/cfc-resolver.js`, bounded shared-scope resolution is implemented in `src/scope-resolver.js`, bounded web-flow resolution is implemented in `src/web-flow-resolver.js`, and bounded repository resolution is implemented in `src/repository-resolver.js`; broader linkage resolution and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
+The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1–M7 bounded slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, a private CLI envelope, bounded parser scanners, Fact evidence, immutable indexes, conservative literal resolution, dynamic/generated/SQL-dynamic preservation, bounded SQL/queryExecute extraction, structural repository/action resolution, and bounded Graph IR/query production; bounded Graph IR production/validation is implemented in `src/graph.js`, bounded CFC resolution is implemented in `src/cfc-resolver.js`, bounded shared-scope resolution is implemented in `src/scope-resolver.js`, bounded web-flow resolution is implemented in `src/web-flow-resolver.js`, bounded repository resolution is implemented in `src/repository-resolver.js`, and bounded query/evidence explanations are implemented in `src/graph-query.js`; broader linkage resolution and CLI orchestration remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
 
 ```text
 Local source + explicit policy
@@ -43,7 +43,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Evidence policy | evidence merge and confidence classes | parser-specific parsing |
 | Graph builder/validator | Graph IR construction, invariants, serialization readiness | generic business interpretation |
 | Cache | optional derived performance state | source of truth or stale-data authority |
-| Query engine | bounded graph traversal and evidence slices | model-written explanations |
+| Query engine | immutable GraphSnapshot, exact selectors, bounded deterministic traversal, evidence slices, and explanations in `src/graph-query.js` | model-written relationships, target guessing, or runtime execution |
 | CLI/library | private invocation, stable envelope, and stderr separation in M1; public API remains planned | execution of analyzed source |
 
 Core owns stable IDs, confidence policy, root safety, validation, and output contracts. Plugins are intentionally subordinate to those invariants.
@@ -59,7 +59,7 @@ Core owns stable IDs, confidence policy, root safety, validation, and output con
 7. **Evidence:** classify each result and retain ambiguity, including dynamic/generated/SQL-dynamic reasons.
 8. **Graph:** create nodes, edges, unresolved records, diagnostics, and stats.
 9. **Validate:** check schema, references, determinism, completeness, and safety invariants.
-10. **Serve:** cache validated derived data and answer bounded queries.
+10. **Serve:** cache validated derived data and answer bounded queries through the internal GraphSnapshot query engine.
 
 The graph is built from facts plus resolution evidence, never directly from ad hoc parser objects. This allows parser replacement without rewriting graph semantics.
 

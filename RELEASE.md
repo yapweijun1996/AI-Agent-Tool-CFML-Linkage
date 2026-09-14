@@ -9,7 +9,7 @@
 | Scope | Versioning, release gates, artifact traceability, and compatibility claims |
 | Source of truth | Git commit, validated artifacts, tests, and this release policy |
 | Evidence | `package.json` is private with Node `>=20`; no public package artifact, tag, workflow, or release exists |
-| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository tests and produced Fact/Graph schema validation pass; no release candidate exists |
+| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query tests and produced Fact/Graph schema validation pass; no release candidate exists |
 | Limitations | Public exports, runtime support matrix, registry, CI, and maintainer workflow are undecided |
 
 ## Release principles
@@ -35,9 +35,9 @@ The current repository has no release version. `0.1` is a design/documentation v
 A future release candidate requires:
 
 1. reviewed `SPEC.md`, Graph IR schema, and public CLI/library contract;
-2. focused unit, contract, golden, negative, safety, and determinism tests;
+2. focused unit, contract, golden, negative, safety, determinism, and bounded query tests;
 3. verified incomplete, ambiguity, path rejection, and exit-code semantics;
-4. package, installation, library import, and CLI smoke checks from the packed artifact;
+4. package, installation, library import, query API, and CLI smoke checks from the packed artifact;
 5. reproducible artifact metadata tied to the release source commit;
 6. documentation, changelog, security, and limitation parity;
 7. engine compatibility claims only for engines actually tested with recorded evidence.

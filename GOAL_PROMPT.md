@@ -1,6 +1,6 @@
 # Autonomous Goal Prompt
 
-> **Status: PROPOSED / M2–M6 IN PROGRESS.** Future-work contract, not an execution record.
+> **Status: PROPOSED / M2–M7 IN PROGRESS.** Future-work contract, not an execution record.
 
 | Field | Value |
 | --- | --- |
@@ -8,11 +8,11 @@
 | Last updated | 2026-09-14 |
 | Scope | Evidence-driven implementation loop |
 | Source of truth | Core SSOT plus Git/tests/runtime/release evidence |
-| Evidence | M0/M1, T-023–T-025, and bounded T-030–T-034 verified; 62 tests pass |
+| Evidence | M0/M1, T-023–T-025, bounded T-030–T-035 verified; 65 tests pass |
 | Verification | Prompt/documentation only |
 | Limitations | Parser, public API, CI, and release remain open |
 
-Work on `agent-cfml-linkage`, the Node `>=20` CFML-first static linkage prototype. Verified: M0/M1, bounded M2 extraction, T-023–T-025, T-030 CFC, T-031 scope, T-032 web-flow, T-033 dynamic, and T-034 SQL/repository; private package/CLI exist, but no full parser, public API, CI, or release. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
+Work on `agent-cfml-linkage`, the Node `>=20` CFML-first static linkage prototype. Verified: M0/M1, bounded M2 extraction, T-023–T-025, T-030 CFC, T-031 scope, T-032 web-flow, T-033 dynamic, T-034 SQL/repository, and T-035 graph queries/evidence; private package/CLI exist, but no full parser, public API, CI, or release. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
 
 Repeat:
 

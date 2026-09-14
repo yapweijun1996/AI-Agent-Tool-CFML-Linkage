@@ -44,9 +44,10 @@
 - Bounded web-flow/condition resolution for forms, redirects, fetch, known AJAX wrappers, numeric mixed-node ordering, focused fixtures/tests, and ADR-018 for T-032.
 - Bounded dynamic/generated/SQL-dynamic evidence preservation for `evaluate`, generated names, interpolated SQL identifiers, dynamic datasources, focused adversarial fixtures/tests, and ADR-019 for T-033.
 - Bounded `cfquery`/literal-`queryExecute` table and datasource extraction plus structural repository/action Facts, resolutions, Graph edges, filename-only negative evidence, fixtures/tests, and ADR-020 for T-034.
+- Bounded immutable GraphSnapshot queries, exact selector handling, deterministic evidence explanations, traversal/result limits, focused tests, and ADR-021 for T-035.
 
 ### Not claimed
 
 - No complete analyzer implementation has been added.
-- No full parser backend, resolver, full CLI orchestration/public library API, query engine, CI workflow, public package, or release has been added; the private root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact foundation and focused tests are the only runtime slice.
+- No full parser backend, resolver, full CLI orchestration/public library API, CI workflow, public package, or release has been added; the private root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact foundation, bounded resolvers/Graph, and internal query engine are the only runtime slices.
 - No Lucee, Adobe ColdFusion, browser, database, or network verification has been performed.
