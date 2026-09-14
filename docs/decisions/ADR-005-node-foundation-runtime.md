@@ -24,6 +24,6 @@ The first runtime module is a root guard. It canonicalizes an existing directory
 
 ## Consequences
 
-The foundation is easy to run and audit, with no supply-chain dependency added for path safety. Node's platform path semantics still require cross-platform tests before release. The package remains private and has no public export map; T-013 later adds an internal CLI entry without making the package a released public API.
+The foundation is easy to run and audit, with no supply-chain dependency added for path safety. Node's platform path semantics still require cross-platform tests before release. The package remains private and its bounded `analyzeProject` export and CLI entry do not constitute a released public API.
 
 Revisit this decision if parser/runtime requirements, supported Node versions, or package compatibility evidence materially change.

@@ -62,7 +62,7 @@ test("returns machine-readable invalid-input diagnostics and human stderr diagno
   }
 });
 
-test("validates the root before returning an incomplete analysis command", () => {
+test("runs the bounded analysis pipeline after validating the root", () => {
   const root = temporaryDirectory();
   try {
     fs.writeFileSync(path.join(root, "inert.js"), "throw new Error('must not execute');\n", "utf8");
@@ -70,8 +70,15 @@ test("validates the root before returning an incomplete analysis command", () =>
     const result = runCli(["analyze", "--config", "config.json"], root);
     assert.equal(result.exitCode, 3);
     assert.equal(result.stdout.status, "incomplete");
-    assert.equal(result.stdout.diagnostics[0].code, "COMMAND_NOT_IMPLEMENTED");
-    assert.match(result.stderr, /^WARNING COMMAND_NOT_IMPLEMENTED: /u);
+    assert.equal(result.stdout.data.graph.schema_version, "agent-cfml-linkage-graph/v0.1");
+    assert.equal(result.stdout.data.graph.snapshot.file_count, 1);
+    assert.equal(result.stdout.diagnostics[0].code, "UNSUPPORTED_SYNTAX");
+    assert.match(result.stderr, /^WARNING UNSUPPORTED_SYNTAX: /u);
+
+    const indexResult = runCli(["index", "--config", "config.json"], root);
+    assert.equal(indexResult.exitCode, 3);
+    assert.equal(indexResult.stdout.status, "incomplete");
+    assert.equal(indexResult.stdout.data.graph.schema_version, "agent-cfml-linkage-graph/v0.1");
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }

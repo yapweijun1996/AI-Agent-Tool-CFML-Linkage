@@ -14,7 +14,7 @@
 
 ## 1. Boundary
 
-The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1–M8 bounded slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, a private CLI envelope, bounded parser scanners, Fact evidence, immutable indexes, conservative literal resolution, dynamic/generated/SQL-dynamic preservation, bounded SQL/queryExecute extraction, structural repository/action resolution, bounded Graph IR/query production, and inert adversarial safe-failure fixtures; bounded Graph IR production/validation is implemented in `src/graph.js`, bounded CFC resolution is implemented in `src/cfc-resolver.js`, bounded shared-scope resolution is implemented in `src/scope-resolver.js`, bounded web-flow resolution is implemented in `src/web-flow-resolver.js`, bounded repository resolution is implemented in `src/repository-resolver.js`, and bounded query/evidence explanations are implemented in `src/graph-query.js`; broader linkage resolution and CLI orchestration remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
+The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented bounded slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, bounded CLI/library composition, bounded parser scanners, Fact evidence, immutable indexes, conservative literal resolution, dynamic/generated/SQL-dynamic preservation, bounded SQL/queryExecute extraction, structural repository/action resolution, bounded Graph IR/query production, and inert adversarial safe-failure fixtures; bounded Graph IR production/validation is implemented in `src/graph.js`, bounded CFC resolution is implemented in `src/cfc-resolver.js`, bounded shared-scope resolution is implemented in `src/scope-resolver.js`, bounded web-flow resolution is implemented in `src/web-flow-resolver.js`, bounded repository resolution is implemented in `src/repository-resolver.js`, bounded query/evidence explanations are implemented in `src/graph-query.js`, and T-036 composition is implemented in `src/analyzer.js`; broader linkage resolution, query-command orchestration, and public release remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
 
 ```text
 Local source + explicit policy
@@ -44,7 +44,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Graph builder/validator | Graph IR construction, invariants, serialization readiness | generic business interpretation |
 | Cache | optional derived performance state | source of truth or stale-data authority |
 | Query engine | immutable GraphSnapshot, exact selectors, bounded deterministic traversal, evidence slices, and explanations in `src/graph-query.js` | model-written relationships, target guessing, or runtime execution |
-| CLI/library | private invocation, stable envelope, and stderr separation in M1; public API remains planned | execution of analyzed source |
+| CLI/library | private invocation, stable envelope, stderr separation, bounded `analyze`/`index`, and private `analyzeProject` export | execution of analyzed source, query-command persistence, or public release |
 
 Core owns stable IDs, confidence policy, root safety, validation, and output contracts. Plugins are intentionally subordinate to those invariants.
 
@@ -61,7 +61,7 @@ Core owns stable IDs, confidence policy, root safety, validation, and output con
 9. **Validate:** check schema, references, determinism, completeness, and safety invariants.
 10. **Serve:** cache validated derived data and answer bounded queries through the internal GraphSnapshot query engine.
 
-The graph is built from facts plus resolution evidence, never directly from ad hoc parser objects. This allows parser replacement without rewriting graph semantics.
+The graph is built from facts plus resolution evidence, never directly from ad hoc parser objects. This allows parser replacement without rewriting graph semantics. `src/analyzer.js` owns the stage order and deterministic merge boundary; individual resolvers remain independently callable and read-only.
 
 ## 4. Important ownership boundaries
 
@@ -104,7 +104,7 @@ An internal invariant or serialization failure is different: it is an internal e
 
 ## 7. Security boundaries
 
-The implemented root guard reads filesystem metadata only to canonicalize and contain paths; the snapshot reads bounded source bytes without decoding or executing them. The future process must read only authorized local paths beneath the canonical root and configured safe metadata. It must not evaluate CFML expressions, execute JavaScript or SQL, spawn application commands, access a database, or make network requests. Diagnostics and graph evidence must be bounded and must not disclose secret contents.
+The implemented root guard reads filesystem metadata only to canonicalize and contain paths; the snapshot and bounded orchestrator read bounded source bytes without executing them and verify source stability around parsing. The process reads only authorized local paths beneath the canonical root and configured safe metadata. It must not evaluate CFML expressions, execute JavaScript or SQL, spawn application commands, access a database, or make network requests. Diagnostics and graph evidence must be bounded and must not disclose secret contents.
 
 ## 8. Extensibility
 

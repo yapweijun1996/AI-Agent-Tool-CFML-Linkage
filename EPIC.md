@@ -1,6 +1,6 @@
 # Epic: Build the CFML-first linkage evidence provider
 
-> **Status: PROPOSED / M2–M9 IN PROGRESS.** This epic is planning material; the M1 foundation, bounded M2 parser/scanner/Fact slices, bounded M3 path/Graph slices, bounded M4 CFC, M5 scope/web-flow resolvers, M6 SQL/repository evidence, M7 graph-query, M8 robustness/adversarial, and M9 check/package-smoke/Node-host-compatibility slices are verified.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** This epic is planning material; the M1 foundation, bounded M2 parser/scanner/Fact slices, bounded M3 path/Graph slices, bounded M4 CFC, M5 scope/web-flow resolvers, M6 SQL/repository evidence, M7 graph-query/orchestration, M8 robustness/adversarial, and M9 check/package-smoke/Node-host-compatibility slices are verified.
 
 | Field | Value |
 | --- | --- |
@@ -8,15 +8,15 @@
 | Last updated | 2026-09-14 |
 | Scope | A local, deterministic static linkage graph for mixed CFML web projects |
 | Project type | Planned NPM/library + CLI + AI-agent evidence provider |
-| Lifecycle | Prototype / bounded M6 implementation |
+| Lifecycle | Prototype / bounded M7 implementation |
 | Source of truth | This epic for outcome and milestones; `SPEC.md` for the contract; Git history for actual completion |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
-| Verification | M0 contract checks, produced Fact/Graph IR schema validation, and 68 foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture tests pass; broader Graph linkage verification remains open |
+| Verification | M0 contract checks, produced Fact/Graph/analysis IR schema validation, and 73 foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture tests pass; broader Graph linkage verification remains open |
 | Limitations | Estimates, sequencing, parser choice, and compatibility are not validated |
 
 ## 1. Problem
 
-This epic is the product-level outcome for one planned package boundary. It does not imply that the package, CLI, or downstream integrations already exist.
+This epic is the product-level outcome for one planned package boundary. The private package, bounded CLI, and private library entry exist, but complete linkage, query-command integration, and downstream integrations are not established.
 
 CFML applications often spread behavior across includes, CFCs, Application files, HTML forms, JavaScript requests, CSS assets, SQL, and shared scopes. A coding agent cannot safely infer those relationships from a single file or from filename similarity. The project needs a bounded, inspectable evidence provider that exposes relationships without running the application or pretending to know dynamic runtime behavior.
 
@@ -49,8 +49,8 @@ Out of scope: source execution, runtime network/database access, browser automat
 | M4 CFC linkage | Mappings, inheritance, instantiation, `cfinvoke`, and conservative method resolution | M3 | In progress — T-030 bounded resolver verified |
 | M5 Globe3-critical flows | Ordered scope flow, AJAX/fetch, and conditions | M3 | In progress — T-031/T-032 bounded scope and web-flow condition flow verified |
 | M6 SQL/repository | Dynamic/generated/SQL-dynamic preservation, query/table/datasource, and structurally evidenced repository edges | M3, M5 | In progress — T-033 preservation and bounded T-034 SQL/repository resolution verified; broader SQL semantics open |
-| M7 Query interface | Related/callers/callees/includes/included-by/trace/scope-flow/tables/routes/unresolved/explain-edge/stats/impact-evidence | M3–M6 | Verified (bounded) — T-035 |
-| M8 Incremental performance | Dependency-aware invalidation, bounded workers, budgets, repeatability | M7 | In progress — T-040/T-041 bounded robustness and adversarial safe-failure evidence |
+| M7 Query interface | Related/callers/callees/includes/included-by/trace/scope-flow/tables/routes/unresolved/explain-edge/stats/impact-evidence plus bounded analysis composition | M3–M6 | In progress — T-035/T-036 verified (bounded) |
+| M8 Incremental performance | Dependency-aware invalidation, bounded workers, budgets, repeatability | M7 | In progress — T-040/T-041 bounded robustness/adversarial evidence and T-036 parser-time drift evidence |
 | M9 Release verification | Golden/adversarial suite, package/import/CLI smoke, engine evidence | M8 | In progress — T-042 checks/package smoke, T-043 Node host evidence, and T-044 bounded release/security/parity audit; broader compatibility/public release remains open |
 
 ## 5. Epic acceptance criteria
@@ -68,7 +68,7 @@ The epic is complete only when all of the following are evidenced:
 
 ## 6. Risks and blockers
 
-Current status: M0/M1 work, T-010–T-014/T-020–T-022 bounded parser/scanner/Fact extraction, T-023 immutable indexes, T-024 conservative literal resolution, T-033 dynamic/generated/SQL-dynamic evidence preservation, bounded T-034 SQL/repository linkage, bounded T-035 graph queries/evidence explanations, T-040/T-041 robustness/adversarial safe-failure evidence, T-042 bounded checks/package smoke, T-043 bounded Node host compatibility, and T-044 bounded release/security/parity audit are verified. The root-guard/snapshot/decoder/private CLI/cache/parser/Fact/index/resolver/query foundation is the only runtime slice; full grammar, broader language coverage, orchestration, and resolution remain open.
+Current status: M0/M1 work, T-010–T-014/T-020–T-022 bounded parser/scanner/Fact extraction, T-023 immutable indexes, T-024 conservative literal resolution, T-033 dynamic/generated/SQL-dynamic evidence preservation, bounded T-034 SQL/repository linkage, bounded T-035 graph queries/evidence explanations, bounded T-036 analysis orchestration/private library and CLI entry points, T-040/T-041 robustness/adversarial safe-failure evidence, T-042 bounded checks/package smoke, T-043 bounded Node host compatibility, and T-044 bounded release/security/parity audit are verified. The root-guard/snapshot/decoder/bounded CLI/library/cache/parser/Fact/index/resolver/query foundation is the only runtime slice; full grammar, broader language coverage, query-command integration, and broader resolution remain open.
 
 Known technical risks include runtime-computed Application mappings, dynamic `evaluate` and generated names, ambiguous components/method receivers, shared-scope semantics, embedded JavaScript/SQL parsing, and resource exhaustion. These are release risks, not reasons to guess.
 

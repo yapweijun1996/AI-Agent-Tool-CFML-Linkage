@@ -1,6 +1,6 @@
 # Test Plan: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M9 IN PROGRESS.** This plan defines future verification; focused M1 and bounded M2–M9 parser/scanner/Fact/resolution/query/robustness/adversarial/check suites exist.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** This plan defines future verification; focused M1 and bounded M2–M9 parser/scanner/Fact/resolution/query/orchestration/robustness/adversarial/check suites exist.
 
 | Field | Value |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Scope | Contract, determinism, safety, linkage, partial-result, and release verification |
 | Source of truth | This plan for intended verification; actual test output and CI for evidence |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local source includes the verified foundation and bounded extractors |
-| Verification | T-001–T-006 contract checks, produced Fact/Graph IR schema validation, and T-010–T-014/T-020–T-035/T-040–T-042 `npm test` (68/68) plus bounded T-043 Node host evidence passed; broader project test suite does not exist |
+| Verification | T-001–T-006 contract checks, produced Fact/Graph/analysis IR schema validation, and T-010–T-014/T-020–T-036/T-040–T-042 `npm test` (73/73) plus bounded T-043 Node host evidence passed; broader project test suite does not exist |
 | Limitations | Exact framework, parser fixtures, supported runtimes, and performance targets are not selected |
 
 ## 1. Verification principles
@@ -29,8 +29,8 @@
 | Contract/schema | Graph IR, Fact IR, diagnostics, unresolved records, CLI envelope | Schema/fixture assertions; T-001–T-006 cover contracts and layout |
 | Golden | End-to-end static linkage for frozen projects | Expected graph/evidence comparison |
 | Adversarial | Ambiguity, malformed syntax, dynamic code, cycles, escapes, drift, caps | Explicit safe failure and `complete=false` where applicable |
-| Integration | CLI/library boundary, cache, query engine | `test/graph-query.test.js` covers immutable snapshots, exact selectors, operation results, explanations, and bounded traversal; public CLI/library orchestration remains open |
-| Package smoke | Packed/installable artifact identity and imports | `pack`/install/import/CLI evidence |
+| Integration | CLI/library boundary, cache, query engine | `test/graph-query.test.js` covers immutable snapshots, exact selectors, operation results, explanations, and bounded traversal; `test/analyzer.test.js` and `test/cli.test.js` cover composed Fact/index/resolver/Graph output, explicit parser selection, drift, private import, and bounded `analyze`/`index`; query-command wiring remains open |
+| Package smoke | Packed/installable artifact identity and imports | `pack`/offline install/import/CLI evidence; bounded evidence covers package self-import, packed-artifact consumer analysis, and dry-run, while public release remains unavailable |
 | Engine matrix | Only if the analyzer has runtime-adjacent claims | Separate, reproducible environment evidence |
 
 ## 3. Golden fixture matrix
@@ -58,7 +58,7 @@ Each fixture should assert nodes, edges, confidence, evidence spans, conditions,
 - ignored dependency, generated, cache, and secret-like paths;
 - unreadable or invalidly encoded files;
 - include and graph cycles;
-- snapshot mutation during analysis;
+- snapshot mutation during analysis, including parser-time source drift;
 - corrupt, stale, or version-mismatched cache;
 - file/byte/fact/edge/evidence/traversal/output/time limits and query result/depth/visited-node limits;
 - bounded evidence that does not copy full source files;
@@ -82,8 +82,8 @@ A future release must satisfy all required gates:
 
 ## 6. Planned commands
 
-The current focused command is `npm test`, using Node's built-in test runner. No full build, lint, type, package, browser, or engine command exists yet. Once those workflows are implemented, the repository must document exact commands; placeholder commands must not be reported as executed checks.
+The current focused commands are `npm test`, the repository's static checks, package self-import, and `npm pack --dry-run`; Node's built-in test runner supplies the suite. No full build, lint, type, packed-artifact installation, browser, or engine command exists yet. Once those workflows are implemented, the repository must document exact commands; placeholder commands must not be reported as executed checks.
 
 ## 7. Current result
 
-**T-001–T-006, T-010–T-014, T-020–T-035, and T-040–T-044 passed for their bounded scopes:** contract schemas/examples, identity/order, confidence/completeness, configuration, fixture-manifest, root-guard containment, deterministic discovery, snapshot fingerprint, symlink, limit, strict decoding, source maps, CLI envelope, stderr separation, cache invalidation/corruption, parser unavailable/partial/failure handling, bounded CFML scanning, structural Fact extraction, golden expectations, immutable index lookups, literal path resolution, bounded Graph IR construction/validation, reverse adjacency, bounded CFC mapping/inheritance/instantiation/invoke/method resolution, ordered scope production/consumption/override and resource-limit handling, web-flow condition/wrapper resolution, dynamic/generated/SQL-dynamic preservation, bounded `cfquery`/`queryExecute` SQL and structural repository/action resolution, immutable GraphSnapshot queries, exact-selector ambiguity, deterministic explanations, traversal bounds, repeatability, content drift, cache invalidation/corruption, cycle safety, resource limits, inert adversarial safe-failure fixtures, unsupported regions, and no-execution checks pass; `npm test` reports 68 passed and 0 failed, and the produced Fact/Graph IR validates against schema. This uses no project dependency beyond Node built-ins. Runtime producer repeatability beyond the current foundation tests, full CLI orchestration, broader Graph linkage behavior, public package publication, Lucee/Adobe/browser, and broader engine checks remain unverified; local private package/CLI smoke, Node host evidence, and bounded release/security/parity audit passed.
+**T-001–T-006, T-010–T-014, T-020–T-036, and T-040–T-044 passed for their bounded scopes:** contract schemas/examples, identity/order, confidence/completeness, configuration, fixture-manifest, root-guard containment, deterministic discovery, snapshot fingerprint, symlink, limit, strict decoding, source maps, CLI envelope, stderr separation, cache invalidation/corruption, parser unavailable/partial/failure handling, bounded CFML scanning, structural Fact extraction, golden expectations, immutable index lookups, literal path resolution, bounded Graph IR construction/validation, reverse adjacency, bounded CFC mapping/inheritance/instantiation/invoke/method resolution, ordered scope production/consumption/override and resource-limit handling, web-flow condition/wrapper resolution, dynamic/generated/SQL-dynamic preservation, bounded `cfquery`/`queryExecute` SQL and structural repository/action resolution, immutable GraphSnapshot queries, exact-selector ambiguity, deterministic explanations, traversal bounds, composed analysis orchestration, parser-time drift, repeatability, content drift, cycle safety, resource limits, inert adversarial safe-failure fixtures, unsupported regions, and no-execution checks pass; `npm test` reports 73 passed and 0 failed, and the produced Fact/Graph/analysis IR validates against schema. This uses no project dependency beyond Node built-ins. Runtime producer repeatability beyond the current foundation tests, full query-command CLI wiring, broader Graph linkage behavior, public package publication, Lucee/Adobe/browser, and broader engine checks remain unverified; local private package self-import/CLI smoke, Node host evidence, and bounded release/security/parity audit passed.

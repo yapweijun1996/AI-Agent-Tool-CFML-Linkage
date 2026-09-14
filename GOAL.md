@@ -10,8 +10,8 @@
 | Lifecycle | Prototype / safe-foundation implementation |
 | Source of truth | This repository's Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for state |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; subsequent local commits add the verified foundation and bounded extractors |
-| Verification | M1 foundation, bounded M2 CFML/web parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC resolution, bounded M5 scope/web-flow resolution, bounded M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries, bounded M8 robustness evidence, and 68 focused Node tests pass locally; linkage/runtime/package-release verification is absent |
-| Limitations | Public exports/CLI orchestration, full parser/resolver, full runtime matrix, deployment model, and release compatibility are not established; bounded query APIs remain internal |
+| Verification | M1 foundation, bounded M2 CFML/web parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC resolution, bounded M5 scope/web-flow resolution, bounded M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries/orchestration, bounded M8 robustness evidence, and 73 focused Node tests pass locally; full linkage/runtime/package-release verification is absent |
+| Limitations | Query-command CLI orchestration, full parser/resolver, full runtime matrix, deployment model, and release compatibility are not established; the bounded analysis/library entry and query APIs remain private |
 
 ## Purpose
 
@@ -52,4 +52,4 @@ The goal is achieved only when a release has:
 
 ## State model
 
-The project must track **Planned → Implemented → Verified → Released** independently. M0/M1, bounded M2 parser/scanner/Fact extraction, bounded M3–M6 linkage, bounded M7 queries, bounded M8 robustness/adversarial safe-failure evidence, and bounded M9 checks/package smoke/Node host compatibility/release-parity audit are verified; full parser coverage, orchestration, public package, and release remain incomplete/unreleased.
+The project must track **Planned → Implemented → Verified → Released** independently. M0/M1, bounded M2 parser/scanner/Fact extraction, bounded M3–M6 linkage, bounded M7 queries/orchestration, bounded M8 robustness/adversarial safe-failure evidence, and bounded M9 checks/package smoke/Node host compatibility/release-parity audit are verified; full parser coverage, query-command integration, public package, and release remain incomplete/unreleased.

@@ -1,6 +1,6 @@
 # ADR-008: Keep the CLI envelope stable and fail closed
 
-> **Status: PROVISIONAL / M1 PARTIAL.** The private CLI boundary is implemented and tested; analysis commands and release/public API remain open.
+> **Status: PROVISIONAL / M1/T-036 BOUNDED.** The private CLI boundary is implemented and tested; bounded `analyze`/`index` commands exist, while query commands and release/public API remain open.
 
 | Field | Value |
 | --- | --- |

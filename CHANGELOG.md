@@ -50,9 +50,10 @@
 - Completed bounded T-042 verification: 68 tests, contract/example checks, CLI/package smoke, syntax/fixture/document checks, and conservative credential scan pass; lint/type scripts and Secretlint are unavailable locally.
 - Recorded bounded T-043 compatibility evidence for Node `v25.2.1` on `win32`/`x64`; no Lucee, Adobe ColdFusion, cross-version, cross-platform, browser, database, network, or public-package claim is made.
 - Completed the bounded T-044 release/security/parity audit with exact pre-release package metadata, source commit identity, local security checks, and explicit remaining gates; nothing was published.
+- Implemented bounded T-036 analysis orchestration, private library exports, composed-analysis schema, CLI `analyze`/`index` wiring, parser-time drift checks, and offline packed-artifact consumer smoke; full grammar and query-command integration remain open.
 
 ### Not claimed
 
 - No complete analyzer implementation has been added.
-- No full parser backend, resolver, full CLI orchestration/public library API, CI workflow, public package, or release has been added; the private root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact foundation, bounded resolvers/Graph, and internal query engine are the only runtime slices.
+- No full parser backend, broad resolver, query-command CLI, CI workflow, public package, or release has been added; the private root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact foundation, bounded resolvers/Graph, internal query engine, and bounded analysis composition are the only runtime slices.
 - No Lucee, Adobe ColdFusion, browser, database, or network verification has been performed.

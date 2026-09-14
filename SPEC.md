@@ -9,7 +9,7 @@
 | Scope | Static cross-file linkage analysis for CFML-first mixed web projects |
 | Source of truth | This document for the proposed contract; Git history for current code facts |
 | Evidence | Initial repository commit `1b29c0b` contained only `.gitattributes`; current local source contains the verified foundation and bounded extractors |
-| Verification | Graph/Fact/config contract checks, produced Fact/Graph IR schema validation, and `npm test` foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture tests (68/68) pass; linkage contract/runtime verification is incomplete |
+| Verification | Graph/Fact/config/analysis contract checks, produced Fact/Graph/analysis IR schema validation, and `npm test` foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture tests (73/73) pass; full linkage contract/runtime verification is incomplete |
 | Limitations | Parser coverage, resolver accuracy, performance, compatibility, and release status are unverified |
 
 ## 1. Objective
@@ -43,7 +43,7 @@ The M1 snapshot currently discovers `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.
 
 ### 3.1 Current repository contract evidence
 
-The repository now has a private `package.json` with Node `>=20`, an `npm test` script, a private `bin/agent-cfml-linkage.js` entry point, and internal root-guard, snapshot, source-map, CLI, cache, parser-adapter, bounded CFML/web scanner, Fact extractor, bounded SQL/repository resolver, and bounded graph-query modules with focused tests. It has no full parser grammar, public export map, released CLI/API, analysis orchestrator, runtime linkage implementation, third-party dependencies, build workflow, or release artifact. API, CLI names, parser dependency, and public package metadata below remain proposed contracts.
+The repository now has a private `package.json` with Node `>=20`, an `npm test` script, a private `bin/agent-cfml-linkage.js` entry point, package `exports`, a private `src/index.js` library entry, and internal root-guard, snapshot, source-map, CLI, cache, parser-adapter, bounded CFML/web scanner, Fact extractor, bounded SQL/repository resolver, analysis orchestrator, and bounded graph-query modules with focused tests. It has no full parser grammar, query-command CLI wiring, released CLI/API, runtime linkage implementation, third-party dependencies, build workflow, or release artifact. API, parser dependency, and public package metadata below remain proposed contracts.
 
 ## 4. Analysis contract
 
@@ -51,7 +51,7 @@ The proposed pipeline is:
 
 `Root Guard → Snapshot/Discovery → Decode/Source Map → Parse → Fact Extraction → Project Index → Resolution Passes → Evidence/Confidence → Graph Build → Validate → Cache → Query → CLI/JSON`.
 
-Each stage has typed boundaries and may emit diagnostics. Cross-file stages consume normalized Fact IR rather than parser-specific AST nodes. No stage mutates source files. The implemented parser adapter and bounded Fact extractor do not resolve across files; they normalize parser state, preserve bounded dynamic/generated/SQL-dynamic evidence, and emit fixture-backed structural facts only. The internal T-023 index builder creates immutable lookup indexes; T-024 provides conservative literal path/Application resolution; T-025 builds/validates bounded Graph IR; T-030 resolves bounded literal CFC relationships; T-031/T-032 resolve bounded ordered scope and web-flow condition relationships; T-033 preserves bounded dynamic/generated/SQL-dynamic evidence; T-034 extracts bounded `queryExecute` SQL and resolves structurally evidenced repository/action calls; and T-035 provides bounded immutable graph queries/evidence explanations without broader cross-file inference.
+Each stage has typed boundaries and may emit diagnostics. Cross-file stages consume normalized Fact IR rather than parser-specific AST nodes. No stage mutates source files. The implemented parser adapter and bounded Fact extractor do not resolve across files; they normalize parser state, preserve bounded dynamic/generated/SQL-dynamic evidence, and emit fixture-backed structural facts only. The internal T-023 index builder creates immutable lookup indexes; T-024 provides conservative literal path/Application resolution; T-025 builds/validates bounded Graph IR; T-030 resolves bounded literal CFC relationships; T-031/T-032 resolve bounded ordered scope and web-flow condition relationships; T-033 preserves bounded dynamic/generated/SQL-dynamic evidence; T-034 extracts bounded `queryExecute` SQL and resolves structurally evidenced repository/action calls; T-035 provides bounded immutable graph queries/evidence explanations; and T-036 composes these stages behind a private analysis result without broader cross-file inference.
 
 ### 4.0 Fact IR contract
 
@@ -125,9 +125,15 @@ Unresolved records are successful analysis output, not internal errors. Planned 
 
 ### 4.5 Bounded query contract
 
-`src/graph-query.js` provides the bounded internal `createGraphSnapshot` and `queryGraph` contract. A snapshot deep-copies and freezes a validated Graph IR document. Queries select nodes only by exact `node_id`, `path`, `canonical_name`, or `name` (with optional exact `kind`); ambiguous selectors return no target and a diagnostic. `explain-edge` requires an exact `edge_id`.
+`src/graph-query.js` provides the bounded internal `createGraphSnapshot` and `queryGraph` contract. A snapshot deep-copies and freezes a validated Graph IR document. Queries select nodes only by exact `node_id`, `path`, `canonical_name`, or `name` (with optional exact `kind`); ambiguous selectors return no target and a diagnostic. `explain-edge` requires an exact `edge_id`. T-036 exposes this query boundary through the private package entry, but does not add query-command persistence or CLI wiring.
 
 The supported operations are `related`, `callers`, `callees`, `includes`, `included-by`, `trace`, `scope-flow`, `tables`, `routes`, `unresolved`, `explain-edge`, `impact-evidence`, and `stats`. Results are deterministic and bounded by `max_results`, `max_depth`, and `max_visited`; traversal is cycle-safe. Exhausted limits return diagnostics and `complete=false`. Query explanations are deterministic templates over edge confidence, metadata, spans, and evidence; they do not execute source or invent targets. The query envelope is `agent-cfml-linkage-query/v0.1`; public CLI/library integration remains a later contract.
+
+## 4.6 Composed analysis result
+
+T-036 exposes `analyzeProject({ rootPath, config, parserBackend | parserAdapter, ...options })` through the private package entry. It creates the root guard, discovers a deterministic snapshot, reads and parses each admitted file, extracts Fact IR, builds immutable indexes, runs the bounded path/CFC/scope/web-flow/repository passes, merges resolution and diagnostic evidence by stable IDs, builds Graph IR, and returns immutable reverse adjacency. The default parser backend remains unselected and therefore returns `PARSER_UNAVAILABLE`; the CLI explicitly injects `mixed-structural-scanner/v0.1`. Source metadata/content is checked after parsing, and drift makes the result incomplete. The result contract is `schema/agent-cfml-linkage-analysis-v0.1.schema.json`.
+
+The orchestrator currently applies configured language and file/fact/resolver/traversal limits that are supported by the underlying bounded stages. Ignore glob semantics, edge/evidence/output/time budgets, query-command persistence, full parser coverage, and public release remain open and are not implied by this API.
 
 ## 5. Resolution rules
 

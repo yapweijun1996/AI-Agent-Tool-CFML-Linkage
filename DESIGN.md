@@ -9,14 +9,14 @@
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
-| Verification | Graph/Fact/config checks, produced Fact/Graph IR schema validation, and 68 foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture tests pass locally; broader runtime stages below remain unimplemented proposals |
+| Verification | Graph/Fact/config/analysis checks, produced Fact/Graph/analysis IR schema validation, and 73 foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture tests pass locally; broader runtime stages below remain unimplemented proposals |
 | Limitations | Parser choice, language coverage, performance, and engine compatibility remain unknown |
 
 ## 1. Design goals
 
 The analyzer should give coding agents a small, queryable, evidence-backed view of cross-file relationships without executing the application or guessing dynamic behavior. The design favors narrow stages, immutable intermediate data, explicit incompleteness, and stable output.
 
-**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, private CLI-envelope, cache, parser-adapter, bounded CFML/web scanners, bounded Fact extractor, immutable index, literal/CFC/scope/web-flow/repository resolver modules, dynamic/generated/SQL evidence handling, Graph builder, and bounded graph query engine with focused tests, a private `package.json`, and validated contracts; full parser backend, broader Fact IR, analysis orchestration, caller, CI, and release architecture remain unimplemented; bounded graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query construction is implemented.
+**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, bounded CLI/library orchestration, cache, parser-adapter, bounded CFML/web scanners, bounded Fact extractor, immutable index, literal/CFC/scope/web-flow/repository resolver modules, dynamic/generated/SQL evidence handling, Graph builder, and bounded graph query engine with focused tests, a private `package.json`, and validated contracts; full parser backend, broader Fact IR, query-command orchestration, caller, CI, and release architecture remain unimplemented; bounded graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query construction and T-036 composition are implemented.
 
 It is CFML-first: CFM/CFC structure, Application governance, includes, CFC typing, and shared scopes receive priority. HTML, JavaScript, CSS, SQL, and repository relations extend that model where static evidence is available.
 
@@ -141,7 +141,7 @@ Selectors are exact node IDs or exact path/canonical-name/name values; ambiguous
 
 ### Stage 12 — CLI and library boundary
 
-The implemented private CLI boundary emits one stable JSON envelope on stdout and human diagnostics on stderr; it currently exposes `capabilities`, help, version, input validation, and explicit incomplete responses for unimplemented analysis commands. Full orchestration remains planned. The library should expose `analyzeProject`, `analyzeTarget`, `queryGraph`, `capabilities`, and Graph IR types. Proposed commands are `capabilities`, `index`/`analyze`, `related`, `callers`, `callees`, `trace`, `unresolved`, `explain`, and `stats`.
+The implemented private CLI boundary emits one stable JSON envelope on stdout and human diagnostics on stderr; it exposes `capabilities`, help, version, input validation, and bounded `analyze`/`index` commands. `src/analyzer.js` composes the bounded stages and `src/index.js` exports `analyzeProject`, `queryGraph`, `createGraphSnapshot`, and the explicit mixed scanner backend under the private package `exports` boundary. The `agent-cfml-linkage-analysis/v0.1` result contains Fact IR, merged resolution evidence, Graph IR, immutable reverse adjacency, diagnostics, and stats. Query commands remain planned; full parser coverage and public release remain open. Proposed commands are `capabilities`, `index`/`analyze`, `related`, `callers`, `callees`, `trace`, `unresolved`, `explain`, and `stats`.
 
 Proposed exit semantics: `0` completed, `1` internal failure, `2` invalid input, `3` incomplete/unsupported/resource limit, and `4` root/path/access rejection. Exit `3` is not a clean result.
 
@@ -173,8 +173,8 @@ The sequence is dependency-aware but not a schedule. M0's contract gate, M1 foun
 | M4 | CFC mappings, inheritance, instantiation, and method linkage | In progress — T-030 bounded resolver verified; broader type inference open |
 | M5 | Shared scope, AJAX/fetch, conditional routers | In progress — T-031/T-032 bounded scope and web-flow/condition resolvers verified; broader flow open |
 | M6 | Dynamic/generated/SQL-dynamic evidence and SQL/repository linkage | In progress — T-033 preservation and bounded T-034 SQL/repository linkage verified; broader SQL semantics remain open |
-| M7 | Query engine and bounded impact evidence | Verified — T-035 bounded query/evidence engine |
-| M8 | Incremental invalidation, workers, budgets, repeatability | In progress — T-040/T-041 bounded robustness and adversarial safe-failure evidence; orchestration remains open |
+| M7 | Query engine and bounded impact evidence | In progress — T-035 bounded query/evidence engine and T-036 bounded analysis composition/private entry points verified |
+| M8 | Incremental invalidation, workers, budgets, repeatability | In progress — T-040/T-041 bounded robustness and adversarial safe-failure evidence; full output/time budgets remain open |
 | M9 | Golden suite, adversarial tests, package/CLI smoke, and separately evidenced engine checks | In progress — T-042 checks/package smoke, T-043 Node host evidence, and T-044 bounded release/security/parity audit; broader compatibility/public release remains open |
 
 ## 8. Design risks

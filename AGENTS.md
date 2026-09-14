@@ -9,8 +9,8 @@
 | Scope | Repository-specific documentation and implementation rules |
 | Source of truth | This file for local project conventions; higher-priority host instructions still apply |
 | Evidence | Initial `HEAD` contained only `.gitattributes`; current local HEAD includes the verified foundation and bounded extractors plus this guidance |
-| Verification | Guidance is exercised by the private M1 foundation, bounded M2 extraction, bounded M3–M8 resolvers/Graph/query/robustness boundary, bounded SQL/repository resolver, and 68 focused Node tests; full analyzer verification is absent |
-| Limitations | Parser/resolver, public package/API, CI, and released-runtime conventions are not yet established |
+| Verification | Guidance is exercised by the private M1 foundation, bounded M2 extraction, bounded M3–M8 resolvers/Graph/query/orchestration/robustness boundary, bounded SQL/repository resolver, and 73 focused Node tests; full analyzer verification is absent |
+| Limitations | Full parser/resolver, query-command API, public package/release, CI, and released-runtime conventions are not yet established |
 
 ## Project boundary
 

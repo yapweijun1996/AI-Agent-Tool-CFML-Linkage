@@ -1,6 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { analyzeProject } from "./analyzer.js";
+import { createMixedStructuralScannerBackend } from "./web-scanner.js";
 import { createRootGuard, RootGuardError } from "./root-guard.js";
 
 const TOOL_NAME = "agent-cfml-linkage";
@@ -35,9 +37,9 @@ function usageData() {
   return {
     usage: `${TOOL_NAME} <command> [--config <path>]`,
     commands: COMMANDS,
-    implemented_commands: ["capabilities"],
+    implemented_commands: ["capabilities", "analyze", "index"],
     notes: [
-      "Analysis commands remain incomplete until parser, resolver, and graph stages are implemented.",
+      "analyze and index run the bounded, explicit mixed structural scanner pipeline; broader grammar coverage remains incomplete.",
       "Source is never executed; diagnostics are emitted on stderr and in the JSON envelope.",
     ],
   };
@@ -196,8 +198,8 @@ export function runCli(argv, { cwd = process.cwd() } = {}) {
   }
   if (parsed.command === "capabilities") {
     return result(parsed.command, "completed", [], {
-      commands: { capabilities: "implemented", analyze: "planned", index: "planned", queries: "planned" },
-      source_extensions: [".cfm", ".cfml", ".cfc", ".html", ".htm", ".js", ".mjs", ".css"],
+      commands: { capabilities: "implemented", analyze: "bounded", index: "bounded", queries: "planned" },
+      source_extensions: [".cfm", ".cfml", ".cfc", ".html", ".htm", ".js", ".mjs", ".css", ".sql"],
       foundation: ["root_guard", "deterministic_snapshot", "strict_utf8_decoder", "source_map"],
       safety: { source_execution: false, network: false, database: false, shell: false, browser: false },
     }, DEFAULT_EXIT_CODES.completed);
@@ -221,6 +223,31 @@ export function runCli(argv, { cwd = process.cwd() } = {}) {
     return result(parsed.command, "error", [item], null, config.exit_codes.path_rejected);
   }
 
-  const item = diagnostic("COMMAND_NOT_IMPLEMENTED", "warning", `The ${parsed.command} command is not implemented before parser and graph stages.`);
-  return result(parsed.command, "incomplete", [item], null, config.exit_codes.incomplete);
+  try {
+    const analysis = analyzeProject({
+      rootPath: path.resolve(cwd, config.root),
+      config,
+      parserBackend: createMixedStructuralScannerBackend(),
+      parserVersion: "mixed-structural-scanner/v0.1",
+      parserName: "mixed-structural-scanner",
+      maxFacts: config.limits.max_facts,
+      maxResolverRecords: config.limits.max_edges,
+      maxTraversalDepth: config.limits.max_traversal_depth,
+    });
+    const status = analysis.complete ? "completed" : "incomplete";
+    const exitCode = analysis.complete ? config.exit_codes.completed : config.exit_codes.incomplete;
+    return result(parsed.command, status, analysis.diagnostics, {
+      graph: analysis.graph,
+      fact_bundle: analysis.fact_bundle,
+      resolutions: analysis.resolutions,
+      stats: analysis.stats,
+    }, exitCode);
+  } catch (error) {
+    if (error?.code === "NO_SOURCE_FILES") {
+      const item = diagnostic("NO_SOURCE_FILES", "warning", error.message);
+      return result(parsed.command, "incomplete", [item], null, config.exit_codes.incomplete);
+    }
+    const item = diagnostic("ANALYSIS_FAILURE", "error", `Analysis failed: ${error?.code ?? "unknown"}.`);
+    return result(parsed.command, "error", [item], null, config.exit_codes.internal_failure);
+  }
 }
