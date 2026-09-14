@@ -1,0 +1,124 @@
+# Architecture: agent-cfml-linkage
+
+> **Status: PROPOSED.** No components described here currently exist in this repository.
+
+| Field | Value |
+| --- | --- |
+| Version | 0.1 |
+| Last updated | 2026-09-14 |
+| Scope | Component boundaries, data flow, ownership, and failure behavior |
+| Source of truth | This document for proposed architecture; Git history for current code facts |
+| Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
+| Verification | Not run; architecture is design-only |
+| Limitations | Dependency versions, parser feasibility, runtime compatibility, and resource costs are unknown |
+
+## 1. Boundary
+
+The tool owns deterministic static linkage analysis for a local CFML-first project. It produces Graph IR and bounded evidence. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
+
+```text
+Local source + explicit policy
+             |
+             v
+     Linkage analysis boundary
+             |
+     Graph IR + evidence + diagnostics
+             |
+             +--> future consumers (query clients, impact tools)
+```
+
+All consumers receive facts and evidence rather than hidden runtime assumptions. A consumer may interpret evidence, but may not treat candidate or unresolved relationships as confirmed.
+
+## 2. Ownership model
+
+| Component | Owns | Must not own |
+| --- | --- | --- |
+| Root guard/policy | canonical root, containment, ignore rules, limits, frozen policy | parsing or confidence upgrades |
+| Snapshot/discovery | deterministic file set, fingerprints, drift detection | source mutation or runtime discovery |
+| Decoder/source map | decoding state and coordinate conversion | linkage decisions |
+| Parser adapter | syntax trees, parser diagnostics, completeness | cross-file resolution |
+| Fact extractor | normalized Fact IR and extraction evidence | target selection |
+| Project index | immutable path, symbol, mapping, application, query indexes | mutable resolution state |
+| Resolver passes | bounded candidate/target resolution | index mutation or authoritative guessing |
+| Evidence policy | evidence merge and confidence classes | parser-specific parsing |
+| Graph builder/validator | Graph IR construction, invariants, serialization readiness | generic business interpretation |
+| Cache | optional derived performance state | source of truth or stale-data authority |
+| Query engine | bounded graph traversal and evidence slices | model-written explanations |
+| CLI/library | public invocation and stable envelope | execution of analyzed source |
+
+Core owns stable IDs, confidence policy, root safety, validation, and output contracts. Plugins are intentionally subordinate to those invariants.
+
+## 3. Data flow
+
+1. **Context:** validate root and freeze configuration.
+2. **Snapshot:** discover and fingerprint files in sorted order.
+3. **Parse:** decode each file and preserve source coordinates.
+4. **Facts:** convert syntax into parser-neutral facts.
+5. **Index:** build complete immutable indexes before resolution.
+6. **Resolve:** run ordered, read-only resolver passes.
+7. **Evidence:** classify each result and retain ambiguity.
+8. **Graph:** create nodes, edges, unresolved records, diagnostics, and stats.
+9. **Validate:** check schema, references, determinism, completeness, and safety invariants.
+10. **Serve:** cache validated derived data and answer bounded queries.
+
+The graph is built from facts plus resolution evidence, never directly from ad hoc parser objects. This allows parser replacement without rewriting graph semantics.
+
+## 4. Important ownership boundaries
+
+### Parser versus resolver
+
+Parsing establishes syntax and source spans. Resolvers establish only bounded cross-file relationships. This prevents a parser from silently inventing project semantics and prevents resolvers from depending on unstable AST implementation details.
+
+### Evidence versus confidence
+
+Resolvers submit evidence. A central policy assigns confidence. This prevents a plugin or filename heuristic from promoting its own result to `confirmed`.
+
+### Cache versus graph
+
+The graph document and current source snapshot are authoritative. Cache entries are disposable and versioned. Any hash, policy, parser, extractor, or resolver mismatch invalidates the relevant cache scope.
+
+### Linkage versus impact
+
+Linkage answers “what statically relates to what, and why?” Generic impact ranking, change prioritization, and test selection belong to downstream tools such as `agent-change-impact` and `agent-test-scope`.
+
+## 5. Graph model
+
+The proposed Graph IR has semantic nodes such as files, pages, components, methods, forms, JavaScript functions, queries, tables, datasources, scopes, route conditions, external targets, and unresolved targets. It has explicit edge families for includes, calls, web flow, SQL, Application governance, scope flow, and dynamic references.
+
+Every edge includes endpoints, relation type, source span, evidence, resolver identity, confidence, condition/order where relevant, dynamic state, and freshness information. Node and edge IDs remain stable across content changes when semantic identity is unchanged.
+
+## 6. Failure and partial-result model
+
+The architecture treats incomplete analysis as data:
+
+- syntax errors produce partial parse diagnostics where recovery is safe;
+- unsupported syntax produces explicit unresolved evidence;
+- ambiguous names retain candidate targets;
+- dynamic values retain expressions and dependencies;
+- out-of-root targets are rejected;
+- snapshot drift invalidates completeness;
+- resource caps return `complete=false` and identify the exhausted budget;
+- cache corruption causes rebuild, never trusted stale output.
+
+An internal invariant or serialization failure is different: it is an internal error and must not be represented as a clean analysis.
+
+## 7. Security boundaries
+
+The process must read only authorized local paths beneath the canonical root and configured safe metadata. It must not evaluate CFML expressions, execute JavaScript or SQL, spawn application commands, access a database, or make network requests. Diagnostics and graph evidence must be bounded and must not disclose secret contents.
+
+## 8. Extensibility
+
+The initial implementation should keep extension points narrow:
+
+- parser adapter;
+- fact extractor;
+- resolver;
+- SQL adapter;
+- ignore policy;
+- mapping provider.
+
+Third-party plugins are not required for V1. If added later, enablement, compatibility, and version fingerprints must be explicit. Plugins cannot change root safety, output schema, stable ID rules, or confidence policy.
+
+## 9. Architectural risks and decisions
+
+The major decisions are recorded in [`docs/decisions/ADR-001-project-boundary.md`](docs/decisions/ADR-001-project-boundary.md). The largest open technical risks are CFML grammar coverage, runtime-computed mappings, embedded-language parsing, shared-scope flow, dynamic code, and deterministic incremental invalidation. Each must be covered by fixtures and evidence before release claims are made.
