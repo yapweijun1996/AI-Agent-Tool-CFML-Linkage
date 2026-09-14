@@ -43,7 +43,7 @@ The M1 snapshot currently discovers `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.
 
 ### 3.1 Current repository contract evidence
 
-The repository now has a private `package.json` with Node `>=20`, an `npm test` script, a private `bin/agent-cfml-linkage.js` entry point, package `exports`, a private `src/index.js` library entry, and internal root-guard, snapshot, source-map, CLI, cache, parser-adapter, bounded CFML/web scanner, Fact extractor, bounded SQL/repository resolver, analysis orchestrator, and bounded graph-query modules with focused tests. It has no full parser grammar, released CLI/API, runtime linkage implementation, third-party dependencies, build workflow, or release artifact; bounded query-command CLI wiring is implemented. API, parser dependency, and public package metadata below remain proposed contracts.
+The repository now has a private `package.json` with Node `>=20`, an `npm test` script, a private `bin/agent-cfml-linkage.js` entry point, package `exports`, a private `src/index.js` library entry, and internal root-guard, snapshot, source-map, CLI, cache, parser-adapter, bounded CFML/web scanner, Fact extractor, bounded SQL/repository resolver, analysis orchestrator, and bounded graph-query modules with focused tests. It has no full parser grammar, released CLI/API, runtime linkage implementation, third-party dependencies, or release artifact; a read-only CI workflow is defined but has no hosted run, and bounded query-command CLI wiring is implemented. API, parser dependency, and public package metadata below remain proposed contracts.
 
 ## 4. Analysis contract
 

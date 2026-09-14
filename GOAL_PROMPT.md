@@ -1,18 +1,18 @@
 # Autonomous Goal Prompt
 
-> **Status: PROPOSED / M2–M9 IN PROGRESS.** Future-work contract, not an execution record.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** Future-work contract.
 
 | Field | Value |
 | --- | --- |
 | Version | 0.1 |
 | Last updated | 2026-09-14 |
 | Scope | Evidence-driven implementation loop |
-| Source of truth | Core SSOT plus Git/tests/runtime/release evidence |
-| Evidence | M0/M1, T-023–T-036/T-040–T-046 verified; 74 pass |
+| Source | Core SSOT plus Git/tests/runtime/release evidence |
+| Evidence | M0/M1, T-023–T-036/T-040–T-046 verified; T-047 workflow defined; 74 pass |
 | Verification | Prompt/documentation only |
-| Limitations | Full parser, graph persistence, public release, CI, and runtime compatibility remain open |
+| Limitations | Parser, persistence, release, hosted CI, and runtime compatibility remain open |
 
-Work on `agent-cfml-linkage`, Node `>=20` CFML-first static linkage prototype. Verified: M0/M1, bounded M2 extraction, T-023–T-036 linkage/query/orchestration, T-040–T-044 robustness/checks/Node/audit, T-045 query CLI, and T-046 config validation; private entries exist, but no full parser, graph persistence, CI, or release. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
+Work on `agent-cfml-linkage`, Node `>=20` CFML-first static linkage prototype. Verified: M0/M1, bounded M2, T-023–T-036 linkage/query/orchestration, T-040–T-044 robustness/checks/Node/audit, T-045 query CLI and T-046 config; T-047 workflow is defined; private entries exist, but parser, persistence, hosted CI, and release remain open. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
 
 Repeat:
 

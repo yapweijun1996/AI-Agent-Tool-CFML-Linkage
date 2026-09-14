@@ -16,7 +16,7 @@
 
 The analyzer should give coding agents a small, queryable, evidence-backed view of cross-file relationships without executing the application or guessing dynamic behavior. The design favors narrow stages, immutable intermediate data, explicit incompleteness, and stable output.
 
-**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, bounded CLI/library orchestration, cache, parser-adapter, bounded CFML/web scanners, bounded Fact extractor, immutable index, literal/CFC/scope/web-flow/repository resolver modules, dynamic/generated/SQL evidence handling, Graph builder, and bounded graph query engine with focused tests, a private `package.json`, and validated contracts; full parser backend, broader Fact IR, caller, CI, and release architecture remain unimplemented; bounded graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query construction and T-036 composition are implemented.
+**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, bounded CLI/library orchestration, cache, parser-adapter, bounded CFML/web scanners, bounded Fact extractor, immutable index, literal/CFC/scope/web-flow/repository resolver modules, dynamic/generated/SQL evidence handling, Graph builder, and bounded graph query engine with focused tests, a private `package.json`, and validated contracts; full parser backend, broader Fact IR, caller, hosted CI verification, and release architecture remain unimplemented; the read-only CI workflow is defined, while bounded graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query construction and T-036 composition are implemented.
 
 It is CFML-first: CFM/CFC structure, Application governance, includes, CFC typing, and shared scopes receive priority. HTML, JavaScript, CSS, SQL, and repository relations extend that model where static evidence is available.
 
@@ -175,7 +175,7 @@ The sequence is dependency-aware but not a schedule. M0's contract gate, M1 foun
 | M6 | Dynamic/generated/SQL-dynamic evidence and SQL/repository linkage | In progress — T-033 preservation and bounded T-034 SQL/repository linkage verified; broader SQL semantics remain open |
 | M7 | Query engine and bounded impact evidence | In progress — T-035 bounded query/evidence engine, T-036 bounded analysis composition/private entry points, and T-045 bounded query-command CLI and T-046 bounded CLI configuration enforcement verified |
 | M8 | Incremental invalidation, workers, budgets, repeatability | In progress — T-040/T-041 bounded robustness/adversarial safe-failure evidence and private CLI output-budget enforcement; library output and wall-time budgets remain open |
-| M9 | Golden suite, adversarial tests, package/CLI smoke, and separately evidenced engine checks | In progress — T-042 checks/package smoke, T-043 Node host evidence, and T-044 bounded release/security/parity audit; broader compatibility/public release remains open |
+| M9 | Golden suite, adversarial tests, package/CLI smoke, and separately evidenced engine checks | In progress — T-042 checks/package smoke, T-043 Node host evidence, T-044 bounded release/security/parity audit, and T-047 implemented CI workflow; hosted compatibility/public release remains open |
 
 ## 8. Design risks
 

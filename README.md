@@ -16,7 +16,7 @@
 
 - **Project type:** planned hybrid NPM/library + CLI + AI-agent evidence provider.
 - **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction, M3 bounded resolution/Graph IR, M4 bounded CFC, M5 scope/web-flow, M6 bounded dynamic/SQL/repository linkage, M7 bounded graph queries/orchestration, M8 bounded robustness/adversarial evidence, and M9 bounded checks/package smoke/Node host evidence in progress; broader resolver not started.
-- **Current state:** M0 contracts, the complete M1 foundation, bounded M2 parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, M7 graph query/evidence, bounded analysis-orchestration, and bounded query-command CLI slices, M8 robustness/adversarial safe-failure evidence, and M9 local checks/package smoke/Node host compatibility/release-parity audit are implemented/verified; no full parser grammar, broader resolver, or released package exists.
+- **Current state:** M0 contracts, the complete M1 foundation, bounded M2 parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, M7 graph query/evidence, bounded analysis-orchestration, and bounded query-command CLI slices, M8 robustness/adversarial safe-failure evidence, and M9 local checks/package smoke/Node host compatibility/release-parity audit plus a least-privilege CI workflow are implemented; hosted CI is unverified, and no full parser grammar, broader resolver, or released package exists.
 
 ## Purpose
 
@@ -41,7 +41,7 @@ The repository has completed its verified M1 safety foundation and advanced M2 w
 - broader Graph IR linkage and analysis orchestration (bounded Graph construction/validation exists in `src/graph.js`, bounded immutable queries/evidence explanations exist in `src/graph-query.js`, and bounded composition exists in `src/analyzer.js`; the Graph and composed-analysis contracts are `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `schema/agent-cfml-linkage-analysis-v0.1.schema.json`)
 - complete public CLI/library API (the private package exposes bounded `analyzeProject`/`analyze`/`index` entry points and query commands over fresh analysis graphs; public release remains open)
 - full incremental analysis/cache, library output/time budgets, query-command persistence, and public query integration beyond the private CLI
-- broader golden resolver fixtures and full CLI/library integration; the fixture layout, manifest, inert negative/adversarial source inputs, bounded expectations, T-034 SQL/repository fixture, bounded `analyze`/`index` composition, bounded CLI output cap, and local package/CLI smoke exist, while CI and published artifacts remain unavailable
+- broader golden resolver fixtures and full CLI/library integration; the fixture layout, manifest, inert negative/adversarial source inputs, bounded expectations, T-034 SQL/repository fixture, bounded `analyze`/`index` composition, bounded CLI output cap, and local package/CLI smoke exist, while hosted CI runs and published artifacts remain unavailable
 
 A related external project, `agent-cfml-check`, is separate bounded single-file CFML checking prior art. Its external status must not be read as implementation evidence for this repository.
 

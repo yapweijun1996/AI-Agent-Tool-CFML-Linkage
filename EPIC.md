@@ -51,7 +51,7 @@ Out of scope: source execution, runtime network/database access, browser automat
 | M6 SQL/repository | Dynamic/generated/SQL-dynamic preservation, query/table/datasource, and structurally evidenced repository edges | M3, M5 | In progress — T-033 preservation and bounded T-034 SQL/repository resolution verified; broader SQL semantics open |
 | M7 Query interface | Related/callers/callees/includes/included-by/trace/scope-flow/tables/routes/unresolved/explain-edge/stats/impact-evidence plus bounded analysis composition | M3–M6 | In progress — T-035/T-036/T-045/T-046 verified (bounded) |
 | M8 Incremental performance | Dependency-aware invalidation, bounded workers, budgets, repeatability | M7 | In progress — T-040/T-041 bounded robustness/adversarial evidence, T-036 parser-time drift evidence, and private CLI output-budget enforcement; library output/time budgets remain open |
-| M9 Release verification | Golden/adversarial suite, package/import/CLI smoke, engine evidence | M8 | In progress — T-042 checks/package smoke, T-043 Node host evidence, and T-044 bounded release/security/parity audit; broader compatibility/public release remains open |
+| M9 Release verification | Golden/adversarial suite, package/import/CLI smoke, engine evidence | M8 | In progress — T-042 checks/package smoke, T-043 Node host evidence, T-044 bounded release/security/parity audit, and T-047 implemented CI workflow; hosted compatibility/public release remains open |
 
 ## 5. Epic acceptance criteria
 
