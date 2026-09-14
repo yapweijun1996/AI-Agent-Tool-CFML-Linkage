@@ -8,5 +8,6 @@
 | `cfc-inheritance-and-scope` | CFC component/method, instantiation, method call, ordered include scope flow, conditions | Complete with confirmed/strong edges and evidence |
 | `web-surface` | HTML forms/assets, JavaScript fetch/AJAX, CSS references, visible SQL | Bounded Fact output with explicit partial coverage |
 | `web-flow-and-conditions` | Conditional form, fetch, jQuery AJAX, XMLHttpRequest, and redirect flow with literal route targets | Bounded flow/condition Graph edges with explicit partial coverage |
+| `sql-and-repository` | Literal `cfquery`/`queryExecute` tables/datasources and CFC method repository/action calls | Bounded SQL/repository Graph edges; filename-only names are not evidence |
 
-The current inputs support bounded M2 structural Fact extraction and fixture-backed T-032 web-flow/condition verification. Add checked-in golden Graph outputs only after the corresponding resolver and graph contracts are verified.
+The current inputs support bounded M2 structural Fact extraction, fixture-backed T-032 web-flow/condition verification, and T-034 SQL/repository linkage verification. Add checked-in golden Graph outputs only after the corresponding resolver and graph contracts are verified.

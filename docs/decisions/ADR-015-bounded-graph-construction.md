@@ -27,7 +27,7 @@ The builder never executes source or resolves a candidate by filename similarity
 - Graph IDs and ordering are repeatable for the same semantic inputs and injected timestamp.
 - The graph can be schema-validated and consumed even when resolution is partial.
 - Reverse callers/callees lookup is available without making derived indexes part of the serialized contract.
-- Broader component, method, shared-scope, repository, and runtime linkage remains explicitly unimplemented.
+- Broader runtime linkage and query operations remain explicitly unimplemented; repository/action edges are supplied by the separate bounded T-034 resolver.
 
 ## Verification
 

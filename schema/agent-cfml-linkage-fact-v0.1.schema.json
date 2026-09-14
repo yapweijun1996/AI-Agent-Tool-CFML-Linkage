@@ -190,6 +190,7 @@
         "CONDITION",
         "MAPPING",
         "APPLICATION_HOOK",
+        "REPOSITORY_ACTION",
         "DYNAMIC_REFERENCE",
         "CSS_ASSET"
       ]

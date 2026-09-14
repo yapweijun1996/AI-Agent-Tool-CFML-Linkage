@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | Source encoding, BOM handling, byte offsets, line/column spans, and invalid input |
 | Source of truth | `src/source-map.js`, `test/source-map.test.js`, this ADR, and `SPEC.md` |
-| Evidence | `npm test`: 60 passed, including multibyte UTF-8, BOM, invalid encoding, and range cases |
+| Evidence | `npm test`: 62 passed, including multibyte UTF-8, BOM, invalid encoding, and range cases |
 | Verification | Local Node tests pass; parser coordinate compatibility and cross-platform matrix remain unverified |
 | Limitations | Only UTF-8 is accepted; parser-specific column conventions and non-UTF-8 source policy remain outside this slice |
 

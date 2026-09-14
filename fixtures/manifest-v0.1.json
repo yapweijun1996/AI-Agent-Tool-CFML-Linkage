@@ -65,6 +65,20 @@
       "source_execution": false
     },
     {
+      "id": "golden-sql-and-repository",
+      "category": "golden",
+      "path": "golden/sql-and-repository",
+      "covers": [
+        "visible-sql",
+        "queryExecute",
+        "datasource",
+        "repository-actions",
+        "filename-only-non-evidence"
+      ],
+      "expected": "sql-repository-v0.1",
+      "source_execution": false
+    },
+    {
       "id": "negative-ambiguity-and-out-of-root",
       "category": "negative",
       "path": "negative/ambiguity-and-out-of-root",

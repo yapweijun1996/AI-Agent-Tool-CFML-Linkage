@@ -1,6 +1,6 @@
 # Architecture: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M6 IN PROGRESS.** The M1 foundation and bounded M2 parser/scanner/Fact slices exist; the remaining architecture is not implemented.
+> **Status: PROPOSED / M2–M6 IN PROGRESS.** The M1 foundation and bounded M2–M6 parser/scanner/Fact/resolver slices exist; the remaining architecture is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -9,12 +9,12 @@
 | Scope | Component boundaries, data flow, ownership, and failure behavior |
 | Source of truth | This document for proposed architecture; Git history for current code facts |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
-| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/resolver/dynamic-evidence tests pass locally; remaining architecture is unverified |
+| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/resolver/dynamic-evidence/SQL-repository tests pass locally; remaining architecture is unverified |
 | Limitations | Parser feasibility, runtime compatibility, resource costs, and public package compatibility are unknown; M1 uses Node built-ins only |
 
 ## 1. Boundary
 
-The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1–M6 bounded slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, a private CLI envelope, bounded parser scanners, Fact evidence, immutable indexes, conservative literal resolution, and dynamic/generated/SQL-dynamic preservation; Bounded Graph IR production/validation is implemented in `src/graph.js`, bounded CFC resolution is implemented in `src/cfc-resolver.js`, bounded shared-scope resolution is implemented in `src/scope-resolver.js`, and bounded web-flow resolution is implemented in `src/web-flow-resolver.js`; broader linkage resolution and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
+The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1–M6 bounded slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, a private CLI envelope, bounded parser scanners, Fact evidence, immutable indexes, conservative literal resolution, dynamic/generated/SQL-dynamic preservation, bounded SQL/queryExecute extraction, and structural repository/action resolution; bounded Graph IR production/validation is implemented in `src/graph.js`, bounded CFC resolution is implemented in `src/cfc-resolver.js`, bounded shared-scope resolution is implemented in `src/scope-resolver.js`, bounded web-flow resolution is implemented in `src/web-flow-resolver.js`, and bounded repository resolution is implemented in `src/repository-resolver.js`; broader linkage resolution and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
 
 ```text
 Local source + explicit policy
@@ -39,7 +39,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Parser adapter | explicit backend boundary, bounded CFML/web structural scanners, syntax trees, parser diagnostics, completeness; default backend remains unselected | cross-file resolution |
 | Fact extractor | normalized CFML/web Fact IR and extraction evidence | target selection |
 | Project index | immutable path, symbol, mapping, application, query, and per-file fact indexes; unique/ambiguous/missing lookup states | mutable resolution state |
-| Resolver passes | bounded candidate/target resolution in `src/path-resolver.js`, `src/cfc-resolver.js`, `src/scope-resolver.js`, and `src/web-flow-resolver.js`; unresolved/ambiguous/dynamic states | index mutation or authoritative guessing |
+| Resolver passes | bounded candidate/target resolution in `src/path-resolver.js`, `src/cfc-resolver.js`, `src/scope-resolver.js`, `src/web-flow-resolver.js`, and `src/repository-resolver.js`; unresolved/ambiguous/dynamic states | index mutation or authoritative guessing |
 | Evidence policy | evidence merge and confidence classes | parser-specific parsing |
 | Graph builder/validator | Graph IR construction, invariants, serialization readiness | generic business interpretation |
 | Cache | optional derived performance state | source of truth or stale-data authority |
@@ -83,7 +83,7 @@ Linkage answers “what statically relates to what, and why?” Generic impact r
 
 ## 5. Graph model
 
-The Graph IR has semantic nodes such as files, pages, components, methods, forms, JavaScript functions, queries, tables, datasources, scopes, route conditions, external targets, and unresolved targets. It has explicit edge families for includes, calls, web flow, SQL, Application governance, scope flow, and dynamic references.
+The Graph IR has semantic nodes such as files, pages, components, methods, forms, JavaScript functions, queries, tables, datasources, repository actions, scopes, route conditions, external targets, and unresolved targets. It has explicit edge families for includes, calls, web flow, SQL, repository/action calls, Application governance, scope flow, and dynamic references.
 
 Every edge includes endpoints, relation type, source span, evidence, resolver identity, confidence, condition/order where relevant, dynamic state, and freshness information. Node and edge IDs remain stable across content changes when semantic identity is unchanged.
 

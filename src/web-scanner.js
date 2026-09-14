@@ -6,6 +6,7 @@ const DEFAULT_MAX_NODES = 10_000;
 const DEFAULT_MAX_ATTRIBUTE_BYTES = 4_096;
 const DEFAULT_MAX_EXPRESSION_BYTES = 4_096;
 const HTML_EXTENSIONS = new Set([".cfm", ".cfml", ".cfc", ".html", ".htm"]);
+const CFML_EXTENSIONS = new Set([".cfm", ".cfml", ".cfc"]);
 const JAVASCRIPT_EXTENSIONS = new Set([".js", ".mjs"]);
 const CSS_EXTENSIONS = new Set([".css"]);
 const SQL_EXTENSIONS = new Set([".sql"]);
@@ -457,8 +458,8 @@ function sqlTableReferences(text, start, end) {
   };
 }
 
-function sqlNode(text, start, end, sourceMap, file, attributes = {}) {
-  const references = sqlTableReferences(text, start, end);
+function sqlNode(text, start, end, sourceMap, file, attributes = {}, sqlStart = start, sqlEnd = end) {
+  const references = sqlTableReferences(text, sqlStart, sqlEnd);
   return {
     kind: "SQL_QUERY",
     tables: references.tables,
@@ -471,6 +472,91 @@ function sqlNode(text, start, end, sourceMap, file, attributes = {}) {
     ...attributes,
     ...nodeSpan(sourceMap, start, end),
   };
+}
+
+function queryExecuteDatasource(text, start, end) {
+  const match = /\bdatasource\s*[:=]\s*(?:"([^"]*)"|'([^']*)'|([^,}\n)]{1,256}))/iu.exec(text.slice(start, end));
+  if (!match) return { datasource: null, datasource_expression: null, datasource_dynamic: false };
+  const expression = (match[1] ?? match[2] ?? match[3] ?? "").trim().slice(0, 256);
+  const literal = match[1] ?? match[2] ?? null;
+  return {
+    datasource: literal !== null && !literal.includes("#") && literal.trim() !== "" ? literal.trim() : null,
+    datasource_expression: expression || null,
+    datasource_dynamic: literal === null || literal.includes("#") || literal.trim() === "",
+  };
+}
+
+function queryExecuteNodes(text, start, end, sourceMap, file, maxExpressionBytes, limit) {
+  const nodes = [];
+  if (limit <= 0) return { nodes, limited: false };
+  let cursor = start;
+  let limited = false;
+  while (cursor < end) {
+    if (text.startsWith("<!---", cursor)) {
+      const close = text.indexOf("--->", cursor + 5);
+      cursor = close === -1 ? end : close + 4;
+      continue;
+    }
+    if (text.startsWith("<!--", cursor)) {
+      const close = text.indexOf("-->", cursor + 4);
+      cursor = close === -1 ? end : close + 3;
+      continue;
+    }
+    if (text.startsWith("//", cursor)) {
+      const lineEnd = text.indexOf("\n", cursor + 2);
+      cursor = lineEnd === -1 ? end : lineEnd + 1;
+      continue;
+    }
+    if (text.startsWith("/*", cursor)) {
+      const close = text.indexOf("*/", cursor + 2);
+      cursor = close === -1 ? end : close + 2;
+      continue;
+    }
+    if (text[cursor] === "\"" || text[cursor] === "'" || text[cursor] === "`") {
+      cursor = skipJavaScriptString(text, cursor, end);
+      continue;
+    }
+    if (!isIdentifierStart(text[cursor])) {
+      cursor += 1;
+      continue;
+    }
+    const identifierStart = cursor;
+    cursor += 1;
+    while (cursor < end && isIdentifierCharacter(text[cursor])) cursor += 1;
+    if (text.slice(identifierStart, cursor).toLowerCase() !== "queryexecute") continue;
+    const open = skipJavaScriptTrivia(text, cursor, end);
+    if (text[open] !== "(") continue;
+    const callEnd = findCallEnd(text, open, end);
+    if (callEnd <= open || text[callEnd - 1] !== ")") {
+      cursor = callEnd;
+      continue;
+    }
+    const sqlStart = skipJavaScriptTrivia(text, open + 1, callEnd - 1);
+    const sql = parseQuoted(text, sqlStart, callEnd - 1);
+    if (nodes.length >= limit) {
+      limited = true;
+      break;
+    }
+    const bounded = boundedValue(text.slice(identifierStart, callEnd), maxExpressionBytes);
+    if (!sql) {
+      nodes.push(sqlNode(text, identifierStart, callEnd, sourceMap, file, {
+        statement_kind: "queryExecute",
+        dynamic_sql: true,
+        ...queryExecuteDatasource(text, sqlStart, callEnd - 1),
+        expression: bounded.value,
+        expression_truncated: bounded.truncated,
+      }, sqlStart, sqlStart));
+    } else {
+      nodes.push(sqlNode(text, identifierStart, callEnd, sourceMap, file, {
+        statement_kind: "queryExecute",
+        ...queryExecuteDatasource(text, sql.end, callEnd - 1),
+        expression: bounded.value,
+        expression_truncated: bounded.truncated,
+      }, sqlStart + 1, sql.end - 1));
+    }
+    cursor = callEnd;
+  }
+  return { nodes, limited };
 }
 
 function addNode(nodes, node, diagnostics, maxNodes, file, sourceMap, offset) {
@@ -599,6 +685,14 @@ function scanHtml(text, sourceMap, file, maxNodes, maxAttributeBytes, maxExpress
     }
     cursor = parsed.next;
   }
+  if (CFML_EXTENSIONS.has(extensionFor(file)) && nodes.length < maxNodes) {
+    const queryResult = queryExecuteNodes(text, 0, text.length, sourceMap, file, maxExpressionBytes, maxNodes - nodes.length);
+    nodes.push(...queryResult.nodes);
+    if (queryResult.limited) {
+      diagnostics.push(diagnostic("RESOURCE_LIMIT", "error", `Web parser node limit exceeded: ${maxNodes}.`, file, sourceMap, 0));
+      complete = false;
+    }
+  }
   if (text.trim() !== "") {
     diagnostics.push(diagnostic("UNSUPPORTED_SYNTAX", "warning", "HTML coverage is limited to bounded form, asset, and embedded web-flow structures.", file, sourceMap, 0, text.length));
     complete = false;
@@ -681,7 +775,7 @@ function extensionFor(file) {
 /**
  * Scan bounded web-language structures without evaluating any source.
  * The scanner emits evidence nodes for forms, client calls, CSS references,
- * and visible SQL table names; it is not a browser or language runtime.
+ * visible SQL table names, and literal-first-argument queryExecute calls; it is not a browser or language runtime.
  */
 export function createWebScannerBackend({ maxNodes = DEFAULT_MAX_NODES, maxAttributeBytes = DEFAULT_MAX_ATTRIBUTE_BYTES, maxExpressionBytes = DEFAULT_MAX_EXPRESSION_BYTES } = {}) {
   for (const [value, name] of [[maxNodes, "maxNodes"], [maxAttributeBytes, "maxAttributeBytes"], [maxExpressionBytes, "maxExpressionBytes"]]) {

@@ -50,6 +50,7 @@ const FACT_NODE_KINDS = Object.freeze({
   SCOPE_WRITE: "SCOPE_VARIABLE",
   CONDITION: "ROUTE_CONDITION",
   APPLICATION_HOOK: "APPLICATION",
+  REPOSITORY_ACTION: "REPOSITORY_ACTION",
 });
 const FALLBACK_SPAN = Object.freeze({ start_line: 1, start_col: 0, end_line: 1, end_col: 0 });
 const CONFIDENCE_LEVELS = new Set(["confirmed", "strong", "candidate", "unresolved"]);
@@ -155,6 +156,10 @@ function nodeSpec(fact) {
   }
   if (fact.kind === "CONDITION") return { kind, name: fact.normalized_expression, canonicalName: `${fact.file}:condition:${fact.normalized_expression}`, path: fact.file };
   if (fact.kind === "APPLICATION_HOOK") return { kind, name: fact.file, canonicalName: fact.file, path: fact.file, symbol: { kind: "application", name: fact.file } };
+  if (fact.kind === "REPOSITORY_ACTION") {
+    const name = attributes.action_name || fact.normalized_expression;
+    return { kind, name, canonicalName: `${fact.file}:repository:${name}`, path: fact.file, symbol: { kind: "repository_action", name } };
+  }
   return null;
 }
 
@@ -172,6 +177,7 @@ function defaultConfidence(level, reason) {
 
 function resolutionEvidenceKind(relationType) {
   if (relationType === "ROUTES_WHEN") return "condition";
+  if (relationType === "CALLS_REPOSITORY") return "symbol_resolution";
   if (relationType.startsWith("SCOPE_")) return "scope_flow";
   if (relationType.startsWith("APPLICATION") || relationType.startsWith("REQUEST_HOOK") || ["EXTENDS", "IMPLEMENTS", "INSTANTIATES", "CFINVOKES", "CALLS_METHOD"].includes(relationType)) return "symbol_resolution";
   return "path_resolution";
@@ -182,6 +188,7 @@ function confidenceReason(resolution) {
   if (resolution.resolution_kind === "extension-fallback") return "Unique bounded extension fallback within the admitted snapshot.";
   if (resolution.resolution_kind === "nearest-application") return "Unique nearest Application file convention.";
   if (resolution.resolution_kind === "nearest-application-hook") return "Known Application hook under the unique nearest Application file.";
+  if (resolution.resolution_kind === "structural-repository-action") return "Unique CFC method contains a statically visible query.";
   return "Bounded deterministic resolver evidence.";
 }
 
@@ -368,7 +375,9 @@ export function buildGraph({ factBundle, resolutions = null, snapshot = null, ro
     if (relationForFact(fact) && !resolvedFactIds.has(fact.fact_id) && !resolverUnresolvedFactIds.has(fact.fact_id)) addUnresolved({ relation_type: relationForFact(fact), reason: "UNSUPPORTED_SYNTAX", normalized_expression: fact.normalized_expression, span: fact.span }, fact);
     if (fact.kind === "DYNAMIC_REFERENCE" && !resolverUnresolvedFactIds.has(fact.fact_id)) addUnresolved({ relation_type: unresolvedRelationForFact(fact), reason: fact.attributes?.unresolved_reason ?? "DYNAMIC_EXPRESSION", normalized_expression: fact.normalized_expression, span: fact.span }, fact);
     if (fact.kind === "QUERY") {
-      for (const identifier of Array.isArray(fact.attributes?.dynamic_tables) ? fact.attributes.dynamic_tables : []) addUnresolved({ relation_type: "QUERY_READS_TABLE", reason: "SQL_DYNAMIC_IDENTIFIER", normalized_expression: identifier, span: fact.span }, fact);
+      const dynamicTables = Array.isArray(fact.attributes?.dynamic_tables) ? fact.attributes.dynamic_tables : [];
+      for (const identifier of dynamicTables) addUnresolved({ relation_type: "QUERY_READS_TABLE", reason: "SQL_DYNAMIC_IDENTIFIER", normalized_expression: identifier, span: fact.span }, fact);
+      if (fact.attributes?.dynamic_sql === true && dynamicTables.length === 0) addUnresolved({ relation_type: "QUERY_READS_TABLE", reason: "DYNAMIC_EXPRESSION", normalized_expression: fact.attributes?.sql_expression ?? fact.normalized_expression, span: fact.span }, fact);
       if (fact.attributes?.datasource_dynamic === true) addUnresolved({ relation_type: "QUERY_USES_DATASOURCE", reason: "DYNAMIC_EXPRESSION", normalized_expression: fact.attributes?.datasource_expression ?? fact.normalized_expression, span: fact.span }, fact);
     }
     if ((fact.kind === "INSTANTIATE" || fact.kind === "INVOKE" || fact.kind === "MAPPING") && !resolvedFactIds.has(fact.fact_id) && !resolverUnresolvedFactIds.has(fact.fact_id)) addUnresolved({ relation_type: unresolvedRelationForFact(fact), reason: "MAPPING_UNKNOWN", normalized_expression: fact.normalized_expression, span: fact.span }, fact);
@@ -410,7 +419,7 @@ export function buildGraph({ factBundle, resolutions = null, snapshot = null, ro
       supported_languages: [...new Set(factBundle.source_files.map((file) => file.language ?? "unknown"))].filter((language) => SUPPORTED_LANGUAGES.includes(language)).sort(compareStrings),
       node_kinds: [...new Set(graphNodes.map((node) => node.kind))].sort(compareStrings),
       edge_types: [...new Set(graphEdges.map((edge) => edge.type))].sort(compareStrings),
-      resolvers: ["literal-path-resolver/v0.1"],
+      resolvers: ["cfc-resolver/v0.1", "literal-path-resolver/v0.1", "repository-resolver/v0.1", "scope-resolver/v0.1", "web-flow-resolver/v0.1"],
     },
     complete: factBundle.complete === true && resolutions !== null && resolutions.complete === true,
     nodes: graphNodes,

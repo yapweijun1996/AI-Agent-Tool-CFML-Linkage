@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | Forms, redirects, fetch/AJAX, CSS imports/assets, visible SQL tables, and client script assets |
 | Source of truth | `src/web-scanner.js`, `src/fact-extractor.js`, `test/web-scanner.test.js`, `fixtures/golden/web-surface/`, this ADR, and `SPEC.md` |
-| Evidence | `npm test`: 60 passed; mixed fixture Fact IR is deterministic and validates against the Fact IR schema |
+| Evidence | `npm test`: 62 passed; mixed fixture Fact IR is deterministic and validates against the Fact IR schema |
 | Verification | Static strings/comments, dynamic targets, bounded nodes, HTML forms/assets, JavaScript calls, CSS references, SQL tables, and CFML redirect/query cases pass locally |
 | Limitations | No browser execution, JavaScript/CSS/SQL grammar completeness, route semantics, or cross-file resolution exists |
 

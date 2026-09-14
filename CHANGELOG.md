@@ -43,6 +43,7 @@
 - Bounded ordered shared-scope produces/consumes/overrides resolution, Fact scope references, Graph scope-flow edges, focused tests, and ADR-017 for T-031.
 - Bounded web-flow/condition resolution for forms, redirects, fetch, known AJAX wrappers, numeric mixed-node ordering, focused fixtures/tests, and ADR-018 for T-032.
 - Bounded dynamic/generated/SQL-dynamic evidence preservation for `evaluate`, generated names, interpolated SQL identifiers, dynamic datasources, focused adversarial fixtures/tests, and ADR-019 for T-033.
+- Bounded `cfquery`/literal-`queryExecute` table and datasource extraction plus structural repository/action Facts, resolutions, Graph edges, filename-only negative evidence, fixtures/tests, and ADR-020 for T-034.
 
 ### Not claimed
 

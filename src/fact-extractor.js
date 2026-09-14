@@ -44,6 +44,34 @@ function sha256(value) {
   return `sha256:${crypto.createHash("sha256").update(value, "utf8").digest("hex")}`;
 }
 
+function compareStrings(left, right) {
+  if (left < right) return -1;
+  if (left > right) return 1;
+  return 0;
+}
+
+function compareFacts(left, right) {
+  const leftSpan = left.span ?? {};
+  const rightSpan = right.span ?? {};
+  return compareStrings([
+    left.file ?? "",
+    leftSpan.start_line ?? 0,
+    leftSpan.start_col ?? 0,
+    leftSpan.end_line ?? 0,
+    leftSpan.end_col ?? 0,
+    left.kind ?? "",
+    left.fact_id ?? "",
+  ].join("\0"), [
+    right.file ?? "",
+    rightSpan.start_line ?? 0,
+    rightSpan.start_col ?? 0,
+    rightSpan.end_line ?? 0,
+    rightSpan.end_col ?? 0,
+    right.kind ?? "",
+    right.fact_id ?? "",
+  ].join("\0"));
+}
+
 function stableFactId(file, kind, node, rule, ordinal) {
   const span = node.span ?? { start_line: 1, start_col: 0, end_line: 1, end_col: 0 };
   const identity = [
@@ -187,6 +215,32 @@ function makeDynamicFact({ file, language, node, sourceKind, expression, enclosi
     attributes: { source_kind: sourceKind, dynamic: true, ...(unresolvedReason !== "DYNAMIC_EXPRESSION" ? { unresolved_reason: unresolvedReason } : {}) },
     ordinal,
   });
+}
+
+function appendRepositoryActionFacts(facts, addFact, nextOrdinal) {
+  const methods = facts.filter((fact) => fact.kind === "METHOD" && path.extname(fact.file).toLowerCase() === ".cfc").sort(compareFacts);
+  for (const method of methods) {
+    const actionName = method.normalized_expression.replace(/^method\s+/u, "");
+    const queryFacts = facts.filter((fact) => fact.kind === "QUERY" && fact.file === method.file && fact.enclosing_symbol === actionName).sort(compareFacts);
+    if (queryFacts.length === 0) continue;
+    addFact(makeFact({
+      file: method.file,
+      language: method.language,
+      node: method,
+      kind: "REPOSITORY_ACTION",
+      normalizedExpression: `repository action ${actionName}`,
+      enclosingSymbol: method.enclosing_symbol,
+      extractionRuleId: "repository-action-method-query-v0.1",
+      attributes: {
+        action_name: actionName,
+        method_fact_id: method.fact_id,
+        query_fact_ids: queryFacts.map((fact) => fact.fact_id),
+        structural_evidence: ["cfc_method_contains_query"],
+      },
+      ordinal: nextOrdinal++,
+    }));
+  }
+  return nextOrdinal;
 }
 
 function fileSpan(parsed) {
@@ -366,8 +420,9 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
       }
       if (node.kind === "SQL_QUERY") {
         const tables = Array.isArray(node.tables) ? node.tables : [];
-        const expression = tables.length > 0 ? tables.join(", ") : "visible sql query";
-        addFact(makeFact({ file, language: nodeLanguage, node, kind: "QUERY", normalizedExpression: expression, enclosingSymbol, extractionRuleId: "visible-sql-tables-v0.1", attributes: { tables, dynamic_tables: Array.isArray(node.dynamic_tables) ? node.dynamic_tables : [], statement_kind: node.statement_kind ?? "visible_sql", datasource: node.datasource ?? null, datasource_expression: node.datasource_expression ?? null, datasource_dynamic: node.datasource_dynamic === true }, ordinal: factOrdinal++ }));
+        const dynamicTables = Array.isArray(node.dynamic_tables) ? node.dynamic_tables : [];
+        const expression = tables.length > 0 ? tables.join(", ") : dynamicTables.length > 0 ? dynamicTables.join(", ") : node.dynamic_sql === true ? node.expression ?? "dynamic sql query" : "visible sql query";
+        addFact(makeFact({ file, language: nodeLanguage, node, kind: "QUERY", normalizedExpression: expression, enclosingSymbol, extractionRuleId: node.statement_kind === "queryExecute" ? "queryexecute-sql-v0.1" : "visible-sql-tables-v0.1", attributes: { tables, dynamic_tables: dynamicTables, dynamic_sql: node.dynamic_sql === true, sql_expression: node.dynamic_sql === true ? node.expression ?? null : null, statement_kind: node.statement_kind ?? "visible_sql", datasource: node.datasource ?? null, datasource_expression: node.datasource_expression ?? null, datasource_dynamic: node.datasource_dynamic === true }, ordinal: factOrdinal++ }));
         continue;
       }
       if (node.kind !== "CFML_TAG") continue;
@@ -481,6 +536,8 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
       }
     }
   }
+
+  factOrdinal = appendRepositoryActionFacts(facts, addFact, factOrdinal);
 
   facts.sort((left, right) => {
     const leftKey = [left.file, left.span.start_line, left.span.start_col, left.span.end_line, left.span.end_col, left.kind, left.fact_id].join("\0");

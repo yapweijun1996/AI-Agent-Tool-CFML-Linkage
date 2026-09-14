@@ -8,9 +8,9 @@
 | Last updated | 2026-09-14 |
 | Scope | Golden, negative, and adversarial fixture organization |
 | Source of truth | `manifest-v0.1.json` and each fixture's README |
-| Evidence | T-006 layout/manifest invariant check plus T-021/T-022/T-032/T-033 bounded Fact/flow/dynamic-evidence fixture checks and T-023 immutable-index checks |
-| Verification | Layout/manifest consistency, bounded CFML/web Fact behavior, T-032 web-flow/condition behavior, and T-033 dynamic/generated/SQL-dynamic behavior checked; broader resolver/runtime behavior remains unverified |
-| Limitations | Broad resolver golden outputs, SQL/repository resolution, and engine/runtime behavior remain unverified |
+| Evidence | T-006 layout/manifest invariant check plus T-021/T-022/T-032/T-033/T-034 bounded Fact/flow/dynamic-evidence/SQL-repository fixture checks and T-023 immutable-index checks |
+| Verification | Layout/manifest consistency, bounded CFML/web Fact behavior, T-032 web-flow/condition behavior, T-033 dynamic/generated/SQL-dynamic behavior, and T-034 SQL/repository behavior checked; broader resolver/runtime behavior remains unverified |
+| Limitations | Broader resolver golden outputs, SQL semantics, and engine/runtime behavior remain unverified |
 
 ## Layout
 
