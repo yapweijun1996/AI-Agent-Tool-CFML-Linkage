@@ -70,6 +70,7 @@ Core documentation coverage is now the current work product: goal, design, speci
 - Implemented T-046: the private CLI now enforces the complete v0.1 configuration object shape and bounded value contract, including query-request validation, before root admission/analysis; library-wide budget enforcement remains open.
 - Implemented T-047: `.github/workflows/ci.yml` defines a read-only Node 20.x/22.x/24.x `npm test` matrix without publish/deploy steps; hosted execution remains unverified.
 - Implemented and locally verified T-048: `analyzeProject` and `buildGraph` enforce the configured global `max_evidence` budget with deterministic partial evidence and an explicit `RESOURCE_LIMIT` diagnostic; library output/time budgets remain open.
+- Refreshed the retained T-043 Node host evidence and ADR-023 from the prior 68-test observation to the current 75-test run, while preserving the historical T-044 audit record.
 
 ## Blockers and unresolved decisions
 

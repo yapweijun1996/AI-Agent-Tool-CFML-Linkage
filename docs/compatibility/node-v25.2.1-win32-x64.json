@@ -17,7 +17,7 @@
     },
     {
       "command": "npm test",
-      "observed": "68 passed, 0 failed",
+      "observed": "75 passed, 0 failed",
       "status": "passed"
     }
   ],

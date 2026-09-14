@@ -59,6 +59,7 @@
 - Implemented bounded T-046 CLI configuration validation: the complete v0.1 object shape/value contract and query-request options are rejected before root admission/analysis; library-wide budget enforcement remains open.
 - Added T-047 `.github/workflows/ci.yml`, a least-privilege Node 20.x/22.x/24.x test matrix with no publish/deploy step; hosted workflow execution remains unverified.
 - Implemented T-048 bounded library evidence-budget enforcement through `max_evidence`, with deterministic partial evidence, explicit `RESOURCE_LIMIT` incomplete results, focused coverage, and ADR-025; library output/time budgets remain open.
+- Refreshed the retained T-043 Node host evidence and ADR-023 to the current 75-test run; the historical T-044 audit remains tied to its original source commit.
 
 ### Not claimed
 
