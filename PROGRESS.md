@@ -15,7 +15,7 @@
 ## Project classification
 
 - **Type:** planned hybrid of NPM/library, CLI, and AI-agent evidence provider.
-- **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction partial, M3 bounded literal resolution/Graph IR, M4 bounded CFC, M5 bounded scope/web-flow, M6 bounded dynamic/SQL/repository linkage, M7 bounded graph queries, M8 bounded robustness/adversarial evidence, and M9 bounded verification/package smoke/Node compatibility partial; broader resolver not started.
+- **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction partial, M3 bounded literal resolution/Graph IR, M4 bounded CFC, M5 bounded scope/web-flow, M6 bounded dynamic/SQL/repository linkage, M7 bounded graph queries, M8 bounded robustness/adversarial evidence, and M9 bounded verification/package smoke/Node compatibility partial; T-036–T-039 remain undefined; broader resolver not started.
 - **Current product boundary:** one planned static linkage analyzer with implemented internal root-guard, snapshot, decoder, private CLI, cache, bounded parser/scanners, Fact extractor, indexes, literal resolver, Graph builder/validator, reverse adjacency, CFC resolver, scope resolver, web-flow resolver, repository resolver, graph query engine, and dynamic/generated/SQL-dynamic evidence handling; no public package boundary exists.
 - **Runtime/browser state:** not applicable yet. No product can be started or inspected, and no browser journey exists.
 
@@ -53,7 +53,7 @@
 
 ## Progress basis
 
-The implementation roadmap has 10 milestones, M0–M9. **M0 contract gate: verified (T-001–T-006). M1: T-010–T-014 verified. M2: T-020–T-022 bounded parser/scanner/Fact subset verified; M3: T-023–T-025 bounded indexes, literal resolution, and Graph IR verified; M4: T-030 bounded CFC resolution verified; M5: T-031/T-032 bounded scope and web-flow/condition resolution verified; M6: T-033 bounded dynamic/generated/SQL-dynamic evidence preservation and T-034 bounded SQL/repository linkage verified; M7: T-035 bounded graph queries/evidence explanations verified; M8: T-040/T-041 bounded determinism/cache/cycle/limit robustness and inert adversarial safe-failure fixtures verified; M9: T-042 bounded checks/package-CLI smoke and T-043 bounded Node host compatibility verified; T-036+ remain open. M3 started at T-023; M4 started at T-030; M5 started at T-031; M6 started at T-033; M7 started at T-035; M8 started at T-040; M9 started at T-042.** Runtime milestone completion is 1/9 (M1); M2–M9 remain partial and the bounded implementation is not a full linkage resolver.
+The implementation roadmap has 10 milestones, M0–M9. **M0 contract gate: verified (T-001–T-006). M1: T-010–T-014 verified. M2: T-020–T-022 bounded parser/scanner/Fact subset verified; M3: T-023–T-025 bounded indexes, literal resolution, and Graph IR verified; M4: T-030 bounded CFC resolution verified; M5: T-031/T-032 bounded scope and web-flow/condition resolution verified; M6: T-033 bounded dynamic/generated/SQL-dynamic evidence preservation and T-034 bounded SQL/repository linkage verified; M7: T-035 bounded graph queries/evidence explanations verified; M8: T-040/T-041 bounded determinism/cache/cycle/limit robustness and inert adversarial safe-failure fixtures verified; M9: T-042 bounded checks/package-CLI smoke, T-043 bounded Node host compatibility, and T-044 bounded release/security/parity audit verified; T-036–T-039 remain undefined. M3 started at T-023; M4 started at T-030; M5 started at T-031; M6 started at T-033; M7 started at T-035; M8 started at T-040; M9 started at T-042.** Runtime milestone completion is 1/9 (M1); M2–M9 remain partial and the bounded implementation is not a full linkage resolver.
 
 Core documentation coverage is now the current work product: goal, design, specification, epic, roadmap, task register, progress report, autonomous goal prompt, architecture, test plan, security, release policy, changelog, and ADR.
 
@@ -99,4 +99,4 @@ These are documented planning blockers, not reasons to claim failure. No externa
 
 ## Next task / resume point
 
-**Next task: T-044 — complete release traceability, security review, and documentation parity.** Preserve the private/unreleased boundary and do not publish or claim broader compatibility.
+**Resume blocker: T-036–T-039 are reserved without executable definitions.** Define their acceptance criteria before implementation; preserve the private/unreleased boundary and do not publish or claim broader compatibility.

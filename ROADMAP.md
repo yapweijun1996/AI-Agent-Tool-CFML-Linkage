@@ -27,7 +27,7 @@
 
 ## Delivery sequence
 
-The current pass advances M0 to a verified gate, completes M1/T-010–T-014, verifies bounded M2 parser/scanner/Fact extraction at T-020–T-022, M3 index/literal resolution/Graph IR boundaries at T-023–T-025, bounded M4 CFC resolution at T-030, M5 scope/web-flow resolution at T-031–T-032, M6 dynamic-evidence preservation at T-033 and bounded SQL/repository linkage at T-034, M7 bounded graph queries/evidence explanations at T-035, and M8 bounded robustness and adversarial safe-failure evidence at T-040/T-041, and M9 bounded checks/package smoke at T-042 plus bounded Node host compatibility at T-043; it does not establish full grammar coverage or advance broader compatibility/release work. T-036+ remain open.
+The current pass advances M0 to a verified gate, completes M1/T-010–T-014, verifies bounded M2 parser/scanner/Fact extraction at T-020–T-022, M3 index/literal resolution/Graph IR boundaries at T-023–T-025, bounded M4 CFC resolution at T-030, M5 scope/web-flow resolution at T-031–T-032, M6 dynamic-evidence preservation at T-033 and bounded SQL/repository linkage at T-034, M7 bounded graph queries/evidence explanations at T-035, and M8 bounded robustness and adversarial safe-failure evidence at T-040/T-041, and M9 bounded checks/package smoke at T-042 plus bounded Node host compatibility at T-043; it does not establish full grammar coverage or advance broader compatibility/release work. T-036–T-039 remain reserved without executable definitions.
 
 ### Phase 0 — Contract and safety foundation
 
@@ -63,7 +63,7 @@ The current pass advances M0 to a verified gate, completes M1/T-010–T-014, ver
 ### Phase 4 — Incremental operation and release
 
 - M8: cache invalidation, bounded concurrency, hard resource limits, repeatability, and snapshot drift handling; T-040/T-041 verify the bounded repeat/drift/cache/cycle/limit and adversarial safe-failure subset, while orchestration and in-read mutation evidence remain open.
-- M9: package/library/CLI smoke, golden and adversarial suites, documentation synchronization, and separately evidenced Lucee/Adobe compatibility; T-042 verifies local checks/package smoke and T-043 records Node host evidence, while broader compatibility remains open.
+- M9: package/library/CLI smoke, golden and adversarial suites, documentation synchronization, and separately evidenced Lucee/Adobe compatibility; T-042 verifies local checks/package smoke and T-043 records Node host evidence, while broader compatibility remains open; T-036–T-039 remain reserved without executable definitions.
 
 **Exit evidence:** release checklist in `RELEASE.md`, reproducible artifact readback, CI results, and a versioned release note.
 

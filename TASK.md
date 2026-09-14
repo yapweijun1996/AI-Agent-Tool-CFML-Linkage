@@ -1,6 +1,6 @@
 # Task Register: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M9 IN PROGRESS.** T-001–T-006, T-010–T-014, T-020–T-035, and T-040–T-043 have bounded implementation and verification evidence; broader linkage remains open.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** T-001–T-006, T-010–T-014, T-020–T-035, and T-040–T-044 have bounded implementation and verification evidence; T-036–T-039 are reserved and undefined, and broader linkage remains open.
 
 | Field | Value |
 | --- | --- |
@@ -56,11 +56,12 @@ This blocks full-grammar and cross-file resolution tasks; bounded extraction and
 | T-033 | Preserve dynamic/generated/SQL-dynamic relationships as unresolved/candidate | P0 | Verified (bounded) | T-025 | `src/cfml-scanner.js`, `src/web-scanner.js`, `src/fact-extractor.js`, `src/graph.js`, `test/dynamic-evidence.test.js`, `fixtures/adversarial/dynamic-and-generated/`, ADR-019; generated/dynamic facts, interpolated SQL identifiers/datasources, deterministic unresolved reasons, no guessed SQL edges, and comment/string filtering pass within `npm test` 65/65 |
 | T-034 | Resolve SQL table/datasource and structural repository/action edges | P1 | Verified (bounded) | T-022/T-025/T-030 | `src/web-scanner.js`, `src/fact-extractor.js`, `src/repository-resolver.js`, `src/graph.js`, `schema/agent-cfml-linkage-fact-v0.1.schema.json`, `test/repository-resolver.test.js`, `fixtures/golden/sql-and-repository/`, ADR-020; literal `cfquery`/`queryExecute` tables and datasources, structural CFC-method repository actions, repeatability, bounds, and filename-only non-evidence pass within `npm test` 65/65 |
 | T-035 | Implement bounded graph queries and evidence explanations | P1 | Verified (bounded) | T-025/T-030–T-034 | `src/graph-query.js`, `test/graph-query.test.js`, ADR-021; exact selectors, all declared query operations, immutable snapshots, evidence explanations, traversal bounds, ambiguity, and invalid-input behavior pass within `npm test` 65/65 |
+| T-036–T-039 | Reserved post-M7 work; definitions and acceptance criteria required | P0 | Planned / unspecified | T-035 | No executable scope is registered; do not infer work from the reserved identifiers |
 | T-040 | Add repeat, drift, cache, cycle, and resource-limit tests | P0 | Verified (bounded) | T-014/T-025 | `test/snapshot.test.js` repeat/content-drift/file-limit cases, `test/cache.test.js` source/config/parser/cache invalidation and corruption cases, `test/graph-query.test.js` repeat/cycle/query-limit cases, and resolver/scanner limit tests; bounded determinism and robustness evidence passes within `npm test` 65/65 |
 | T-041 | Add adversarial strings/comments, malformed, ambiguity, escape, and dynamic fixtures | P0 | Verified (bounded) | T-020–T-033 | Inert negative/adversarial fixtures under `fixtures/negative/` and `fixtures/adversarial/misleading-and-limits/`, expected bounded outputs, `test/adversarial-fixtures.test.js`, and the CFML script-region guard in `src/web-scanner.js`; ambiguity, path escape, malformed/unsupported, comment/string, and include-cycle evidence passes within `npm test` |
 | T-042 | Run focused/full tests, contract checks, lint/type checks, and package smoke | P0 | Verified (bounded) | T-040/T-041 | `npm test` 68/68; JavaScript syntax, JSON parse, fixture manifest/path/source-execution, Markdown-link, prompt-length, conservative credential, contract/example structural, CLI capabilities/version, `npm pack --dry-run`, and `git diff --check` checks pass. No lint/type scripts or Secretlint installation exist locally; no source execution, network, database, browser, or runtime access occurred. |
 | T-043 | Verify only documented engine/platform compatibility | P1 | Verified (bounded) | T-042 | `docs/compatibility/node-v25.2.1-win32-x64.json` and ADR-023 retain Node `v25.2.1`/`win32`/`x64` evidence with `npm test` 68/68; Node versions other than the observed host, Lucee, Adobe ColdFusion, browser, database, network, application-runtime, and public-package compatibility remain unclaimed |
-| T-044 | Complete release traceability, security review, and documentation parity | P0 | Planned | T-042/T-043 | Release checklist + exact source/artifact identity |
+| T-044 | Complete release traceability, security review, and documentation parity | P0 | Verified (bounded) | T-042/T-043 | `docs/audits/release-security-parity-v0.1.json` and `RELEASE.md`; source commit, dry-run package identity, security/file checks, documentation parity, and remaining release gates are retained. No publication, CI, packed-artifact install, or public release is claimed.
 
 ## Milestone mapping
 
@@ -70,4 +71,4 @@ This blocks full-grammar and cross-file resolution tasks; bounded extraction and
 - **M4–M7:** T-030–T-035 — linkage depth and queries.
 - **M8–M9:** T-040–T-044 — verification and release.
 
-T-001–T-006, T-010–T-014, T-020–T-035, and T-040–T-043 are Verified for their bounded scopes. T-036–T-039 and T-044+ remain Planned; full grammar coverage and broader cross-file resolution remain open.
+T-001–T-006, T-010–T-014, T-020–T-035, and T-040–T-044 are Verified for their bounded scopes. T-036–T-039 remain Planned / unspecified; full grammar coverage, broader cross-file resolution, CI, and public release remain open.

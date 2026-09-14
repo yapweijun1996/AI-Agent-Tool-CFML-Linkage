@@ -16,7 +16,7 @@
 
 - **Project type:** planned hybrid NPM/library + CLI + AI-agent evidence provider.
 - **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction, M3 bounded resolution/Graph IR, M4 bounded CFC, M5 scope/web-flow, M6 bounded dynamic/SQL/repository linkage, M7 bounded graph queries, M8 bounded robustness/adversarial evidence, and M9 bounded checks/package smoke/Node host evidence in progress; broader resolver not started.
-- **Current state:** M0 contracts, the complete M1 foundation, bounded M2 parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, M7 graph query/evidence slices, M8 robustness/adversarial safe-failure evidence, and M9 local checks/package smoke are implemented/verified; no full parser grammar, broader resolver, public API, or released package exists.
+- **Current state:** M0 contracts, the complete M1 foundation, bounded M2 parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, M7 graph query/evidence slices, M8 robustness/adversarial safe-failure evidence, and M9 local checks/package smoke/Node host compatibility/release-parity audit are implemented/verified; no full parser grammar, broader resolver, public API, or released package exists.
 
 ## Purpose
 
@@ -95,6 +95,7 @@ The eight Core SSOT files are `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROA
 - [`docs/decisions/ADR-022-adversarial-fixture-safe-failure.md`](docs/decisions/ADR-022-adversarial-fixture-safe-failure.md) — adversarial fixture and safe-failure boundary decision
 - [`docs/decisions/ADR-023-bounded-node-compatibility-evidence.md`](docs/decisions/ADR-023-bounded-node-compatibility-evidence.md) — bounded Node compatibility evidence decision
 - [`docs/compatibility/node-v25.2.1-win32-x64.json`](docs/compatibility/node-v25.2.1-win32-x64.json) — retained local Node host evidence
+- [`docs/audits/release-security-parity-v0.1.json`](docs/audits/release-security-parity-v0.1.json) — bounded release, security, and documentation parity audit
 - [`AGENTS.md`](AGENTS.md) — repository-specific contribution rules
 
 ## Non-goals

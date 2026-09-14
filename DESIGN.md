@@ -175,7 +175,7 @@ The sequence is dependency-aware but not a schedule. M0's contract gate, M1 foun
 | M6 | Dynamic/generated/SQL-dynamic evidence and SQL/repository linkage | In progress — T-033 preservation and bounded T-034 SQL/repository linkage verified; broader SQL semantics remain open |
 | M7 | Query engine and bounded impact evidence | Verified — T-035 bounded query/evidence engine |
 | M8 | Incremental invalidation, workers, budgets, repeatability | In progress — T-040/T-041 bounded robustness and adversarial safe-failure evidence; orchestration remains open |
-| M9 | Golden suite, adversarial tests, package/CLI smoke, and separately evidenced engine checks | In progress — T-042 checks/package smoke and T-043 Node host evidence; broader compatibility remains open |
+| M9 | Golden suite, adversarial tests, package/CLI smoke, and separately evidenced engine checks | In progress — T-042 checks/package smoke, T-043 Node host evidence, and T-044 bounded release/security/parity audit; broader compatibility/public release remains open |
 
 ## 8. Design risks
 

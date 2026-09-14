@@ -59,6 +59,10 @@ Do not claim full Lucee or Adobe ColdFusion compatibility from parser tests or f
 - [ ] Tag/release metadata points to the verified source commit
 - [ ] No secrets or temporary artifacts included
 
+## Bounded pre-release audit
+
+T-044 has a bounded local audit of the product source at baseline commit `428feb76c77bec1c865bf6963d67f7cb932e8e9f`; the audit-only documentation commit is separate. A single `npm pack --dry-run --json` invocation identified `agent-cfml-linkage-0.1.0.tgz` with shasum `4862072d2bbb9c72c2cea36f5570f2b999f64fe9`; the tarball was not retained or published, and reproducibility is not claimed. Later packaging of the post-audit tree is not the same artifact input because the audit document is included. Security, documentation-parity, test, fixture, and static checks pass within their recorded scope. The complete audit record is [`docs/audits/release-security-parity-v0.1.json`](docs/audits/release-security-parity-v0.1.json).
+
 ## Current release state
 
 **Unreleased.** A private foundation package manifest and root-guard/snapshot/decoder sources exist; local `npm pack --dry-run`, CLI capabilities/version smoke, and bounded Node host evidence pass, but there is no public artifact, CI, tag, or release to verify.
