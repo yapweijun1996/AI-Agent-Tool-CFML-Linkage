@@ -42,7 +42,7 @@ Out of scope: source execution, runtime network/database access, browser automat
 
 | Milestone | Outcome | Dependencies | Status |
 | --- | --- | --- | --- |
-| M0 Contracts | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and fixture rules | None | Not started |
+| M0 Contracts | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and fixture rules | None | In progress — T-001 verified |
 | M1 Safe foundation | Root guard, snapshot, decoding/source maps, discovery, CLI envelope, cache skeleton | M0 | Not started |
 | M2 Parser/extractor | Adapter and normalized facts for priority syntax | M1 | Not started |
 | M3 Basic linkage | Paths, includes, Application governance, unresolved model, graph validator, reverse callers | M2 | Not started |

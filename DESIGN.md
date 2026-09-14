@@ -16,7 +16,7 @@
 
 The analyzer should give coding agents a small, queryable, evidence-backed view of cross-file relationships without executing the application or guessing dynamic behavior. The design favors narrow stages, immutable intermediate data, explicit incompleteness, and stable output.
 
-**Evidence boundary:** these are proposed components and flows, not verified modules. The repository has no source files, entry points, callers, dependency manifest, build script, test runner, CI workflow, or release artifact from which to confirm this architecture.
+**Evidence boundary:** these are proposed components and flows, not verified runtime modules. The repository now contains a locally validated Graph IR schema/example contract, but has no analyzer source, entry points, callers, dependency manifest, build script, test runner, CI workflow, or release artifact from which to confirm runtime architecture.
 
 It is CFML-first: CFM/CFC structure, Application governance, includes, CFC typing, and shared scopes receive priority. HTML, JavaScript, CSS, SQL, and repository relations extend that model where static evidence is available.
 

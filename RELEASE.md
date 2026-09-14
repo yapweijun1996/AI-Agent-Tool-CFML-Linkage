@@ -28,7 +28,7 @@ Use semantic versioning after the package and public contract are established:
 - `1.0`: Graph IR, CLI, library, safety, and completeness contracts are reviewed and stable.
 - Patch releases must preserve the documented contract and correct defects without weakening safety.
 
-The current repository has no release version. `0.1` is a design/documentation version only.
+The current repository has no release version. `0.1` is a design/documentation version only; the Graph IR schema/example contract is not a released package or runtime.
 
 ## Release gates
 

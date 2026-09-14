@@ -9,7 +9,7 @@
 | Scope | Contract, determinism, safety, linkage, partial-result, and release verification |
 | Source of truth | This plan for intended verification; actual test output and CI for evidence |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Not run; repository has no implementation, test runner, or CI workflow |
+| Verification | No project test suite exists; T-001 schema/example validation passed with the existing local Python `jsonschema` module |
 | Limitations | Exact framework, parser fixtures, supported runtimes, and performance targets are not selected |
 
 ## 1. Verification principles
@@ -26,7 +26,7 @@
 | Layer | Purpose | Evidence required |
 | --- | --- | --- |
 | Unit | IDs, paths, spans, normalization, confidence, limits, and serializers | Focused passing tests |
-| Contract/schema | Graph IR, Fact IR, diagnostics, unresolved records, CLI envelope | Schema validation and fixture assertions |
+| Contract/schema | Graph IR, Fact IR, diagnostics, unresolved records, CLI envelope | Schema validation and fixture assertions; T-001 currently covers Graph IR schema/example only |
 | Golden | End-to-end static linkage for frozen projects | Expected graph/evidence comparison |
 | Adversarial | Ambiguity, malformed syntax, dynamic code, cycles, escapes, drift, caps | Explicit safe failure and `complete=false` where applicable |
 | Integration | CLI/library boundary, cache, query engine | Public API/CLI tests and readback |
@@ -86,4 +86,4 @@ No command is currently valid because no project manifest or test runner exists.
 
 ## 7. Current result
 
-**Unrun:** all checks. There is no local implementation against which this plan can produce pass/fail evidence.
+**T-001 passed:** the Graph IR schema is valid, the representative example validates, and example node/edge/reference/count invariants pass. This used an existing local Python module and did not add a project dependency. Project build, test, runtime, browser, and package checks remain unrun because no implementation exists.

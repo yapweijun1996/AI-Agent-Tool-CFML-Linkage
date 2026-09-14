@@ -89,7 +89,7 @@ Required planned node kinds include `FILE`, `CFM_PAGE`, `CFC_COMPONENT`, `CFC_ME
 
 Required planned edge families include `INCLUDES`, `CUSTOM_TAG_CALL`, `EXTENDS`, `IMPLEMENTS`, `INSTANTIATES`, `CFINVOKES`, `CALLS_METHOD`, `FORM_SUBMITS_TO`, `REDIRECTS_TO`, `AJAX_CALLS`, `FETCHES`, `QUERY_READS_TABLE`, `QUERY_WRITES_TABLE`, `QUERY_USES_DATASOURCE`, `CALLS_REPOSITORY`, `APPLICATION_GOVERNS`, `REQUEST_HOOK_APPLIES_TO`, `ROUTES_WHEN`, `SCOPE_PRODUCES`, `SCOPE_CONSUMES`, `SCOPE_OVERRIDES`, and `DYNAMIC_REFERENCE`.
 
-This list is a proposed contract and requires schema freeze before implementation. A future machine-readable schema is the M0 deliverable; none exists now.
+This list is the proposed v0.1 contract. The machine-readable Graph IR schema and representative example are now present at `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`; the runtime graph builder and Fact IR remain unimplemented.
 
 ### 4.3 Identity and evidence
 

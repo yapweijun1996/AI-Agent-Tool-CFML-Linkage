@@ -34,11 +34,11 @@ The intended output is a deterministic Graph IR/JSON document that agents can qu
 
 ## What exists today
 
-The repository is at documentation-only inception. There is no local code from which to claim implemented behavior. The following are therefore **planned**, not available:
+The repository is at contract-only inception. The Graph IR schema/example contract is implemented and locally validated; there is still no analyzer runtime code from which to claim linkage behavior. The following remain **planned**, not available:
 
 - parser and normalized Fact IR
 - project index and multi-pass resolvers
-- Graph IR schema implementation or JSON Schema
+- Graph IR runtime implementation (the proposed JSON Schema contract and example now exist at `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`)
 - CLI/library API
 - incremental cache and query engine
 - fixtures, golden outputs, tests, CI, or published artifacts
