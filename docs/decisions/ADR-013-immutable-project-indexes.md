@@ -1,6 +1,6 @@
 # ADR-013: Build immutable indexes before resolution
 
-> **Status: PROVISIONAL / T-023 VERIFIED.** The index builder is implemented and tested; cross-file resolvers and Graph IR remain open.
+> **Status: PROVISIONAL / T-023 VERIFIED.** The index builder is implemented and tested; bounded cross-file resolvers and Graph IR consumers are now present, while broader resolution remains open.
 
 | Field | Value |
 | --- | --- |
@@ -10,7 +10,7 @@
 | Source of truth | `src/project-index.js`, `test/project-index.test.js`, this ADR, and `ARCHITECTURE.md` |
 | Evidence | `npm test`: 62 passed; reversed fact input produces identical indexes and ambiguity is retained |
 | Verification | Unique/missing/ambiguous lookup states, frozen copied facts, source-file mismatch diagnostics, and deterministic ordering pass locally |
-| Limitations | Indexes are an internal library boundary; no resolver, graph builder, public API, or cache integration exists |
+| Limitations | Indexes are an internal library boundary; broader resolver coverage, public API, and cache integration remain outside this slice |
 
 ## Decision
 

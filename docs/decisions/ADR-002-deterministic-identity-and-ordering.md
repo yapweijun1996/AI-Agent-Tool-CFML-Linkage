@@ -1,15 +1,15 @@
 # ADR-002: Use content-independent deterministic identities and canonical ordering
 
-> **Status: PROPOSED / CONTRACT SLICE.** The identity rules are documented and fixture-checked; no runtime producer exists yet.
+> **Status: PROVISIONAL / T-003 VERIFIED (BOUNDED).** The identity rules are documented, fixture-checked, and exercised by the bounded Graph producer; broader platform behavior remains open.
 
 | Field | Value |
 | --- | --- |
 | Version | 0.1 |
 | Last updated | 2026-09-14 |
 | Scope | Graph/Fact identity, ordering, freshness, and duplicate evidence |
-| Source of truth | This ADR and `SPEC.md`; implementation and repeat-run tests must prove the rules later |
+| Source of truth | This ADR, `SPEC.md`, `src/graph.js`, and deterministic repeat-run tests |
 | Evidence | `examples/identity-order-v0.1.json`; inline deterministic reference check |
-| Verification | Contract fixture/reference check passed; runtime producer repeatability remains unverified |
+| Verification | Contract fixture/reference, bounded Graph identity/order, and aggregate repeatability checks pass; cross-platform identity behavior remains unverified |
 | Limitations | Filesystem case behavior, Unicode normalization, and producer integration remain open |
 
 ## Context
@@ -80,4 +80,4 @@ Case-collision and Unicode policy need platform fixtures before release. Until t
 
 ## Verification fixture
 
-`examples/identity-order-v0.1.json` records canonicalization inputs, expected node/edge IDs, and expected sort keys for the reference algorithm. A future producer must reproduce those values and pass repeat-run tests before T-003 is Verified.
+`examples/identity-order-v0.1.json` records canonicalization inputs, expected node/edge IDs, and expected sort keys for the reference algorithm. The bounded Graph producer and aggregate analysis repeat-run tests exercise these rules; broader producer integrations must preserve them before release.

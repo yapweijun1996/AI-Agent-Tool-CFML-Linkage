@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { analyzeProject } from "./analyzer.js";
+import { queryGraph } from "./graph-query.js";
 import { createMixedStructuralScannerBackend } from "./web-scanner.js";
 import { createRootGuard, RootGuardError } from "./root-guard.js";
 
@@ -18,6 +19,16 @@ const DEFAULT_EXIT_CODES = Object.freeze({
 const MAX_CONFIG_BYTES = 1024 * 1024;
 const MIN_OUTPUT_BYTES = 300;
 const QUERY_COMMANDS = Object.freeze(["related", "callers", "callees", "trace", "unresolved", "explain", "stats"]);
+const QUERY_OPERATIONS = Object.freeze({
+  related: "related",
+  callers: "callers",
+  callees: "callees",
+  trace: "trace",
+  unresolved: "unresolved",
+  explain: "explain-edge",
+  stats: "stats",
+});
+const QUERY_OPTION_KEYS = new Set(["node_id", "path", "canonical_name", "name", "kind", "edge_id", "relation_type", "reason_code", "edge_types", "direction", "max_results", "max_depth", "max_visited"]);
 const COMMANDS = Object.freeze(["capabilities", "analyze", "index", ...QUERY_COMMANDS]);
 
 function diagnostic(code, severity, message, details = {}) {
@@ -39,9 +50,9 @@ function usageData() {
   return {
     usage: `${TOOL_NAME} <command> [--config <path>]`,
     commands: COMMANDS,
-    implemented_commands: ["capabilities", "analyze", "index"],
+    implemented_commands: ["capabilities", "analyze", "index", ...QUERY_COMMANDS],
     notes: [
-      "analyze and index run the bounded, explicit mixed structural scanner pipeline; broader grammar coverage remains incomplete.",
+      "analyze and index run the bounded, explicit mixed structural scanner pipeline; query commands run the same pipeline and query its resulting graph.",
       "Source is never executed; diagnostics are emitted on stderr and in the JSON envelope.",
     ],
   };
@@ -168,6 +179,19 @@ function validateConfig(config) {
   return config;
 }
 
+function validateQueryConfig(config, command) {
+  if (config.query === undefined) return;
+  if (!QUERY_COMMANDS.includes(command)) {
+    throw diagnostic("INVALID_CONFIG", "error", "Configuration query is only valid for a query command.");
+  }
+  if (!config.query || typeof config.query !== "object" || Array.isArray(config.query)) {
+    throw diagnostic("INVALID_CONFIG", "error", "Configuration query must be an object.");
+  }
+  for (const key of Object.keys(config.query)) {
+    if (!QUERY_OPTION_KEYS.has(key)) throw diagnostic("INVALID_CONFIG", "error", `Unsupported query option: ${key}.`);
+  }
+}
+
 function stderrFor(diagnostics) {
   return diagnostics.map((item) => {
     const location = item.path ? ` [${item.path}]` : "";
@@ -190,7 +214,7 @@ function result(command, status, diagnostics, data, exitCode, { maxOutputBytes =
 }
 
 /**
- * Run the stable CLI boundary without invoking any analysis stage.
+ * Run the stable CLI boundary, including bounded analysis-backed queries.
  *
  * @param {string[]} argv command-line arguments excluding the Node/script prefixes
  * @param {{cwd?: string}} options process-independent test options
@@ -212,7 +236,7 @@ export function runCli(argv, { cwd = process.cwd() } = {}) {
   }
   if (parsed.command === "capabilities") {
     return result(parsed.command, "completed", [], {
-      commands: { capabilities: "implemented", analyze: "bounded", index: "bounded", queries: "planned" },
+      commands: { capabilities: "implemented", analyze: "bounded", index: "bounded", queries: "bounded" },
       source_extensions: [".cfm", ".cfml", ".cfc", ".html", ".htm", ".js", ".mjs", ".css", ".sql"],
       foundation: ["root_guard", "deterministic_snapshot", "strict_utf8_decoder", "source_map"],
       safety: { source_execution: false, network: false, database: false, shell: false, browser: false },
@@ -222,6 +246,7 @@ export function runCli(argv, { cwd = process.cwd() } = {}) {
   let config;
   try {
     config = validateConfig(readConfig(parsed.configPath, cwd));
+    validateQueryConfig(config, parsed.command);
   } catch (error) {
     const item = error?.code ? error : diagnostic("INVALID_INPUT", "error", "Configuration validation failed.");
     const code = item.code === "ROOT_NOT_FOUND" || item.code === "ROOT_NOT_DIRECTORY" || item.code === "ROOT_ACCESS_ERROR" ? DEFAULT_EXIT_CODES.path_rejected : DEFAULT_EXIT_CODES.invalid_input;
@@ -237,11 +262,6 @@ export function runCli(argv, { cwd = process.cwd() } = {}) {
     return result(parsed.command, "error", [item], null, config.exit_codes.path_rejected);
   }
 
-  if (QUERY_COMMANDS.includes(parsed.command)) {
-    const item = diagnostic("UNIMPLEMENTED_COMMAND", "warning", `The ${parsed.command} query command is recognized but not implemented.`);
-    return result(parsed.command, "incomplete", [item], null, config.exit_codes.incomplete, { maxOutputBytes: config.limits.max_output_bytes });
-  }
-
   try {
     const analysis = analyzeProject({
       rootPath: path.resolve(cwd, config.root),
@@ -253,6 +273,23 @@ export function runCli(argv, { cwd = process.cwd() } = {}) {
       maxResolverRecords: config.limits.max_edges,
       maxTraversalDepth: config.limits.max_traversal_depth,
     });
+
+    if (QUERY_COMMANDS.includes(parsed.command)) {
+      let query;
+      try {
+        query = queryGraph(analysis.graph, { ...(config.query ?? {}), operation: QUERY_OPERATIONS[parsed.command] });
+      } catch (error) {
+        const item = diagnostic("INVALID_CONFIG", "error", `Query configuration is invalid: ${error?.message ?? "unknown"}.`);
+        return result(parsed.command, "error", [item], null, config.exit_codes.invalid_input);
+      }
+      const status = query.complete ? "completed" : "incomplete";
+      const exitCode = query.complete ? config.exit_codes.completed : config.exit_codes.incomplete;
+      return result(parsed.command, status, query.diagnostics, query, exitCode, {
+        maxOutputBytes: config.limits.max_output_bytes,
+        incompleteExitCode: config.exit_codes.incomplete,
+      });
+    }
+
     const status = analysis.complete ? "completed" : "incomplete";
     const exitCode = analysis.complete ? config.exit_codes.completed : config.exit_codes.incomplete;
     return result(parsed.command, status, analysis.diagnostics, {

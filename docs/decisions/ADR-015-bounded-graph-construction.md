@@ -27,7 +27,7 @@ The builder never executes source or resolves a candidate by filename similarity
 - Graph IDs and ordering are repeatable for the same semantic inputs and injected timestamp.
 - The graph can be schema-validated and consumed even when resolution is partial.
 - Reverse callers/callees lookup is available without making derived indexes part of the serialized contract.
-- Broader runtime linkage and CLI query integration remain explicitly unimplemented; bounded query operations are supplied by the separate `src/graph-query.js` T-035 engine, while repository/action edges are supplied by the separate bounded T-034 resolver.
+- Broader runtime linkage, graph persistence, and public query integration remain explicitly unimplemented; bounded query operations are supplied by the separate `src/graph-query.js` T-035 engine and exposed through the private T-045 CLI, while repository/action edges are supplied by the separate bounded T-034 resolver.
 
 ## Verification
 

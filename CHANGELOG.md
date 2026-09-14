@@ -9,7 +9,7 @@
 | Scope | Changes in this repository |
 | Source of truth | Git history and this changelog |
 | Evidence | Initial commit `1b29c0b`; documentation baseline and M1 foundation commits follow |
-| Verification | Documentation consistency checks, bounded query/robustness/adversarial-fixture checks, and `npm test` (73/73) are run during this pass |
+| Verification | Documentation consistency checks, bounded query/robustness/adversarial-fixture checks, and `npm test` (74/74) are run during this pass |
 | Limitations | No parser/resolver release runtime, public package, CI, or release exists |
 
 ## Unreleased
@@ -50,8 +50,8 @@
 - Completed bounded T-042 verification: 68 tests, contract/example checks, CLI/package smoke, syntax/fixture/document checks, and conservative credential scan pass; lint/type scripts and Secretlint are unavailable locally.
 - Recorded bounded T-043 compatibility evidence for Node `v25.2.1` on `win32`/`x64`; no Lucee, Adobe ColdFusion, cross-version, cross-platform, browser, database, network, or public-package claim is made.
 - Completed the bounded T-044 release/security/parity audit with exact pre-release package metadata, source commit identity, local security checks, and explicit remaining gates; nothing was published.
-- Implemented bounded T-036 analysis orchestration, private library exports, composed-analysis schema, CLI `analyze`/`index` wiring, parser-time drift checks, and offline packed-artifact consumer smoke; full grammar and query-command integration remain open.
-- Hardened the private CLI so recognized but unimplemented query commands return bounded `UNIMPLEMENTED_COMMAND` evidence instead of running the analysis command.
+- Implemented bounded T-036 analysis orchestration, private library exports, composed-analysis schema, CLI `analyze`/`index` wiring, parser-time drift checks, and offline packed-artifact consumer smoke; full grammar and query-command integration remained open at that point.
+- Implemented bounded T-045 CLI query commands over fresh analysis graphs; recognized commands map to the immutable query engine, preserve bounded results/diagnostics, reject unsupported query options, and retain the serialized output cap.
 - Added private CLI serialized-output enforcement for `limits.max_output_bytes`, with an explicit `OUTPUT_LIMIT` incomplete result and a documented minimum envelope size.
 - Hardened literal path resolution to require current root-contained target existence, preserving vanished snapshot targets as unresolved evidence.
 - Hardened `createGraphSnapshot` to validate and deep-copy snapshot-shaped input instead of trusting caller mutability.
@@ -59,5 +59,5 @@
 ### Not claimed
 
 - No complete analyzer implementation has been added.
-- No full parser backend, broad resolver, query-command CLI, CI workflow, public package, or release has been added; the private root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact foundation, bounded resolvers/Graph, internal query engine, and bounded analysis composition are the only runtime slices.
+- No full parser backend, broad resolver, graph persistence, CI workflow, public package, or release has been added; the private root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact foundation, bounded resolvers/Graph, internal query engine, and bounded analysis composition are the only runtime slices.
 - No Lucee, Adobe ColdFusion, browser, database, or network verification has been performed.

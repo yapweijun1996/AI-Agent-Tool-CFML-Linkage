@@ -43,6 +43,7 @@ test("emits a stable JSON capabilities envelope without stderr noise", () => {
     assert.equal(result.stdout.status, "completed");
     assert.deepEqual(result.stdout.diagnostics, []);
     assert.equal(result.stdout.data.safety.source_execution, false);
+    assert.equal(result.stdout.data.commands.queries, "bounded");
     assert.deepEqual(Object.keys(result.stdout), ["schema_version", "tool", "command", "status", "data", "diagnostics"]);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
@@ -90,14 +91,46 @@ test("runs the bounded analysis pipeline after validating the root", () => {
     assert.equal(limitedResult.stdout.diagnostics[0].code, "OUTPUT_LIMIT");
     assert.ok(Buffer.byteLength(JSON.stringify(limitedResult.stdout), "utf8") + 1 <= 512);
 
+    const queryConfig = JSON.parse(fs.readFileSync(path.join(root, "config.json"), "utf8"));
+    queryConfig.limits.max_output_bytes = 52428800;
     for (const command of ["related", "callers", "callees", "trace", "unresolved", "explain", "stats"]) {
+      queryConfig.query = ["explain", "stats"].includes(command) ? {} : { path: "inert.js" };
+      fs.writeFileSync(path.join(root, "config.json"), JSON.stringify(queryConfig), "utf8");
       const queryResult = runCli([command, "--config", "config.json"], root);
       assert.equal(queryResult.exitCode, 3);
       assert.equal(queryResult.stdout.status, "incomplete");
-      assert.equal(queryResult.stdout.data, null);
-      assert.equal(queryResult.stdout.diagnostics[0].code, "UNIMPLEMENTED_COMMAND");
-      assert.match(queryResult.stderr, new RegExp(`^WARNING UNIMPLEMENTED_COMMAND: The ${command} query command`));
+      assert.equal(queryResult.stdout.data.schema_version, "agent-cfml-linkage-query/v0.1");
+      assert.equal(queryResult.stdout.data.operation, command === "explain" ? "explain-edge" : command);
+      assert.equal(queryResult.stdout.diagnostics.some((item) => item.code === "UNIMPLEMENTED_COMMAND"), false);
     }
+
+    queryConfig.limits.max_output_bytes = 512;
+    queryConfig.query = {};
+    fs.writeFileSync(path.join(root, "config.json"), JSON.stringify(queryConfig), "utf8");
+    const limitedQueryResult = runCli(["stats", "--config", "config.json"], root);
+    assert.equal(limitedQueryResult.exitCode, 3);
+    assert.equal(limitedQueryResult.stdout.status, "incomplete");
+    assert.equal(limitedQueryResult.stdout.data, null);
+    assert.equal(limitedQueryResult.stdout.diagnostics[0].code, "OUTPUT_LIMIT");
+    assert.ok(Buffer.byteLength(JSON.stringify(limitedQueryResult.stdout), "utf8") + 1 <= 512);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("runs a bounded query against the freshly analyzed graph", () => {
+  const root = temporaryDirectory();
+  try {
+    fs.writeFileSync(path.join(root, "index.cfm"), '<cfinclude template="target.cfm">\n', "utf8");
+    fs.writeFileSync(path.join(root, "target.cfm"), "<cfset request.value = 1>\n", "utf8");
+    writeConfig(root, { query: { path: "index.cfm" } });
+    const result = runCli(["callees", "--config", "config.json"], root);
+    assert.equal(result.exitCode, 3);
+    assert.equal(result.stdout.status, "incomplete");
+    assert.equal(result.stdout.data.schema_version, "agent-cfml-linkage-query/v0.1");
+    assert.equal(result.stdout.data.operation, "callees");
+    assert.equal(result.stdout.data.results.some((item) => item.node.path === "target.cfm"), true);
+    assert.equal(result.stdout.data.diagnostics.some((item) => item.code === "QUERY_TARGET_NOT_FOUND"), false);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
@@ -132,6 +165,16 @@ test("rejects malformed JSON and unsafe configuration before analysis", () => {
       shell: false,
       browser: false,
     } });
+    result = runCli(["analyze", "--config", "config.json"], root);
+    assert.equal(result.exitCode, 2);
+    assert.equal(result.stdout.diagnostics[0].code, "INVALID_CONFIG");
+
+    writeConfig(root, { query: { operation: "stats" } });
+    result = runCli(["stats", "--config", "config.json"], root);
+    assert.equal(result.exitCode, 2);
+    assert.equal(result.stdout.diagnostics[0].code, "INVALID_CONFIG");
+
+    writeConfig(root, { query: { path: "index.cfm" } });
     result = runCli(["analyze", "--config", "config.json"], root);
     assert.equal(result.exitCode, 2);
     assert.equal(result.stdout.diagnostics[0].code, "INVALID_CONFIG");

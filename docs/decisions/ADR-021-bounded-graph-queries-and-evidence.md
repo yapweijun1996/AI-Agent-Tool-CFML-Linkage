@@ -18,7 +18,7 @@ Implement `src/graph-query.js` with two read-only entry points:
 4. Traversal is cycle-safe and deterministic. `max_results`, `max_depth`, and `max_visited` cap query work; exhausted limits emit diagnostics, retain the bounded result, and set query `complete=false`.
 5. Results contain bounded node/edge/unresolved evidence slices. `explain-edge` uses a deterministic template over the recorded relation, confidence, metadata, span, and evidence. It is not an LLM-generated explanation and does not promote confidence.
 
-The query envelope is `agent-cfml-linkage-query/v0.1`. CLI orchestration and a released public library export remain separate tasks.
+The query envelope is `agent-cfml-linkage-query/v0.1`. T-045 wires the bounded query commands to fresh analysis graphs; graph persistence and a released public library remain separate tasks.
 
 ## Consequences
 
@@ -30,7 +30,7 @@ The query envelope is `agent-cfml-linkage-query/v0.1`. CLI orchestration and a r
 ## Verification
 
 - `test/graph-query.test.js` exercises immutable snapshots, exact selectors, all declared operations, evidence slices, deterministic explanations, unresolved filtering, traversal/result/depth/visited limits, ambiguity, invalid options, and result immutability.
-- `npm test` reports 73 passed; the query module re-copies even snapshot-shaped input before freezing, is syntax-checked, and uses no third-party dependency or runtime/service access.
+- `npm test` reports 74 passed; the query module re-copies even snapshot-shaped input before freezing, is syntax-checked, and uses no third-party dependency or runtime/service access.
 
 ## Limitations
 

@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | Includes, custom tags, forms, redirects, fetch/AJAX, CSS assets, Application ownership, and request hooks |
 | Source of truth | `src/path-resolver.js`, `src/fact-extractor.js`, `test/path-resolver.test.js`, this ADR, and `SPEC.md` |
-| Evidence | `npm test`: 73 passed; literal fixtures resolve deterministically, vanished snapshot targets remain unresolved, and unsafe/dynamic/ambiguous paths remain explicit |
+| Evidence | `npm test`: 74 passed; literal fixtures resolve deterministically, vanished snapshot targets remain unresolved, and unsafe/dynamic/ambiguous paths remain explicit |
 | Verification | Relative/root-relative paths, extension fallback, Application governance/hooks, ambiguity, missing paths, external targets, and traversal cases pass locally |
 | Limitations | Full route semantics, broad parser coverage, engine behavior, and runtime execution remain unimplemented |
 

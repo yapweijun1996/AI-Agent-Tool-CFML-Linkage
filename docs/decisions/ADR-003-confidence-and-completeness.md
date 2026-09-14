@@ -1,15 +1,15 @@
 # ADR-003: Make confidence evidence-gated and incompleteness explicit
 
-> **Status: PROPOSED / CONTRACT SLICE.** The policy and fixture are documented and checked; no resolver runtime exists.
+> **Status: PROVISIONAL / BOUNDED RESOLVER VERIFIED.** The policy and fixture are documented and checked; bounded resolver/Graph behavior is verified while broader coverage remains open.
 
 | Field | Value |
 | --- | --- |
 | Version | 0.1 |
 | Last updated | 2026-09-14 |
 | Scope | Confidence levels, unresolved relationships, diagnostics, and completeness |
-| Source of truth | This ADR and `SPEC.md`; resolver implementation must preserve the gates |
+| Source of truth | This ADR, `SPEC.md`, bounded resolver implementations, and their tests |
 | Evidence | `examples/confidence-v0.1.json`; local policy invariant check |
-| Verification | Confidence policy fixture check passed; runtime resolver behavior remains unverified |
+| Verification | Confidence policy fixture and bounded resolver/Graph confidence, unresolved, and completeness behavior checks pass; broader resolver coverage remains unverified |
 | Limitations | Exact parser diagnostics and resolver coverage depend on future implementation |
 
 ## Context
@@ -47,4 +47,4 @@ Agents can safely filter confirmed/strong edges without mistaking plausible cand
 
 ## Verification fixture
 
-`examples/confidence-v0.1.json` covers positive levels, ambiguity, dynamic expressions, partial parsing, score non-promotion, and completeness conditions. A future resolver test suite must reproduce these decisions.
+`examples/confidence-v0.1.json` covers positive levels, ambiguity, dynamic expressions, partial parsing, score non-promotion, and completeness conditions. The bounded resolver and Graph test suites exercise these decisions; broader resolver implementations must preserve them.
