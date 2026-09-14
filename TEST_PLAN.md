@@ -82,7 +82,7 @@ A future release must satisfy all required gates:
 
 ## 6. Planned commands
 
-The current focused commands are `npm test`, the repository's static checks, package self-import, and `npm pack --dry-run`; Node's built-in test runner supplies the suite. No full build, lint, type, packed-artifact installation, browser, or engine command exists yet. Once those workflows are implemented, the repository must document exact commands; placeholder commands must not be reported as executed checks.
+The current focused commands are `npm test`, the repository's static checks, package self-import, an offline packed-artifact install/import smoke, and `npm pack --dry-run`; Node's built-in test runner supplies the suite. No full build, lint, type, browser, or engine command exists yet. Once those workflows are implemented, the repository must document exact commands; placeholder commands must not be reported as executed checks.
 
 ## 7. Current result
 
