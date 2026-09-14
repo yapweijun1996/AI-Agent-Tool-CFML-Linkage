@@ -5,6 +5,7 @@ const GRAPH_SCHEMA_VERSION = "agent-cfml-linkage-graph/v0.1";
 const TOOL_NAME = "agent-cfml-linkage";
 const DEFAULT_TOOL_VERSION = "0.1.0";
 const DEFAULT_RESOLVER = { name: "literal-path-resolver", version: "v0.1" };
+const DEFAULT_MAX_EDGES = 100_000;
 const DEFAULT_MAX_EVIDENCE = 1_000_000;
 const PATH_RELATIONS = Object.freeze({
   INCLUDE: "INCLUDES",
@@ -254,6 +255,20 @@ function validateGraph(graph) {
   return diagnostics;
 }
 
+function enforceEdgeLimit(graph, maxEdges) {
+  if (graph.edges.length <= maxEdges) return;
+  graph.edges = graph.edges.slice(0, maxEdges);
+  graph.complete = false;
+  graph.diagnostics.push({
+    id: `diagnostic:${sha256(["edge-limit", maxEdges].join("\0"))}`,
+    severity: "error",
+    code: "RESOURCE_LIMIT",
+    message: `Edge limit exceeded: ${maxEdges}.`,
+    details: { max_edges: maxEdges },
+  });
+  graph.stats.edge_count = graph.edges.length;
+}
+
 function enforceEvidenceLimit(graph, maxEvidence) {
   // Preserve relationship evidence before supporting node evidence when the global cap is tight.
   const records = [
@@ -290,11 +305,12 @@ function enforceEvidenceLimit(graph, maxEvidence) {
  * Build a bounded Graph IR document from Fact IR and resolver output. This
  * creates only evidence-backed nodes/edges; it does not infer missing links.
  */
-export function buildGraph({ factBundle, resolutions = null, snapshot = null, rootGuard, toolVersion = DEFAULT_TOOL_VERSION, maxEvidence = DEFAULT_MAX_EVIDENCE, createdAt = new Date().toISOString() } = {}) {
+export function buildGraph({ factBundle, resolutions = null, snapshot = null, rootGuard, toolVersion = DEFAULT_TOOL_VERSION, maxEdges = DEFAULT_MAX_EDGES, maxEvidence = DEFAULT_MAX_EVIDENCE, createdAt = new Date().toISOString() } = {}) {
   if (!factBundle || !Array.isArray(factBundle.facts) || !Array.isArray(factBundle.source_files)) throw new TypeError("factBundle with facts and source_files is required");
   if (!rootGuard || typeof rootGuard.rootPath !== "string") throw new TypeError("rootGuard must be created by createRootGuard");
   if (typeof createdAt !== "string" || Number.isNaN(Date.parse(createdAt))) throw new TypeError("createdAt must be a date-time string");
   if (typeof toolVersion !== "string" || toolVersion.trim() === "") throw new TypeError("toolVersion must be a non-empty string");
+  const edgeLimit = normalizePositiveLimit(maxEdges, "maxEdges", DEFAULT_MAX_EDGES);
   const evidenceLimit = normalizePositiveLimit(maxEvidence, "maxEvidence", DEFAULT_MAX_EVIDENCE);
 
   const facts = factBundle.facts.slice().sort(compareFacts);
@@ -475,6 +491,7 @@ export function buildGraph({ factBundle, resolutions = null, snapshot = null, ro
       evidence_count: graphNodes.reduce((count, node) => count + node.evidence.length, 0) + graphEdges.reduce((count, edge) => count + edge.evidence.length, 0) + graphUnresolved.reduce((count, item) => count + item.evidence.length, 0),
     },
   };
+  enforceEdgeLimit(draft, edgeLimit);
   enforceEvidenceLimit(draft, evidenceLimit);
   const validationDiagnostics = validateGraph(draft);
   for (const [index, item] of validationDiagnostics.entries()) diagnostics.push({ id: `diagnostic:${sha256([item.code, item.message, index].join("\0"))}`, ...item });

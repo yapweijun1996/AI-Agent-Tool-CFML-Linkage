@@ -9,14 +9,14 @@
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
-| Verification | Graph/Fact/config/analysis checks, produced Fact/Graph/analysis IR schema validation, and 75 foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query/configuration/evidence-budget tests pass locally; broader runtime stages below remain unimplemented proposals |
+| Verification | Graph/Fact/config/analysis checks, produced Fact/Graph/analysis IR schema validation, and 76 foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query/configuration/evidence-budget/edge-budget tests pass locally; broader runtime stages below remain unimplemented proposals |
 | Limitations | Parser choice, language coverage, performance, and engine compatibility remain unknown |
 
 ## 1. Design goals
 
 The analyzer should give coding agents a small, queryable, evidence-backed view of cross-file relationships without executing the application or guessing dynamic behavior. The design favors narrow stages, immutable intermediate data, explicit incompleteness, and stable output.
 
-**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, bounded CLI/library orchestration, cache, parser-adapter, bounded CFML/web scanners, bounded Fact extractor, immutable index, literal/CFC/scope/web-flow/repository resolver modules, dynamic/generated/SQL evidence handling, Graph builder, and bounded graph query engine with focused tests, a private `package.json`, and validated contracts; full parser backend, broader Fact IR, caller, hosted CI verification, and release architecture remain unimplemented; the read-only CI workflow is defined, while bounded graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query construction and T-036 composition are implemented.
+**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, bounded CLI/library orchestration, cache, parser-adapter, bounded CFML/web scanners, bounded Fact extractor, immutable index, literal/CFC/scope/web-flow/repository resolver modules, dynamic/generated/SQL evidence handling, Graph builder, and bounded graph query engine with focused tests, a private `package.json`, and validated contracts; full parser backend, broader Fact IR, caller, hosted CI verification, and release architecture remain unimplemented; the read-only CI workflow is defined, while bounded graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query construction, T-036 composition, and T-049 Graph edge-budget enforcement are implemented.
 
 It is CFML-first: CFM/CFC structure, Application governance, includes, CFC typing, and shared scopes receive priority. HTML, JavaScript, CSS, SQL, and repository relations extend that model where static evidence is available.
 
@@ -121,7 +121,7 @@ A central policy combines resolver evidence and assigns `confirmed`, `strong`, `
 
 ### Stage 8 — graph builder
 
-Transform facts and resolutions into Graph IR nodes, edges, unresolved records, diagnostics, and statistics. Node identity derives from project-relative canonical path plus semantic identity, not source hash. Edge identity derives from relation type, endpoints, source fact, and condition. The exact SHA-256 identity and canonical ordering rules are defined in [`ADR-002`](docs/decisions/ADR-002-deterministic-identity-and-ordering.md) and exercised by `examples/identity-order-v0.1.json`. Deduplication must preserve multiple evidence records, include order, condition, dynamic flags, resolver version, and source fingerprint. Reverse adjacency is available as a separate immutable derived index via `buildReverseAdjacency`, while the serialized Graph IR remains the forward contract.
+Transform facts and resolutions into Graph IR nodes, edges, unresolved records, diagnostics, and statistics. Node identity derives from project-relative canonical path plus semantic identity, not source hash. Edge identity derives from relation type, endpoints, source fact, and condition. The exact SHA-256 identity and canonical ordering rules are defined in [`ADR-002`](docs/decisions/ADR-002-deterministic-identity-and-ordering.md) and exercised by `examples/identity-order-v0.1.json`. Deduplication must preserve multiple evidence records, include order, condition, dynamic flags, resolver version, and source fingerprint. `buildGraph` applies the configured `max_edges` cap after deterministic edge ordering, retains the bounded prefix, marks the graph incomplete, and emits `RESOURCE_LIMIT`; reverse adjacency is then derived only from retained edges via `buildReverseAdjacency`, while the serialized Graph IR remains the forward contract.
 
 ### Stage 9 — graph validation
 
@@ -151,7 +151,7 @@ Plugins remain narrow and deterministic: `ParserAdapter`, `FactExtractor`, `Reso
 
 ## 5. Performance strategy
 
-Correctness comes first. Parse with bounded worker concurrency and merge facts in sorted path order. Use map/set indexes instead of all-pairs symbol comparison. Cache source hashes and Fact IR. Enforce hard caps for files, bytes, facts, edges, evidence, traversal depth, output bytes, and wall time. The library graph stage enforces the configured evidence-item cap with deterministic partial evidence and an explicit incomplete diagnostic; the private CLI enforces the serialized output-byte cap with an explicit incomplete envelope. Library output and wall-time enforcement remain open. A cap hit returns partial evidence and identifies the exhausted budget; it never silently truncates.
+Correctness comes first. Parse with bounded worker concurrency and merge facts in sorted path order. Use map/set indexes instead of all-pairs symbol comparison. Cache source hashes and Fact IR. Enforce hard caps for files, bytes, facts, edges, evidence, traversal depth, output bytes, and wall time. The library graph stage enforces the configured edge and evidence caps with deterministic partial results and explicit incomplete diagnostics; the private CLI enforces the serialized output-byte cap with an explicit incomplete envelope. Library output and wall-time enforcement remain open. A cap hit returns partial evidence and identifies the exhausted budget; it never silently truncates.
 
 ## 6. Boundary with related tools
 
@@ -174,7 +174,7 @@ The sequence is dependency-aware but not a schedule. M0's contract gate, M1 foun
 | M5 | Shared scope, AJAX/fetch, conditional routers | In progress — T-031/T-032 bounded scope and web-flow/condition resolvers verified; broader flow open |
 | M6 | Dynamic/generated/SQL-dynamic evidence and SQL/repository linkage | In progress — T-033 preservation and bounded T-034 SQL/repository linkage verified; broader SQL semantics remain open |
 | M7 | Query engine and bounded impact evidence | In progress — T-035 bounded query/evidence engine, T-036 bounded analysis composition/private entry points, and T-045 bounded query-command CLI and T-046 bounded CLI configuration enforcement verified |
-| M8 | Incremental invalidation, workers, budgets, repeatability | In progress — T-040/T-041 bounded robustness/adversarial safe-failure evidence, T-048 library evidence-budget enforcement, and private CLI output-budget enforcement; library output and wall-time budgets remain open |
+| M8 | Incremental invalidation, workers, budgets, repeatability | In progress — T-040/T-041 bounded robustness/adversarial safe-failure evidence, T-048 library evidence-budget and T-049 Graph edge-budget enforcement, and private CLI output-budget enforcement; library output and wall-time budgets remain open |
 | M9 | Golden suite, adversarial tests, package/CLI smoke, and separately evidenced engine checks | In progress — T-042 checks/package smoke, T-043 Node host evidence, T-044 bounded release/security/parity audit, and T-047 implemented CI workflow; hosted compatibility/public release remains open |
 
 ## 8. Design risks

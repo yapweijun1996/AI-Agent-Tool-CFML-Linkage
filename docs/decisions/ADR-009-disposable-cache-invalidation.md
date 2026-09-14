@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | Cache record shape, configuration/version fingerprints, file invalidation, corruption, and storage boundary |
 | Source of truth | `src/cache.js`, `test/cache.test.js`, this ADR, and `SPEC.md` |
-| Evidence | `npm test`: 75 passed, including key-order fingerprints, add/change/remove detection, stale contexts, atomic replacement, corruption, and path-boundary cases |
+| Evidence | `npm test`: 76 passed, including key-order fingerprints, add/change/remove detection, stale contexts, atomic replacement, corruption, and path-boundary cases |
 | Verification | Local Node tests pass; parser/fact cache integration and cross-platform filesystem behavior remain unverified |
 | Limitations | Cache stores metadata only; it does not yet persist Fact IR, indexes, resolver results, or query state |
 

@@ -64,6 +64,7 @@ function limitsFrom(config, options) {
     maxFileBytes: normalizePositiveLimit(options.maxFileBytes ?? configured.max_file_bytes, "maxFileBytes", undefined),
     maxTotalBytes: normalizePositiveLimit(options.maxTotalBytes ?? configured.max_total_bytes, "maxTotalBytes", undefined),
     maxFacts: normalizePositiveLimit(options.maxFacts ?? configured.max_facts, "maxFacts", undefined),
+    maxEdges: normalizePositiveLimit(options.maxEdges ?? configured.max_edges, "maxEdges", DEFAULT_MAX_RESOLVER_RECORDS),
     maxResolverRecords: normalizePositiveLimit(options.maxResolverRecords ?? configured.max_edges, "maxResolverRecords", DEFAULT_MAX_RESOLVER_RECORDS),
     maxEvidence: normalizePositiveLimit(options.maxEvidence ?? configured.max_evidence, "maxEvidence", DEFAULT_MAX_EVIDENCE),
     maxTraversalDepth: normalizePositiveLimit(options.maxTraversalDepth ?? configured.max_traversal_depth, "maxTraversalDepth", 32),
@@ -274,6 +275,7 @@ export function analyzeProject({
   createdAt,
   snapshotOptions = {},
   maxFacts,
+  maxEdges,
   maxResolverRecords,
   maxEvidence,
   maxTraversalDepth,
@@ -286,7 +288,7 @@ export function analyzeProject({
   if (typeof parserName !== "string" || parserName.trim() === "") throw new TypeError("parserName must be a non-empty string");
   if (!snapshotOptions || typeof snapshotOptions !== "object" || Array.isArray(snapshotOptions)) throw new TypeError("snapshotOptions must be an object");
 
-  const limits = limitsFrom(config, { ...snapshotOptions, maxFacts, maxResolverRecords, maxEvidence, maxTraversalDepth });
+  const limits = limitsFrom(config, { ...snapshotOptions, maxFacts, maxEdges, maxResolverRecords, maxEvidence, maxTraversalDepth });
   const extensions = extensionsFor(config, snapshotOptions);
   const rootGuard = createRootGuard(rootPath);
   const snapshot = createSnapshot(rootGuard, {
@@ -322,7 +324,7 @@ export function analyzeProject({
   const webFlowResolution = resolveWebFlowLinks({ factBundle, resolutions: baseResolutions, maxRecords: limits.maxResolverRecords });
   const repositoryResolution = resolveRepositoryLinks({ factBundle, cfcResolution, maxRecords: limits.maxResolverRecords });
   const resolutions = mergeResolutionResults(factBundle, [pathResolution, cfcResolution, scopeResolution, webFlowResolution, repositoryResolution]);
-  const graph = buildGraph({ factBundle, resolutions, snapshot, rootGuard, toolVersion, maxEvidence: limits.maxEvidence, ...(createdAt === undefined ? {} : { createdAt }) });
+  const graph = buildGraph({ factBundle, resolutions, snapshot, rootGuard, toolVersion, maxEdges: limits.maxEdges, maxEvidence: limits.maxEvidence, ...(createdAt === undefined ? {} : { createdAt }) });
   const reverseAdjacency = buildReverseAdjacency(graph);
 
   return {

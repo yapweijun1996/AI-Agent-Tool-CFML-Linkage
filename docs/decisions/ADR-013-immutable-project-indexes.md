@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | Path, component, method, application, mapping, custom-tag, symbol, query, and per-file fact indexes |
 | Source of truth | `src/project-index.js`, `test/project-index.test.js`, this ADR, and `ARCHITECTURE.md` |
-| Evidence | `npm test`: 75 passed; reversed fact input produces identical indexes and ambiguity is retained |
+| Evidence | `npm test`: 76 passed; reversed fact input produces identical indexes and ambiguity is retained |
 | Verification | Unique/missing/ambiguous lookup states, frozen copied facts, source-file mismatch diagnostics, and deterministic ordering pass locally |
 | Limitations | Indexes are an internal library boundary; broader resolver coverage, public API, and cache integration remain outside this slice |
 

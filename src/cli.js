@@ -309,6 +309,7 @@ export function runCli(argv, { cwd = process.cwd() } = {}) {
       parserVersion: "mixed-structural-scanner/v0.1",
       parserName: "mixed-structural-scanner",
       maxFacts: config.limits.max_facts,
+      maxEdges: config.limits.max_edges,
       maxResolverRecords: config.limits.max_edges,
       maxTraversalDepth: config.limits.max_traversal_depth,
     });

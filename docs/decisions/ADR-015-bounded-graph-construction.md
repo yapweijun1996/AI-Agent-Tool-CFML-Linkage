@@ -19,6 +19,7 @@ Implement `src/graph.js` as a pure boundary over Fact IR and optional bounded re
 5. Validate duplicate IDs, supported edge types, endpoint existence, and unresolved source nodes before returning a graph.
 6. Keep reverse adjacency as a separate immutable derived index (`buildReverseAdjacency`) so the versioned Graph IR schema remains the serialized source contract.
 7. Mark graph completeness false when Fact IR or the supplied resolver result is incomplete; unresolved records alone do not imply failure.
+8. Apply the configured final `max_edges` cap after deterministic edge ordering, retain the bounded prefix, emit `RESOURCE_LIMIT`, and derive reverse adjacency from retained edges.
 
 The builder never executes source or resolves a candidate by filename similarity, LLM output, or runtime behavior. Its output remains bounded by the input facts, resolutions, and snapshot fingerprints.
 
@@ -32,4 +33,5 @@ The builder never executes source or resolves a candidate by filename similarity
 ## Verification
 
 - `test/graph.test.js` covers deterministic output, resolved/unresolved preservation, graph completeness, validation, and immutable reverse adjacency.
+- `test/analyzer.test.js` covers configured edge-budget truncation, incomplete diagnostics, and reverse-adjacency consistency; the full `npm test` suite reports 76 passed.
 - The bounded graph output passes local Draft 2020-12 validation against `schema/agent-cfml-linkage-graph-v0.1.schema.json`.

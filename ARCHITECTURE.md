@@ -9,7 +9,7 @@
 | Scope | Component boundaries, data flow, ownership, and failure behavior |
 | Source of truth | This document for proposed architecture; Git history for current code facts |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
-| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/resolver/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture tests pass locally; remaining architecture is unverified |
+| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/resolver/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture/evidence-budget/edge-budget tests pass locally; remaining architecture is unverified |
 | Limitations | Parser feasibility, runtime compatibility, resource costs, and public package compatibility are unknown; M1 uses Node built-ins only |
 
 ## 1. Boundary
@@ -41,7 +41,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Project index | immutable path, symbol, mapping, application, query, and per-file fact indexes; unique/ambiguous/missing lookup states | mutable resolution state |
 | Resolver passes | bounded candidate/target resolution in `src/path-resolver.js`, `src/cfc-resolver.js`, `src/scope-resolver.js`, `src/web-flow-resolver.js`, and `src/repository-resolver.js`; unresolved/ambiguous/dynamic states | index mutation or authoritative guessing |
 | Evidence policy | evidence merge and confidence classes | parser-specific parsing |
-| Graph builder/validator | Graph IR construction, invariants, serialization readiness, and the bounded global evidence-item budget | generic business interpretation |
+| Graph builder/validator | Graph IR construction, invariants, serialization readiness, and the bounded global edge/evidence budgets | generic business interpretation |
 | Cache | optional derived performance state | source of truth or stale-data authority |
 | Query engine | immutable GraphSnapshot, exact selectors, bounded deterministic traversal, evidence slices, and explanations in `src/graph-query.js` | model-written relationships, target guessing, or runtime execution |
 | CLI/library | private invocation, stable envelope, stderr separation, bounded `analyze`/`index`, and private `analyzeProject` export | execution of analyzed source, query-command persistence, or public release |
@@ -97,7 +97,7 @@ The architecture treats incomplete analysis as data:
 - dynamic/generated/SQL-dynamic values retain bounded expressions and dependencies;
 - out-of-root targets are rejected;
 - snapshot drift invalidates completeness;
-- resource caps return `complete=false` and identify the exhausted budget; the graph stage enforces the configured evidence-item cap in deterministic edge, unresolved-record, and node order;
+- resource caps return `complete=false` and identify the exhausted budget; the graph stage enforces the configured edge cap in deterministic edge order and evidence-item cap in deterministic edge, unresolved-record, and node order;
 - cache corruption causes rebuild, never trusted stale output.
 
 An internal invariant or serialization failure is different: it is an internal error and must not be represented as a clean analysis.

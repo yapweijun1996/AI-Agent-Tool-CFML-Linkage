@@ -9,7 +9,7 @@
 | Scope | Threat boundaries for local static analysis |
 | Source of truth | This document for proposed security requirements; implementation and tests for actual controls |
 | Evidence | Current local source contains root guard, snapshot, decoder, parser/scanner, Fact extraction, bounded resolvers, dynamic-evidence, SQL, repository/action, query, orchestration, and adversarial safe-failure controls; full runtime code does not exist |
-| Verification | Root-guard containment/symlink, snapshot no-execution, strict-decoding, CLI safety, recognized query-command mapping/validation behavior, serialized output-byte bounds, cache path/corruption, parser/scanner no-execution, bounded Fact extraction, dynamic/generated/SQL-dynamic preservation, bounded SQL/repository linkage, vanished-snapshot-target rejection, validated/copied immutable query snapshots, query bounds, composed orchestration, re-admission, parser-time drift, and diagnostic-bound tests pass; broader security test suite does not exist |
+| Verification | Root-guard containment/symlink, snapshot no-execution, strict-decoding, CLI safety, recognized query-command mapping/validation behavior, serialized output-byte bounds, cache path/corruption, parser/scanner no-execution, bounded Fact extraction, dynamic/generated/SQL-dynamic preservation, bounded SQL/repository linkage, vanished-snapshot-target rejection, validated/copied immutable query snapshots, query bounds, composed orchestration, re-admission, parser-time drift, library edge/evidence budgets, and diagnostic-bound tests pass; broader security test suite does not exist |
 | Limitations | Threat model, platform sandbox, dependency policy, and disclosure process require implementation-specific review |
 
 ## Security objectives
@@ -36,7 +36,7 @@ Canonicalize the requested root and every discovered/reference path. Reject trav
 
 ### Resource exhaustion
 
-Use hard limits for file size/count, bytes, facts, edges, evidence, traversal depth, output bytes, concurrency, and wall time. The bounded library graph stage enforces `max_evidence`, and the private CLI enforces serialized output bytes. On exhaustion, return an explicit incomplete result and budget diagnostic; never silently truncate or continue with an implied complete graph. Library output/time enforcement remains open.
+Use hard limits for file size/count, bytes, facts, edges, evidence, traversal depth, output bytes, concurrency, and wall time. The bounded library graph stage enforces `max_edges` and `max_evidence`, and the private CLI enforces serialized output bytes. On exhaustion, return an explicit incomplete result and budget diagnostic; never silently truncate or continue with an implied complete graph. Library output/time enforcement remains open.
 
 ### Sensitive data
 
@@ -64,7 +64,7 @@ Before release, test:
 - plugin rejection or containment if plugins exist;
 - CI workflow permissions and action scope remain read-only with no publish/deploy step.
 
-The root-admission, non-execution, dynamic-evidence, SQL, repository/action, bounded query, validated/copied snapshots, composed-orchestration, recognized query-command mapping/validation, complete v0.1 CLI configuration shape/value validation, library evidence budget, serialized output-byte bound, and adversarial safe-failure boundaries are verified by focused Node tests. T-047 records a least-privilege workflow definition with `contents: read` and no publish/deploy step; hosted CI execution remains unverified. T-044 records a bounded local credential/file/documentation audit in `docs/audits/release-security-parity-v0.1.json`; no complete analyzer security review, dependency audit, runtime instrumentation, or public release security verification exists.
+The root-admission, non-execution, dynamic-evidence, SQL, repository/action, bounded query, validated/copied snapshots, composed-orchestration, recognized query-command mapping/validation, complete v0.1 CLI configuration shape/value validation, library edge/evidence budgets, serialized output-byte bound, and adversarial safe-failure boundaries are verified by focused Node tests. T-047 records a least-privilege workflow definition with `contents: read` and no publish/deploy step; hosted CI execution remains unverified. T-044 records a bounded local credential/file/documentation audit in `docs/audits/release-security-parity-v0.1.json`; no complete analyzer security review, dependency audit, runtime instrumentation, or public release security verification exists.
 
 ## Reporting
 

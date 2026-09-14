@@ -9,7 +9,7 @@
 | Scope | Changes in this repository |
 | Source of truth | Git history and this changelog |
 | Evidence | Initial commit `1b29c0b`; documentation baseline and M1 foundation commits follow |
-| Verification | Documentation consistency checks, bounded query/robustness/adversarial-fixture/evidence-budget checks, and `npm test` (75/75) are run during this pass |
+| Verification | Documentation consistency checks, bounded query/robustness/adversarial-fixture/evidence/edge-budget checks, and `npm test` (76/76) are run during this pass |
 | Limitations | No parser/resolver release runtime, public package, hosted CI run, or release exists; the read-only CI workflow is present |
 
 ## Unreleased
@@ -59,7 +59,8 @@
 - Implemented bounded T-046 CLI configuration validation: the complete v0.1 object shape/value contract and query-request options are rejected before root admission/analysis; library-wide budget enforcement remains open.
 - Added T-047 `.github/workflows/ci.yml`, a least-privilege Node 20.x/22.x/24.x test matrix with no publish/deploy step; hosted workflow execution remains unverified.
 - Implemented T-048 bounded library evidence-budget enforcement through `max_evidence`, with deterministic partial evidence, explicit `RESOURCE_LIMIT` incomplete results, focused coverage, and ADR-025; library output/time budgets remain open.
-- Refreshed the retained T-043 Node host evidence and ADR-023 to the current 75-test run; the historical T-044 audit remains tied to its original source commit.
+- Implemented T-049 bounded library Graph edge-budget enforcement through `max_edges`, retaining the deterministic edge prefix, rebuilding valid reverse adjacency, marking capped results incomplete, and recording `RESOURCE_LIMIT` details in ADR-026; library serialized-output/time budgets remain open.
+- Refreshed the retained T-043 Node host evidence and ADR-023 to the current 76-test run; the historical T-044 audit remains tied to its original source commit.
 - Corrected the EPIC lifecycle metadata to reflect the current bounded M9 implementation state; full parser, broader linkage, and release work remain open.
 
 ### Not claimed

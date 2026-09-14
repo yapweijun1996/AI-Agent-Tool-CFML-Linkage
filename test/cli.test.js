@@ -92,7 +92,23 @@ test("runs the bounded analysis pipeline after validating the root", () => {
     assert.equal(evidenceLimitedResult.stdout.data.graph.stats.evidence_count, 1);
     assert.equal(evidenceLimitedResult.stdout.data.graph.diagnostics.some((item) => item.code === "RESOURCE_LIMIT" && item.details?.max_evidence === 1), true);
 
+    fs.writeFileSync(path.join(root, "edge-index.cfm"), '<cfinclude template="edge-target.cfm">\n<cfinclude template="edge-target-two.cfm">\n', "utf8");
+    fs.writeFileSync(path.join(root, "edge-target.cfm"), "<cfset request.value = 1>\n", "utf8");
+    fs.writeFileSync(path.join(root, "edge-target-two.cfm"), "<cfset request.value = 2>\n", "utf8");
+    const edgeConfig = JSON.parse(fs.readFileSync(path.join(root, "config.json"), "utf8"));
+    edgeConfig.limits.max_evidence = 1000000;
+    edgeConfig.limits.max_edges = 1;
+    edgeConfig.limits.max_output_bytes = 52428800;
+    fs.writeFileSync(path.join(root, "config.json"), JSON.stringify(edgeConfig), "utf8");
+    const edgeLimitedResult = runCli(["analyze", "--config", "config.json"], root);
+    assert.equal(edgeLimitedResult.exitCode, 3);
+    assert.equal(edgeLimitedResult.stdout.status, "incomplete");
+    assert.equal(edgeLimitedResult.stdout.data.graph.edges.length, 1);
+    assert.equal(edgeLimitedResult.stdout.data.graph.stats.edge_count, 1);
+    assert.equal(edgeLimitedResult.stdout.data.graph.diagnostics.some((item) => item.code === "RESOURCE_LIMIT" && item.details?.max_edges === 1), true);
+
     const boundedConfig = JSON.parse(fs.readFileSync(path.join(root, "config.json"), "utf8"));
+    boundedConfig.limits.max_edges = 1000000;
     boundedConfig.limits.max_evidence = 1000000;
     boundedConfig.limits.max_output_bytes = 512;
     fs.writeFileSync(path.join(root, "config.json"), JSON.stringify(boundedConfig), "utf8");

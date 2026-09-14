@@ -29,4 +29,4 @@ The mixed scanner merge is ordered by numeric source byte offsets so CFML condit
 ## Verification
 
 - `test/web-flow-resolver.test.js` uses the inert `fixtures/golden/web-flow-and-conditions/` fixture to verify literal form/AJAX/fetch/redirect targets, wrapper labels, condition edges, deterministic repeatability, Graph materialization, unresolved condition sources, and non-execution boundaries.
-- The full `npm test` suite reports 75 passed; produced Graph IR and contract examples pass local Draft 2020-12 validation.
+- The full `npm test` suite reports 76 passed; produced Graph IR and contract examples pass local Draft 2020-12 validation.

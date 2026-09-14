@@ -30,5 +30,5 @@ The pass uses a small lexical scan over already bounded expression text; it does
 
 ## Verification
 
-- `test/scope-resolver.test.js` covers ordered production, consumption, overrides, dynamic preservation, missing include coverage, Graph edge materialization, and include-depth/event/output resource bounds; the full `npm test` suite reports 75 passed.
+- `test/scope-resolver.test.js` covers ordered production, consumption, overrides, dynamic preservation, missing include coverage, Graph edge materialization, and include-depth/event/output resource bounds; the full `npm test` suite reports 76 passed.
 - `test/fact-extractor.test.js` verifies bounded RHS references and condition variables are retained in Fact IR.

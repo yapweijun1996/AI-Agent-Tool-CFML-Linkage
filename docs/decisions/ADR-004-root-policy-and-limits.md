@@ -1,6 +1,6 @@
 # ADR-004: Make root safety and resource limits explicit configuration
 
-> **Status: PROVISIONAL / BOUNDED.** The v0.1 configuration shape/value boundary, root guard, private library evidence-limit boundary, and private CLI output-limit boundary are implemented for bounded scopes; broader runtime policy enforcement remains open.
+> **Status: PROVISIONAL / BOUNDED.** The v0.1 configuration shape/value boundary, root guard, private library edge/evidence-limit boundaries, and private CLI output-limit boundary are implemented for bounded scopes; broader runtime policy enforcement remains open.
 
 | Field | Value |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Scope | Analysis root, path safety, ignores, limits, output, prohibited actions, and exit codes |
 | Source of truth | This ADR and `SPEC.md`; runtime enforcement must preserve the contract |
 | Evidence | `schema/agent-cfml-linkage-config-v0.1.schema.json`, `examples/config-v0.1.json`, `src/cli.js`, `src/analyzer.js`, `src/graph.js`, `test/cli.test.js`, `test/analyzer.test.js`, and local schema/policy check |
-| Verification | Configuration schema, shape/value, and safety invariant checks pass; `test/cli.test.js` verifies invalid configuration is rejected before root admission/analysis, `test/analyzer.test.js` verifies the bounded library evidence limit, and bounded CLI output-limit tests pass; broader runtime policy enforcement remains unverified |
+| Verification | Configuration schema, shape/value, and safety invariant checks pass; `test/cli.test.js` verifies invalid configuration is rejected before root admission/analysis, `test/analyzer.test.js` verifies the bounded library edge/evidence limits, and bounded CLI output-limit tests pass; broader runtime policy enforcement remains unverified |
 | Limitations | Platform-specific permission behavior, glob semantics, and operational defaults require implementation tests |
 
 ## Context
@@ -30,7 +30,7 @@ The v0.1 configuration requires:
 - immutable prohibited-action flags: source execution, network, database, shell, and browser are all false;
 - fixed exit meanings `0` completed, `1` internal failure, `2` invalid input, `3` incomplete/unsupported/limited, and `4` path/access rejection.
 
-The machine-readable contract is `schema/agent-cfml-linkage-config-v0.1.schema.json`; its example is `examples/config-v0.1.json`. `src/cli.js` now enforces the complete v0.1 object shape and bounded value contract, including query-request validation, before root admission/analysis. This validation does not imply that every configured library/runtime budget is implemented: the library graph stage enforces `max_evidence`, the private CLI enforces the serialized output-byte limit, while library output/time enforcement and other limits remain open or are delegated to bounded stages.
+The machine-readable contract is `schema/agent-cfml-linkage-config-v0.1.schema.json`; its example is `examples/config-v0.1.json`. `src/cli.js` now enforces the complete v0.1 object shape and bounded value contract, including query-request validation, before root admission/analysis. This validation does not imply that every configured library/runtime budget is implemented: the library graph stage enforces `max_edges` and `max_evidence`, the private CLI enforces the serialized output-byte limit, while library output/time enforcement and other limits remain open or are delegated to bounded stages.
 
 ## Consequences
 

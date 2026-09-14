@@ -57,6 +57,22 @@ test("enforces the configured library evidence budget deterministically", () => 
   assert.deepEqual(first.graph, second.graph);
 });
 
+test("enforces the configured library graph-edge budget deterministically", () => {
+  const first = analyze("golden/sql-and-repository", { config: { limits: { max_edges: 1 } } });
+  const second = analyze("golden/sql-and-repository", { config: { limits: { max_edges: 1 } } });
+  assert.equal(first.complete, false);
+  assert.equal(first.graph.complete, false);
+  assert.equal(first.graph.edges.length, 1);
+  assert.equal(first.graph.stats.edge_count, 1);
+  assert.equal(first.graph.nodes.length > 0, true);
+  assert.equal(first.graph.unresolved.length > 0, true);
+  assert.equal(first.graph.diagnostics.some((item) => item.code === "RESOURCE_LIMIT" && item.details?.max_edges === 1), true);
+  assert.equal(validateGraph(first.graph).length, 0);
+  assert.equal(Object.values(first.reverse_adjacency.outgoing).flat().length, 1);
+  assert.deepEqual(first.graph, second.graph);
+  assert.deepEqual(first.reverse_adjacency, second.reverse_adjacency);
+});
+
 test("keeps the parser boundary fail-closed when no backend is selected", () => {
   const result = analyzeProject({
     rootPath: path.resolve("fixtures/golden/core-cfml-web-surface"),
