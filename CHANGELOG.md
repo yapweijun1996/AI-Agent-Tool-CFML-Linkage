@@ -28,9 +28,10 @@
 - Confidence/completeness fixture in `examples/confidence-v0.1.json`.
 - Root/configuration/limits contract in `schema/agent-cfml-linkage-config-v0.1.schema.json`, `examples/config-v0.1.json`, and ADR-004.
 - Versioned golden/negative/adversarial fixture layout and manifest under `fixtures/` for T-006.
+- Node `>=20` private foundation, root guard, focused tests, and ADR-005 for T-010.
 
 ### Not claimed
 
 - No analyzer implementation has been added.
-- No parser, resolver, schema artifact, CLI, library API, cache, query engine, test, CI workflow, package, or release has been added.
+- No parser, resolver, public CLI/library API, cache, query engine, CI workflow, public package, or release has been added; the private foundation and focused root-guard test are the only runtime slice.
 - No Lucee, Adobe ColdFusion, browser, database, or network verification has been performed.

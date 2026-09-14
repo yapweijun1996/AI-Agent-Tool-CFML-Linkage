@@ -1,6 +1,6 @@
 # Design: agent-cfml-linkage Analysis Pipeline
 
-> **Status: PROPOSED.** This document describes the intended architecture only. The repository currently contains no implementation or runtime evidence.
+> **Status: PROPOSED / M1 PARTIAL.** This document describes the intended architecture; only the safe root-guard foundation has runtime evidence.
 
 | Field | Value |
 | --- | --- |
@@ -9,14 +9,14 @@
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Graph IR and Fact IR schema/example contracts validate locally; runtime stages below remain unimplemented proposals |
+| Verification | Graph/Fact/config contract checks and 6 root-guard tests pass locally; runtime stages below remain unimplemented proposals |
 | Limitations | Parser choice, language coverage, performance, and engine compatibility remain unknown |
 
 ## 1. Design goals
 
 The analyzer should give coding agents a small, queryable, evidence-backed view of cross-file relationships without executing the application or guessing dynamic behavior. The design favors narrow stages, immutable intermediate data, explicit incompleteness, and stable output.
 
-**Evidence boundary:** these are proposed components and flows, not verified runtime modules. The repository now contains a locally validated Graph IR schema/example contract, but has no analyzer source, entry points, callers, dependency manifest, build script, test runner, CI workflow, or release artifact from which to confirm runtime architecture.
+**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains `src/root-guard.js`, `test/root-guard.test.js`, a private `package.json`, and validated contracts; parser, resolver, graph, query, CLI, caller, CI, and release architecture remain unimplemented.
 
 It is CFML-first: CFM/CFC structure, Application governance, includes, CFC typing, and shared scopes receive priority. HTML, JavaScript, CSS, SQL, and repository relations extend that model where static evidence is available.
 
@@ -44,7 +44,7 @@ Every stage has a typed input/output boundary. Stages may emit diagnostics but n
 
 ### Stage 0 — Root guard and policy
 
-Resolve the canonical root, reject traversal and symlink escapes, load the explicit v0.1 configuration (`schema/agent-cfml-linkage-config-v0.1.schema.json`), apply mappings and limits, and freeze the `AnalysisContext`. No database, network, or CFML execution is permitted. Globe3-specific mappings are configuration rather than hardcoded rules.
+Resolve the canonical root, reject traversal and symlink escapes, load the explicit v0.1 configuration (`schema/agent-cfml-linkage-config-v0.1.schema.json`), apply mappings and limits, and freeze the `AnalysisContext`. This M1 root-guard slice is implemented in `src/root-guard.js` and covered by `test/root-guard.test.js`. No database, network, or CFML execution is permitted. Globe3-specific mappings are configuration rather than hardcoded rules.
 
 ### Stage 1 — Snapshot and discovery
 
@@ -161,12 +161,12 @@ Correctness comes first. Parse with bounded worker concurrency and merge facts i
 
 ## 7. Proposed implementation sequence
 
-The sequence is dependency-aware but not a schedule. M0's contract gate is verified; parser and resolver implementation remains blocked until the safe M1 foundation is established.
+The sequence is dependency-aware but not a schedule. M0's contract gate and T-010 are verified; T-011–T-014 remain before parser and resolver implementation.
 
 | Milestone | Content | Current status |
 | --- | --- | --- |
 | M0 | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and golden-fixture contract | Verified — T-001–T-006 |
-| M1 | Safe root guard, snapshot, decoder, discovery, cache skeleton, CLI envelope | Not started |
+| M1 | Safe root guard, snapshot, decoder, discovery, cache skeleton, CLI envelope | In progress — T-010 verified |
 | M2 | Parser adapter and normalized extraction | Not started |
 | M3 | Basic path/Application/include linkage and graph validation | Not started |
 | M4 | CFC mappings, inheritance, instantiation, and method linkage | Not started |

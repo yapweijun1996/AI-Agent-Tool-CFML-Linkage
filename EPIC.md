@@ -1,6 +1,6 @@
 # Epic: Build the CFML-first linkage evidence provider
 
-> **Status: PROPOSED.** This epic is planning material. No implementation work is present in the current repository.
+> **Status: PROPOSED / M1 IN PROGRESS.** This epic is planning material; only the safe root-guard foundation is implemented.
 
 | Field | Value |
 | --- | --- |
@@ -11,7 +11,7 @@
 | Lifecycle | Planning / pre-prototype |
 | Source of truth | This epic for outcome and milestones; `SPEC.md` for the contract; Git history for actual completion |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Not started; no code, tests, or CI exist |
+| Verification | M0 contract checks and 6 root-guard tests pass; no CI or linkage verification exists |
 | Limitations | Estimates, sequencing, parser choice, and compatibility are not validated |
 
 ## 1. Problem
@@ -43,7 +43,7 @@ Out of scope: source execution, runtime network/database access, browser automat
 | Milestone | Outcome | Dependencies | Status |
 | --- | --- | --- | --- |
 | M0 Contracts | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and fixture rules | None | Verified — T-001–T-006 |
-| M1 Safe foundation | Root guard, snapshot, decoding/source maps, discovery, CLI envelope, cache skeleton | M0 | Not started |
+| M1 Safe foundation | Root guard, snapshot, decoding/source maps, discovery, CLI envelope, cache skeleton | M0 | In progress — T-010 verified |
 | M2 Parser/extractor | Adapter and normalized facts for priority syntax | M1 | Not started |
 | M3 Basic linkage | Paths, includes, Application governance, unresolved model, graph validator, reverse callers | M2 | Not started |
 | M4 CFC linkage | Mappings, inheritance, instantiation, `cfinvoke`, and conservative method resolution | M3 | Not started |
@@ -68,7 +68,7 @@ The epic is complete only when all of the following are evidenced:
 
 ## 6. Risks and blockers
 
-Current status: M0 contract work is verified, but there is no analyzer implementation baseline. Parser strategy and supported syntax remain an M2 decision; M1 safe-foundation implementation is the next dependency-ready work.
+Current status: M0 contract work and T-010 are verified. The root-guard foundation is the only runtime slice; T-011–T-014 remain before parser work, while parser strategy and supported syntax remain an M2 decision.
 
 Known technical risks include runtime-computed Application mappings, dynamic `evaluate` and generated names, ambiguous components/method receivers, shared-scope semantics, embedded JavaScript/SQL parsing, and resource exhaustion. These are release risks, not reasons to guess.
 

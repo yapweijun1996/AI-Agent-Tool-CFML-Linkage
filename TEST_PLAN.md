@@ -1,6 +1,6 @@
 # Test Plan: agent-cfml-linkage
 
-> **Status: PROPOSED.** This plan defines future verification; no tests have been created or run.
+> **Status: PROPOSED / M1 PARTIAL.** This plan defines future verification; only the focused root-guard suite exists.
 
 | Field | Value |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Scope | Contract, determinism, safety, linkage, partial-result, and release verification |
 | Source of truth | This plan for intended verification; actual test output and CI for evidence |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | No project test suite exists; T-001 schema/example validation passed with the existing local Python `jsonschema` module |
+| Verification | T-001–T-006 contract checks and T-010 `npm test` (6/6) passed; broader project test suite does not exist |
 | Limitations | Exact framework, parser fixtures, supported runtimes, and performance targets are not selected |
 
 ## 1. Verification principles
@@ -26,7 +26,7 @@
 | Layer | Purpose | Evidence required |
 | --- | --- | --- |
 | Unit | IDs, paths, spans, normalization, confidence, limits, and serializers | Focused passing tests |
-| Contract/schema | Graph IR, Fact IR, diagnostics, unresolved records, CLI envelope | Schema validation and fixture assertions; T-001–T-006 cover Graph IR, Fact IR, identity/order, confidence/completeness, configuration, and fixture-layout artifacts |
+| Contract/schema | Graph IR, Fact IR, diagnostics, unresolved records, CLI envelope | Schema/fixture assertions; T-001–T-006 cover contracts and layout |
 | Golden | End-to-end static linkage for frozen projects | Expected graph/evidence comparison |
 | Adversarial | Ambiguity, malformed syntax, dynamic code, cycles, escapes, drift, caps | Explicit safe failure and `complete=false` where applicable |
 | Integration | CLI/library boundary, cache, query engine | Public API/CLI tests and readback |
@@ -82,8 +82,8 @@ A future release must satisfy all required gates:
 
 ## 6. Planned commands
 
-No command is currently valid because no project manifest or test runner exists. Once implementation begins, the repository must document exact commands for focused tests, full tests, contract/schema checks, lint/type checks, package smoke, and any engine probes. Placeholder commands must not be reported as executed checks.
+The current focused command is `npm test`, using Node's built-in test runner. No full build, lint, type, package, browser, or engine command exists yet. Once those workflows are implemented, the repository must document exact commands; placeholder commands must not be reported as executed checks.
 
 ## 7. Current result
 
-**T-001–T-006 passed:** all three schemas are valid, representative examples validate, graph/fact ID, reference, count, source, span, stable identity, ordering, confidence, completeness, root-safety, limit, exit-code, and fixture-manifest invariants pass. This used existing local Python modules and did not add a project dependency. Runtime producer repeatability/enforcement remains unverified; project build, test, runtime, browser, and package checks remain unrun because no implementation exists.
+**T-001–T-006 and T-010 passed:** contract schemas/examples, identity/order, confidence/completeness, configuration, fixture-manifest, and root-guard containment checks pass; `npm test` reports 6 passed and 0 failed. This uses no project dependency beyond Node built-ins. Runtime producer repeatability/enforcement, linkage behavior, package smoke, browser, and engine checks remain unverified.

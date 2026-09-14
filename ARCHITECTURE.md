@@ -1,6 +1,6 @@
 # Architecture: agent-cfml-linkage
 
-> **Status: PROPOSED.** No components described here currently exist in this repository.
+> **Status: PROPOSED / M1 PARTIAL.** The root-guard component exists; the remaining architecture is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -9,12 +9,12 @@
 | Scope | Component boundaries, data flow, ownership, and failure behavior |
 | Source of truth | This document for proposed architecture; Git history for current code facts |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Not run; architecture is design-only |
-| Limitations | Dependency versions, parser feasibility, runtime compatibility, and resource costs are unknown |
+| Verification | Root-guard tests pass locally; remaining architecture is unverified |
+| Limitations | Parser feasibility, runtime compatibility, resource costs, and public package compatibility are unknown; M1 uses Node built-ins only |
 
 ## 1. Boundary
 
-The tool owns deterministic static linkage analysis for a local CFML-first project. It produces Graph IR and bounded evidence. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
+The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1 slice currently owns only root admission and path containment; Graph IR production, linkage evidence, and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
 
 ```text
 Local source + explicit policy
@@ -33,7 +33,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 
 | Component | Owns | Must not own |
 | --- | --- | --- |
-| Root guard/policy | canonical root, containment, ignore rules, limits, frozen policy | parsing or confidence upgrades |
+| Root guard/policy | canonical root and path containment in the implemented M1 slice; planned ignores, limits, and frozen policy | parsing or confidence upgrades |
 | Snapshot/discovery | deterministic file set, fingerprints, drift detection | source mutation or runtime discovery |
 | Decoder/source map | decoding state and coordinate conversion | linkage decisions |
 | Parser adapter | syntax trees, parser diagnostics, completeness | cross-file resolution |
@@ -104,7 +104,7 @@ An internal invariant or serialization failure is different: it is an internal e
 
 ## 7. Security boundaries
 
-The process must read only authorized local paths beneath the canonical root and configured safe metadata. It must not evaluate CFML expressions, execute JavaScript or SQL, spawn application commands, access a database, or make network requests. Diagnostics and graph evidence must be bounded and must not disclose secret contents.
+The implemented root guard reads filesystem metadata only to canonicalize and contain paths; it does not read analyzed source. The future process must read only authorized local paths beneath the canonical root and configured safe metadata. It must not evaluate CFML expressions, execute JavaScript or SQL, spawn application commands, access a database, or make network requests. Diagnostics and graph evidence must be bounded and must not disclose secret contents.
 
 ## 8. Extensibility
 

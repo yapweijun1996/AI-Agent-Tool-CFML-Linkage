@@ -8,9 +8,9 @@
 | Last updated | 2026-09-14 |
 | Scope | Versioning, release gates, artifact traceability, and compatibility claims |
 | Source of truth | Git commit, validated artifacts, tests, and this release policy |
-| Evidence | Initial commit `1b29c0b`; no manifest, package, tag, workflow, or release exists |
-| Verification | Not run; no release candidate exists |
-| Limitations | Package name, runtime support matrix, registry, CI, and maintainer workflow are undecided |
+| Evidence | `package.json` is private with Node `>=20`; no public package artifact, tag, workflow, or release exists |
+| Verification | Root-guard tests pass; no release candidate exists |
+| Limitations | Public exports, runtime support matrix, registry, CI, and maintainer workflow are undecided |
 
 ## Release principles
 
@@ -28,7 +28,7 @@ Use semantic versioning after the package and public contract are established:
 - `1.0`: Graph IR, CLI, library, safety, and completeness contracts are reviewed and stable.
 - Patch releases must preserve the documented contract and correct defects without weakening safety.
 
-The current repository has no release version. `0.1` is a design/documentation version only; the Graph IR schema/example contract is not a released package or runtime.
+The current repository has no release version. `0.1` is a design/documentation version only; the private `package.json` and root-guard foundation are not a released package or linkage runtime.
 
 ## Release gates
 
@@ -61,4 +61,4 @@ Do not claim full Lucee or Adobe ColdFusion compatibility from parser tests or f
 
 ## Current release state
 
-**Unreleased and not started.** There is no implementation, package, CI, tag, or release to verify.
+**Unreleased.** A private foundation package manifest and root-guard source exist; there is no public artifact, CI, tag, or release to verify.

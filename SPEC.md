@@ -9,7 +9,7 @@
 | Scope | Static cross-file linkage analysis for CFML-first mixed web projects |
 | Source of truth | This document for the proposed contract; Git history for current code facts |
 | Evidence | Initial repository commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Not run; no implementation or test suite exists |
+| Verification | Graph/Fact/config contract checks and `npm test` root-guard tests pass; linkage contract/runtime verification is incomplete |
 | Limitations | Parser coverage, resolver accuracy, performance, compatibility, and release status are unverified |
 
 ## 1. Objective
@@ -37,13 +37,13 @@ The future API accepts:
 - optional configuration for ignore rules, file limits, mappings, parser selection, and resolver policy;
 - an optional target or query after graph construction.
 
-The implementation MUST canonicalize the root, reject traversal and symlink escapes, enforce root containment, freeze policy before discovery, and report rejected paths explicitly. The v0.1 configuration contract is `schema/agent-cfml-linkage-config-v0.1.schema.json` with example `examples/config-v0.1.json`; its root-safety, prohibited-action, limit, output, and exit-code invariants validate locally. Project-specific mappings are configuration, not hardcoded Globe3 behavior.
+The implementation MUST canonicalize the root, reject traversal and symlink escapes, enforce root containment, freeze policy before discovery, and report rejected paths explicitly. The v0.1 configuration contract is `schema/agent-cfml-linkage-config-v0.1.schema.json` with example `examples/config-v0.1.json`; its root-safety, prohibited-action, limit, output, and exit-code invariants validate locally. The M1 root guard in `src/root-guard.js` now implements and tests this boundary; project-specific mappings are configuration, not hardcoded Globe3 behavior.
 
 The analyzer SHOULD discover `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.js`, `.mjs`, `.css`, and statically relevant SQL regions. Exact extension and embedded-region coverage remains a design detail to validate during M0/M1.
 
 ### 3.1 Current repository contract evidence
 
-No public entry point, caller, package manifest, dependency declaration, build command, runtime target, or configuration file exists in the current repository. The API, CLI names, language/runtime, parser dependency, and package metadata below are therefore proposed contracts, not existing interfaces.
+The repository now has a private `package.json` with Node `>=20` and an `npm test` script, plus the internal `src/root-guard.js` module and focused test. It has no public export map, CLI entry point, callers, runtime linkage implementation, third-party dependencies, build workflow, or release artifact. API, CLI names, parser dependency, and public package metadata below remain proposed contracts.
 
 ## 4. Analysis contract
 

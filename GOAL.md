@@ -1,17 +1,17 @@
 # Goal: agent-cfml-linkage
 
-> **Status: PROPOSED / PLANNING.** This goal describes the intended product outcome. The repository has no implementation evidence.
+> **Status: PROPOSED / M1 IN PROGRESS.** This goal describes the intended product outcome; only the safe root-guard foundation is implemented.
 
 | Field | Value |
 | --- | --- |
 | Version | 0.1 |
 | Last updated | 2026-09-14 |
 | Project type | Planned NPM/library + CLI + AI-agent evidence provider; CFML-first static analyzer |
-| Lifecycle | Planning / pre-prototype |
+| Lifecycle | Prototype / safe-foundation implementation |
 | Source of truth | This repository's Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for state |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; this pass adds documentation, not implementation |
-| Verification | No implementation, tests, runtime, package, or release verification exists |
-| Limitations | Public API, package name, parser, runtime matrix, and deployment model are not yet established |
+| Verification | Root-guard implementation and 6 focused Node tests pass locally; linkage/runtime/package-release verification is absent |
+| Limitations | Public exports/CLI, parser, full runtime matrix, deployment model, and release compatibility are not established |
 
 ## Purpose
 
@@ -52,4 +52,4 @@ The goal is achieved only when a release has:
 
 ## State model
 
-The project must track **Planned → Implemented → Verified → Released** independently. The M0 contract foundation is now verified; the analyzer runtime, package, and release remain planned only.
+The project must track **Planned → Implemented → Verified → Released** independently. M0 is verified and the M1 root-guard slice is implemented/verified; the linkage analyzer, public package, and release remain incomplete/unreleased.

@@ -1,6 +1,6 @@
 # agent-cfml-linkage
 
-> **Status: PROPOSED.** This repository contains documentation for a planned tool. No analyzer implementation, package, CLI, test suite, or runtime verification is currently present.
+> **Status: PROPOSED / M1 IN PROGRESS.** The repository contains a safe root-guard foundation and contracts; the linkage analyzer, CLI, and release are not complete.
 
 | Field | Value |
 | --- | --- |
@@ -9,14 +9,14 @@
 | Scope | Deterministic, read-only, local-first linkage analysis for CFML web applications |
 | Repository evidence | Initial `main` commit `1b29c0b934129fcd005b0575d9b986159043fbc9` contained only `.gitattributes`; this pass adds documentation, not implementation |
 | Source of truth | Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for actual state |
-| Verification | No implementation, runtime, package, or release verification exists |
+| Verification | `npm test` passes 6 focused root-guard tests; broader linkage/runtime/package/release verification is absent |
 | Limitations | Public API, parser, dependencies, runtime matrix, and deployment model are not established |
 
 ## Classification
 
 - **Project type:** planned hybrid NPM/library + CLI + AI-agent evidence provider.
-- **Lifecycle:** planning / pre-prototype.
-- **Current state:** documentation exists in the working tree; no product implementation exists in `HEAD`.
+- **Lifecycle:** prototype / safe-foundation implementation.
+- **Current state:** M0 contracts and the M1 root guard are implemented/verified; no linkage parser, resolver, CLI, or public package exists.
 
 ## Purpose
 
@@ -34,14 +34,14 @@ The intended output is a deterministic Graph IR/JSON document that agents can qu
 
 ## What exists today
 
-The repository is at contract-only inception. The Graph IR schema/example contract is implemented and locally validated; there is still no analyzer runtime code from which to claim linkage behavior. The following remain **planned**, not available:
+The repository is at safe-foundation inception. Graph IR/Fact IR/configuration contracts and the root guard are implemented/verified; there is still no linkage parser or resolver runtime. The following remain **planned**, not available:
 
-- parser/extractor runtime that produces Fact IR (the proposed Fact IR schema/example contract now exists at `schema/agent-cfml-linkage-fact-v0.1.schema.json` and `examples/facts-v0.1.json`)
+- parser/extractor runtime that produces Fact IR (the Fact IR schema/example contract exists at `schema/agent-cfml-linkage-fact-v0.1.schema.json` and `examples/facts-v0.1.json`)
 - project index and multi-pass resolvers
 - Graph IR runtime implementation (the proposed JSON Schema contract and example now exist at `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`)
-- CLI/library API
+- public CLI/library API (the private `package.json` currently provides only the Node test script)
 - incremental cache and query engine
-- golden/negative/adversarial fixture layout and manifest now exist; fixture source inputs, golden outputs, tests, CI, and published artifacts remain unavailable
+- golden/negative/adversarial fixture layout and manifest exist; fixture source inputs, golden outputs, broader tests, CI, and published artifacts remain unavailable
 
 A related external project, `agent-cfml-check`, is separate bounded single-file CFML checking prior art. Its external status must not be read as implementation evidence for this repository.
 
@@ -75,6 +75,7 @@ The eight Core SSOT files are `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROA
 - [`docs/decisions/ADR-002-deterministic-identity-and-ordering.md`](docs/decisions/ADR-002-deterministic-identity-and-ordering.md) — identity, freshness, deduplication, and ordering decision
 - [`docs/decisions/ADR-003-confidence-and-completeness.md`](docs/decisions/ADR-003-confidence-and-completeness.md) — confidence, unresolved, diagnostics, and completeness decision
 - [`docs/decisions/ADR-004-root-policy-and-limits.md`](docs/decisions/ADR-004-root-policy-and-limits.md) — root safety, limits, output, and exit-code decision
+- [`docs/decisions/ADR-005-node-foundation-runtime.md`](docs/decisions/ADR-005-node-foundation-runtime.md) — Node foundation and zero-dependency decision
 - [`AGENTS.md`](AGENTS.md) — repository-specific contribution rules
 
 ## Non-goals
@@ -90,4 +91,4 @@ The planned tool will not:
 
 ## Verification and limitations
 
-No implementation verification has been run. Verification begins only after source, contracts, and tests exist. Until then, all capabilities described in the documentation are proposals and all runtime, performance, compatibility, and release claims remain unknown.
+Root-guard verification has been run with `npm test` (6/6 passed). No parser, resolver, CLI, browser, engine, package, deployment, or release verification exists; all linkage capabilities and compatibility claims remain proposed.
