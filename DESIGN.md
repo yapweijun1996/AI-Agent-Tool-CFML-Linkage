@@ -9,14 +9,14 @@
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Graph/Fact/config contract checks and 32 foundation/parser-adapter tests pass locally; runtime stages below remain unimplemented proposals |
+| Verification | Graph/Fact/config checks, produced Fact IR schema validation, and 37 foundation/parser/scanner/Fact tests pass locally; runtime stages below remain unimplemented proposals |
 | Limitations | Parser choice, language coverage, performance, and engine compatibility remain unknown |
 
 ## 1. Design goals
 
 The analyzer should give coding agents a small, queryable, evidence-backed view of cross-file relationships without executing the application or guessing dynamic behavior. The design favors narrow stages, immutable intermediate data, explicit incompleteness, and stable output.
 
-**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, private CLI-envelope, cache, and parser-adapter modules with focused tests, a private `package.json`, and validated contracts; parser backend, Fact IR, resolver, graph, query orchestration, caller, CI, and release architecture remain unimplemented.
+**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, private CLI-envelope, cache, parser-adapter, bounded scanner, and bounded Fact extractor modules with focused tests, a private `package.json`, and validated contracts; full parser backend, broader Fact IR, resolver, graph, query orchestration, caller, CI, and release architecture remain unimplemented.
 
 It is CFML-first: CFM/CFC structure, Application governance, includes, CFC typing, and shared scopes receive priority. HTML, JavaScript, CSS, SQL, and repository relations extend that model where static evidence is available.
 
@@ -56,7 +56,7 @@ The implemented M1 decoder accepts strict UTF-8, preserves BOM byte alignment, a
 
 ### Stage 3 — Parser adapter
 
-The implemented adapter in `src/parser-adapter.js` enforces strict decoding handoff, explicit backend selection, normalized diagnostics, and bounded partial/unsupported results. It currently has no selected backend and therefore produces `PARSER_UNAVAILABLE` rather than claiming syntax coverage. The future parser-neutral contract is:
+The implemented adapter in `src/parser-adapter.js` enforces strict decoding handoff, explicit backend selection, normalized diagnostics, and bounded partial/unsupported results. `src/cfml-scanner.js` provides an explicit dependency-free structural backend for a bounded CFML tag subset, and `src/fact-extractor.js` emits fixture-backed Fact IR. The default adapter still has no selected backend and produces `PARSER_UNAVAILABLE` rather than claiming full syntax coverage. The future parser-neutral contract is:
 
 ```text
 parse(source, path) -> ParseUnit {
@@ -67,7 +67,7 @@ parse(source, path) -> ParseUnit {
 }
 ```
 
-A CFML Tree-sitter grammar may be used as the preferred foundation, but parser choice stays behind the adapter and remains unselected. The eventual backend must cover tag CFML, CFScript, and embedded HTML/JavaScript/SQL regions sufficiently for extraction. Recoverable syntax errors yield partial units; unsupported or catastrophic regions yield explicit diagnostics. Whole-language regex parsing is prohibited.
+A CFML Tree-sitter grammar or another verified grammar may later replace or extend the bounded scanner, but parser choice stays behind the adapter. The current scanner covers structural CFML tags and preserves CFScript/embedded script regions as explicit opaque unsupported evidence; it is not a general grammar. Recoverable syntax errors yield partial units; unsupported or catastrophic regions yield explicit diagnostics. Whole-language regex parsing is prohibited.
 
 ### Stage 4 — normalized Fact IR
 
@@ -167,7 +167,7 @@ The sequence is dependency-aware but not a schedule. M0's contract gate and T-01
 | --- | --- | --- |
 | M0 | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and golden-fixture contract | Verified — T-001–T-006 |
 | M1 | Safe root guard, snapshot, decoder, discovery, cache skeleton, CLI envelope | Verified — T-010–T-014 |
-| M2 | Parser adapter and normalized extraction | In progress — T-020 adapter boundary verified; backend unselected |
+| M2 | Parser adapter and normalized extraction | In progress — T-020/T-021 bounded parser/Fact subset verified; broader coverage open |
 | M2 | Parser adapter and normalized extraction | Not started |
 | M3 | Basic path/Application/include linkage and graph validation | Not started |
 | M4 | CFC mappings, inheritance, instantiation, and method linkage | Not started |

@@ -83,6 +83,29 @@ export class SourceMap {
     return this.#lineStarts.length;
   }
 
+  textOffsetToByteOffset(textOffset) {
+    assertInteger(textOffset, "textOffset");
+    if (textOffset > this.#text.length) {
+      throw new RangeError(`textOffset must be <= ${this.#text.length}`);
+    }
+    if (!isCodePointBoundary(this.#text, textOffset)) {
+      throw new RangeError("textOffset must be on a UTF-16 code-point boundary");
+    }
+    return Buffer.byteLength(this.#text.slice(0, textOffset), "utf8");
+  }
+
+  spanFromTextOffsets(startTextOffset, endTextOffset) {
+    assertInteger(startTextOffset, "startTextOffset");
+    assertInteger(endTextOffset, "endTextOffset");
+    if (endTextOffset < startTextOffset || endTextOffset > this.#text.length) {
+      throw new RangeError("text span must be ordered and within the source");
+    }
+    return this.spanFromByteOffsets(
+      this.textOffsetToByteOffset(startTextOffset),
+      this.textOffsetToByteOffset(endTextOffset),
+    );
+  }
+
   byteOffsetToPosition(byteOffset) {
     assertInteger(byteOffset, "byteOffset");
     if (byteOffset > this.#byteLength) {

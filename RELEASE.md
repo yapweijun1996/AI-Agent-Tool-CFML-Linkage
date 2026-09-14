@@ -9,7 +9,7 @@
 | Scope | Versioning, release gates, artifact traceability, and compatibility claims |
 | Source of truth | Git commit, validated artifacts, tests, and this release policy |
 | Evidence | `package.json` is private with Node `>=20`; no public package artifact, tag, workflow, or release exists |
-| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter tests pass; no release candidate exists |
+| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact tests and produced Fact schema validation pass; no release candidate exists |
 | Limitations | Public exports, runtime support matrix, registry, CI, and maintainer workflow are undecided |
 
 ## Release principles

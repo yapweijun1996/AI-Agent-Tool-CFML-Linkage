@@ -11,7 +11,7 @@
 | Lifecycle | Planning / pre-prototype |
 | Source of truth | This epic for outcome and milestones; `SPEC.md` for the contract; Git history for actual completion |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | M0 contract checks and 32 foundation/parser-adapter tests pass; no CI or linkage verification exists |
+| Verification | M0 contract checks, produced Fact IR schema validation, and 37 foundation/parser-adapter/scanner/Fact tests pass; no CI or linkage verification exists |
 | Limitations | Estimates, sequencing, parser choice, and compatibility are not validated |
 
 ## 1. Problem
@@ -68,7 +68,7 @@ The epic is complete only when all of the following are evidenced:
 
 ## 6. Risks and blockers
 
-Current status: M0/M1 work and T-010–T-014 plus the T-020 adapter boundary are verified. The root-guard/snapshot/decoder/private CLI/cache/parser-adapter foundation is the only runtime slice; parser backend strategy and supported syntax remain unresolved.
+Current status: M0/M1 work and T-010–T-014/T-020/T-021 bounded parser/scanner/Fact extraction are verified. The root-guard/snapshot/decoder/private CLI/cache/parser/Fact foundation is the only runtime slice; full grammar, broader language coverage, and resolution remain open.
 
 Known technical risks include runtime-computed Application mappings, dynamic `evaluate` and generated names, ambiguous components/method receivers, shared-scope semantics, embedded JavaScript/SQL parsing, and resource exhaustion. These are release risks, not reasons to guess.
 

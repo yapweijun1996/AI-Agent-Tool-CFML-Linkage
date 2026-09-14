@@ -17,6 +17,13 @@ test("decodes strict UTF-8 and maps ASCII line positions", () => {
     exact: true,
   });
   assert.equal(result.sourceMap.positionToByteOffset(2, 2), 8);
+  assert.equal(result.sourceMap.textOffsetToByteOffset(6), 6);
+  assert.deepEqual(result.sourceMap.spanFromTextOffsets(0, 10), {
+    start_line: 1,
+    start_col: 0,
+    end_line: 2,
+    end_col: 4,
+  });
   assert.deepEqual(result.sourceMap.spanFromByteOffsets(0, 10), {
     start_line: 1,
     start_col: 0,

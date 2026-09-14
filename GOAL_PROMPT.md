@@ -8,11 +8,11 @@
 | Last updated | 2026-09-14 |
 | Scope | Evidence-driven implementation loop |
 | Source of truth | Core SSOT plus Git/tests/runtime/release evidence |
-| Evidence | M0/M1 verified; M2 adapter boundary and 32 tests pass |
+| Evidence | M0/M1 verified; M2 bounded Fact subset; 37 tests pass |
 | Verification | Prompt/documentation only |
 | Limitations | Parser, public API, CI, and release remain open |
 
-Work on `agent-cfml-linkage`, a Node `>=20` prototype NPM/library + CLI + AI-agent evidence provider for CFML-first static linkage. M0/M1 and the M2 parser-adapter boundary are verified; only a private package, CLI envelope, adapter, and focused tests exist. No parser backend, resolver, public API, CI, or release exists. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
+Work on `agent-cfml-linkage`, a Node `>=20` prototype NPM/library + CLI + AI-agent evidence provider for CFML-first static linkage. M0/M1 and the bounded M2 adapter/scanner/Fact boundary are verified; only a private package, CLI envelope, bounded extractor, and focused tests exist. No full parser grammar, resolver, public API, CI, or release exists. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
 
 Repeat:
 

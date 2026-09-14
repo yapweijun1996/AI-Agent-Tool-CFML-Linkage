@@ -33,7 +33,8 @@
 - Strict UTF-8 decoding, byte/line/column source maps, focused tests, and ADR-007 for T-012.
 - Private CLI JSON envelope, stderr diagnostics, exit-code handling, focused tests, and ADR-008 for T-013.
 - Disposable metadata cache, invalidation fingerprints, corruption handling, focused tests, and ADR-009 for T-014.
-- Fail-closed parser adapter boundary, partial/unsupported diagnostics, focused tests, and ADR-010 for T-020.
+- Fail-closed parser adapter boundary, bounded dependency-free CFML scanner, partial/unsupported diagnostics, focused tests, and ADR-010 for T-020.
+- Fixture-backed bounded CFML/CFC Fact IR extraction, golden expectations, schema validation, focused tests, and ADR-011 for T-021.
 
 ### Not claimed
 

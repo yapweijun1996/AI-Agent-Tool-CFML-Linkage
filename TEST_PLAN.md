@@ -9,7 +9,7 @@
 | Scope | Contract, determinism, safety, linkage, partial-result, and release verification |
 | Source of truth | This plan for intended verification; actual test output and CI for evidence |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | T-001–T-006 contract checks and T-010–T-014/T-020 `npm test` (32/32) passed; broader project test suite does not exist |
+| Verification | T-001–T-006 contract checks, produced Fact IR schema validation, and T-010–T-014/T-020/T-021 `npm test` (37/37) passed; broader project test suite does not exist |
 | Limitations | Exact framework, parser fixtures, supported runtimes, and performance targets are not selected |
 
 ## 1. Verification principles
@@ -86,4 +86,4 @@ The current focused command is `npm test`, using Node's built-in test runner. No
 
 ## 7. Current result
 
-**T-001–T-006, T-010–T-014, and T-020 passed:** contract schemas/examples, identity/order, confidence/completeness, configuration, fixture-manifest, root-guard containment, deterministic discovery, snapshot fingerprint, symlink, limit, strict decoding, source maps, CLI envelope, stderr separation, cache invalidation/corruption, parser unavailable/partial/failure handling, and no-execution checks pass; `npm test` reports 32 passed and 0 failed. This uses no project dependency beyond Node built-ins. Runtime producer repeatability beyond the current foundation tests, linkage behavior, package smoke, browser, and engine checks remain unverified.
+**T-001–T-006, T-010–T-014, and T-020/T-021 passed:** contract schemas/examples, identity/order, confidence/completeness, configuration, fixture-manifest, root-guard containment, deterministic discovery, snapshot fingerprint, symlink, limit, strict decoding, source maps, CLI envelope, stderr separation, cache invalidation/corruption, parser unavailable/partial/failure handling, bounded CFML scanning, structural Fact extraction, golden expectations, unsupported regions, and no-execution checks pass; `npm test` reports 37 passed and 0 failed, and the produced fixture Fact IR validates against schema. This uses no project dependency beyond Node built-ins. Runtime producer repeatability beyond the current foundation tests, broader Fact IR/linkage behavior, package smoke, browser, and engine checks remain unverified.

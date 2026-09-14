@@ -36,7 +36,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Root guard/policy | canonical root, path containment, and snapshot admission in the implemented M1 slice; config-wide policy freezing remains planned | parsing or confidence upgrades |
 | Snapshot/discovery | deterministic file set, content fingerprints, metadata, symlink skipping, and drift diagnostics in M1 | source mutation or runtime discovery |
 | Decoder/source map | decoding state and coordinate conversion | linkage decisions |
-| Parser adapter | explicit backend boundary, syntax trees, parser diagnostics, completeness; M2 adapter is verified but backend is unselected | cross-file resolution |
+| Parser adapter | explicit backend boundary, bounded structural scanner, syntax trees, parser diagnostics, completeness; default backend remains unselected | cross-file resolution |
 | Fact extractor | normalized Fact IR and extraction evidence | target selection |
 | Project index | immutable path, symbol, mapping, application, query indexes | mutable resolution state |
 | Resolver passes | bounded candidate/target resolution | index mutation or authoritative guessing |

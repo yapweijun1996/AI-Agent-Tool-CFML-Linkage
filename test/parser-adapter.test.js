@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { createCfmlScannerBackend } from "../src/cfml-scanner.js";
 import { createParserAdapter } from "../src/parser-adapter.js";
 
 test("returns explicit unavailable evidence when no parser backend is selected", () => {
@@ -90,8 +91,64 @@ test("caps parser diagnostics and marks the result incomplete", () => {
   assert.equal(result.diagnostics[1].code, "DIAGNOSTICS_TRUNCATED");
 });
 
-test("rejects invalid adapter options", () => {
+test("scans a bounded CFML tag subset without parsing comments or executing script content", () => {
+  const adapter = createParserAdapter({
+    parserVersion: "cfml-structural-scanner/v0.1",
+    backend: createCfmlScannerBackend(),
+  });
+  const source = [
+    "<!--- <cfinclude template=\"ignored.cfm\"> --->",
+    "<cfcomponent name=\"app\">",
+    "<cffunction name=\"run\">",
+    "<cfinclude template=\"views/home.cfm\">",
+    "<cfset result = 1>",
+    "</cffunction>",
+    "<cfscript>throw new Error('must not execute');</cfscript>",
+    "<script>throw new Error('opaque');</script>",
+  ].join("\n");
+  const result = adapter.parse(Buffer.from(source, "utf8"), "Application.cfc");
+  assert.equal(result.parser_version, "cfml-structural-scanner/v0.1");
+  assert.equal(result.tree.kind, "CFML_STRUCTURAL_DOCUMENT");
+  assert.deepEqual(result.tree.nodes.filter((node) => node.kind === "CFML_TAG").map((node) => node.name), [
+    "cfcomponent",
+    "cffunction",
+    "cfinclude",
+    "cfset",
+    "cffunction",
+    "cfscript",
+    "cfscript",
+  ]);
+  const include = result.tree.nodes.find((node) => node.name === "cfinclude");
+  assert.equal(include.attributes[0].value, "views/home.cfm");
+  const set = result.tree.nodes.find((node) => node.name === "cfset");
+  assert.equal(set.expression, "result = 1");
+  assert.equal(result.tree.nodes.some((node) => node.name === "ignored"), false);
+  assert.equal(result.complete, false);
+  assert.equal(result.diagnostics.some((item) => item.code === "UNSUPPORTED_SYNTAX"), true);
+});
+
+test("reports malformed tags, unsupported tags, field limits, and node limits", () => {
+  const malformed = createParserAdapter({ backend: createCfmlScannerBackend() }).parse(Buffer.from("<cfinclude template=\"x", "utf8"), "bad.cfm");
+  assert.equal(malformed.complete, false);
+  assert.equal(malformed.diagnostics[0].code, "PARSE_PARTIAL");
+
+  const unsupported = createParserAdapter({ backend: createCfmlScannerBackend() }).parse(Buffer.from("<cfunknown>", "utf8"), "unknown.cfm");
+  assert.equal(unsupported.complete, false);
+  assert.equal(unsupported.diagnostics[0].code, "UNSUPPORTED_SYNTAX");
+
+  const limitedField = createParserAdapter({ backend: createCfmlScannerBackend({ maxAttributeBytes: 2 }) }).parse(Buffer.from("<cfinclude template=\"long\">", "utf8"), "limit.cfm");
+  assert.equal(limitedField.complete, false);
+  assert.equal(limitedField.diagnostics.some((item) => item.code === "RESOURCE_LIMIT"), true);
+
+  const limitedNodes = createParserAdapter({ backend: createCfmlScannerBackend({ maxNodes: 1 }) }).parse(Buffer.from("<cfset a=1><cfset b=2>", "utf8"), "nodes.cfm");
+  assert.equal(limitedNodes.complete, false);
+  assert.equal(limitedNodes.diagnostics.some((item) => item.code === "RESOURCE_LIMIT"), true);
+});
+
+test("rejects invalid adapter options, scanner options, and unsafe spans", () => {
   assert.throws(() => createParserAdapter({ parserVersion: "" }), /parserVersion/u);
   assert.throws(() => createParserAdapter({ maxDiagnostics: 0 }), /maxDiagnostics/u);
   assert.throws(() => createParserAdapter({ backend: {} }), /backend/u);
+  assert.throws(() => createCfmlScannerBackend({ maxNodes: 0 }), /maxNodes/u);
+  assert.throws(() => createCfmlScannerBackend({ maxAttributeBytes: 0 }), /maxAttributeBytes/u);
 });

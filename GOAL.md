@@ -10,7 +10,7 @@
 | Lifecycle | Prototype / safe-foundation implementation |
 | Source of truth | This repository's Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for state |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; this pass adds documentation, not implementation |
-| Verification | M1 foundation, M2 parser-adapter boundary, and 32 focused Node tests pass locally; linkage/runtime/package-release verification is absent |
+| Verification | M1 foundation, bounded M2 parser/scanner/Fact extraction, and 37 focused Node tests pass locally; linkage/runtime/package-release verification is absent |
 | Limitations | Public exports/CLI orchestration, parser/resolver, full runtime matrix, deployment model, and release compatibility are not established |
 
 ## Purpose
@@ -52,4 +52,4 @@ The goal is achieved only when a release has:
 
 ## State model
 
-The project must track **Planned → Implemented → Verified → Released** independently. M0/M1 and the M2 parser-adapter boundary are verified; the parser backend, linkage analyzer, public package, and release remain incomplete/unreleased.
+The project must track **Planned → Implemented → Verified → Released** independently. M0/M1 and bounded M2 parser/scanner/Fact extraction are verified; full parser coverage, linkage resolution, public package, and release remain incomplete/unreleased.
