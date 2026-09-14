@@ -1,6 +1,6 @@
 # Architecture: agent-cfml-linkage
 
-> **Status: PROPOSED / M1 PARTIAL.** The root-guard and byte-snapshot components exist; the remaining architecture is not implemented.
+> **Status: PROPOSED / M1 PARTIAL.** The root-guard, byte-snapshot, decoder, and private CLI-envelope components exist; the remaining architecture is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -9,12 +9,12 @@
 | Scope | Component boundaries, data flow, ownership, and failure behavior |
 | Source of truth | This document for proposed architecture; Git history for current code facts |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Root-guard/snapshot tests pass locally; remaining architecture is unverified |
+| Verification | Root-guard/snapshot/decoder/CLI tests pass locally; remaining architecture is unverified |
 | Limitations | Parser feasibility, runtime compatibility, resource costs, and public package compatibility are unknown; M1 uses Node built-ins only |
 
 ## 1. Boundary
 
-The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1 slice currently owns root admission, path containment, and byte snapshot/discovery; Graph IR production, linkage evidence, and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
+The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1 slice currently owns root admission, path containment, byte snapshot/discovery, strict source coordinates, and a private CLI envelope; Graph IR production, linkage evidence, and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
 
 ```text
 Local source + explicit policy
@@ -44,7 +44,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Graph builder/validator | Graph IR construction, invariants, serialization readiness | generic business interpretation |
 | Cache | optional derived performance state | source of truth or stale-data authority |
 | Query engine | bounded graph traversal and evidence slices | model-written explanations |
-| CLI/library | public invocation and stable envelope | execution of analyzed source |
+| CLI/library | private invocation, stable envelope, and stderr separation in M1; public API remains planned | execution of analyzed source |
 
 Core owns stable IDs, confidence policy, root safety, validation, and output contracts. Plugins are intentionally subordinate to those invariants.
 

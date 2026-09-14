@@ -8,9 +8,9 @@
 | Last updated | 2026-09-14 |
 | Scope | Changes in this repository |
 | Source of truth | Git history and this changelog |
-| Evidence | Initial commit `1b29c0b`; documentation baseline added after that commit |
-| Verification | Documentation consistency checks are run during this pass; no runtime checks exist |
-| Limitations | No implementation, package, test suite, CI, or release exists |
+| Evidence | Initial commit `1b29c0b`; documentation baseline and M1 foundation commits follow |
+| Verification | Documentation consistency checks and `npm test` foundation checks are run during this pass |
+| Limitations | No parser/resolver release runtime, public package, CI, or release exists |
 
 ## Unreleased
 
@@ -31,9 +31,10 @@
 - Node `>=20` private foundation, root guard, focused tests, and ADR-005 for T-010.
 - Deterministic byte snapshot/discovery, focused tests, and ADR-006 for T-011.
 - Strict UTF-8 decoding, byte/line/column source maps, focused tests, and ADR-007 for T-012.
+- Private CLI JSON envelope, stderr diagnostics, exit-code handling, focused tests, and ADR-008 for T-013.
 
 ### Not claimed
 
 - No analyzer implementation has been added.
-- No parser, resolver, public CLI/library API, cache, query engine, CI workflow, public package, or release has been added; the private foundation and focused root-guard/snapshot/decoder tests are the only runtime slice.
+- No parser, resolver, full CLI orchestration/public library API, cache, query engine, CI workflow, public package, or release has been added; the private foundation and focused root-guard/snapshot/decoder/CLI tests are the only runtime slice.
 - No Lucee, Adobe ColdFusion, browser, database, or network verification has been performed.

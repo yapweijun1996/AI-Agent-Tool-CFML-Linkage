@@ -16,7 +16,7 @@
 
 - **Project type:** planned hybrid NPM/library + CLI + AI-agent evidence provider.
 - **Lifecycle:** prototype / safe-foundation implementation.
-- **Current state:** M0 contracts and the M1 root guard/snapshot/decoder are implemented/verified; no linkage parser, resolver, CLI, or public package exists.
+- **Current state:** M0 contracts and the M1 root guard/snapshot/decoder/private CLI envelope are implemented/verified; no linkage parser, resolver, public API, or released package exists.
 
 ## Purpose
 
@@ -34,12 +34,12 @@ The intended output is a deterministic Graph IR/JSON document that agents can qu
 
 ## What exists today
 
-The repository is at safe-foundation inception. Graph IR/Fact IR/configuration contracts and the root guard/snapshot/decoder are implemented/verified; there is still no linkage parser or resolver runtime. The following remain **planned**, not available:
+The repository is at safe-foundation inception. Graph IR/Fact IR/configuration contracts and the root guard/snapshot/decoder/private CLI envelope are implemented/verified; there is still no linkage parser or resolver runtime. The following remain **planned**, not available:
 
 - parser/extractor runtime that produces Fact IR (the Fact IR schema/example contract exists at `schema/agent-cfml-linkage-fact-v0.1.schema.json` and `examples/facts-v0.1.json`)
 - project index and multi-pass resolvers
 - Graph IR runtime implementation (the proposed JSON Schema contract and example now exist at `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`)
-- public CLI/library API (the private `package.json` currently provides only the Node test script)
+- public CLI/library API (the private package exposes only an un-released validation envelope)
 - incremental cache and query engine
 - golden/negative/adversarial fixture layout and manifest exist; fixture source inputs, golden outputs, broader tests, CI, and published artifacts remain unavailable
 
@@ -78,6 +78,7 @@ The eight Core SSOT files are `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROA
 - [`docs/decisions/ADR-005-node-foundation-runtime.md`](docs/decisions/ADR-005-node-foundation-runtime.md) — Node foundation and zero-dependency decision
 - [`docs/decisions/ADR-006-deterministic-source-snapshot.md`](docs/decisions/ADR-006-deterministic-source-snapshot.md) — deterministic discovery and snapshot decision
 - [`docs/decisions/ADR-007-strict-decoding-and-source-maps.md`](docs/decisions/ADR-007-strict-decoding-and-source-maps.md) — strict UTF-8 and coordinate decision
+- [`docs/decisions/ADR-008-stable-cli-envelope.md`](docs/decisions/ADR-008-stable-cli-envelope.md) — stable JSON envelope and CLI safety decision
 - [`AGENTS.md`](AGENTS.md) — repository-specific contribution rules
 
 ## Non-goals
@@ -93,4 +94,4 @@ The planned tool will not:
 
 ## Verification and limitations
 
-Foundation verification has been run with `npm test` (16/16 passed). No parser, resolver, CLI, browser, engine, package, deployment, or release verification exists; all linkage capabilities and compatibility claims remain proposed.
+Foundation verification has been run with `npm test` (21/21 passed). The private CLI envelope is tested, but no parser, resolver, full CLI orchestration, browser, engine, package, deployment, or release verification exists; all linkage capabilities and compatibility claims remain proposed.

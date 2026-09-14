@@ -9,14 +9,14 @@
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Graph/Fact/config contract checks and 16 root-guard/snapshot/decoder tests pass locally; runtime stages below remain unimplemented proposals |
+| Verification | Graph/Fact/config contract checks and 21 root-guard/snapshot/decoder/CLI tests pass locally; runtime stages below remain unimplemented proposals |
 | Limitations | Parser choice, language coverage, performance, and engine compatibility remain unknown |
 
 ## 1. Design goals
 
 The analyzer should give coding agents a small, queryable, evidence-backed view of cross-file relationships without executing the application or guessing dynamic behavior. The design favors narrow stages, immutable intermediate data, explicit incompleteness, and stable output.
 
-**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains `src/root-guard.js`, `src/snapshot.js`, focused tests, a private `package.json`, and validated contracts; parser, resolver, graph, query, CLI, caller, CI, and release architecture remain unimplemented.
+**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, and private CLI-envelope modules with focused tests, a private `package.json`, and validated contracts; parser, resolver, graph, query orchestration, caller, CI, and release architecture remain unimplemented.
 
 It is CFML-first: CFM/CFC structure, Application governance, includes, CFC typing, and shared scopes receive priority. HTML, JavaScript, CSS, SQL, and repository relations extend that model where static evidence is available.
 
@@ -140,7 +140,7 @@ Traversal is bounded, cycle-safe, and deterministic. `agent-change-impact` may l
 
 ### Stage 12 — CLI and library boundary
 
-The CLI orchestrates stages and emits one stable JSON envelope on stdout; human diagnostics go to stderr. The library should expose `analyzeProject`, `analyzeTarget`, `queryGraph`, `capabilities`, and Graph IR types. Proposed commands are `capabilities`, `index`/`analyze`, `related`, `callers`, `callees`, `trace`, `unresolved`, `explain`, and `stats`.
+The implemented private CLI boundary emits one stable JSON envelope on stdout and human diagnostics on stderr; it currently exposes `capabilities`, help, version, input validation, and explicit incomplete responses for unimplemented analysis commands. Full orchestration remains planned. The library should expose `analyzeProject`, `analyzeTarget`, `queryGraph`, `capabilities`, and Graph IR types. Proposed commands are `capabilities`, `index`/`analyze`, `related`, `callers`, `callees`, `trace`, `unresolved`, `explain`, and `stats`.
 
 Proposed exit semantics: `0` completed, `1` internal failure, `2` invalid input, `3` incomplete/unsupported/resource limit, and `4` root/path/access rejection. Exit `3` is not a clean result.
 
@@ -161,12 +161,12 @@ Correctness comes first. Parse with bounded worker concurrency and merge facts i
 
 ## 7. Proposed implementation sequence
 
-The sequence is dependency-aware but not a schedule. M0's contract gate and T-010–T-012 are verified; T-013–T-014 remain before parser and resolver implementation.
+The sequence is dependency-aware but not a schedule. M0's contract gate and T-010–T-013 are verified; T-014 remains before parser and resolver implementation.
 
 | Milestone | Content | Current status |
 | --- | --- | --- |
 | M0 | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and golden-fixture contract | Verified — T-001–T-006 |
-| M1 | Safe root guard, snapshot, decoder, discovery, cache skeleton, CLI envelope | In progress — T-010/T-011 verified |
+| M1 | Safe root guard, snapshot, decoder, discovery, cache skeleton, CLI envelope | In progress — T-010–T-013 verified |
 | M2 | Parser adapter and normalized extraction | Not started |
 | M3 | Basic path/Application/include linkage and graph validation | Not started |
 | M4 | CFC mappings, inheritance, instantiation, and method linkage | Not started |

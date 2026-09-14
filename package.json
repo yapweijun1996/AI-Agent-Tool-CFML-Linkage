@@ -4,6 +4,9 @@
   "private": true,
   "description": "CFML-first static linkage evidence provider foundation",
   "type": "module",
+  "bin": {
+    "agent-cfml-linkage": "bin/agent-cfml-linkage.js"
+  },
   "engines": {
     "node": ">=20"
   },
