@@ -5,6 +5,7 @@ const GRAPH_SCHEMA_VERSION = "agent-cfml-linkage-graph/v0.1";
 const TOOL_NAME = "agent-cfml-linkage";
 const DEFAULT_TOOL_VERSION = "0.1.0";
 const DEFAULT_RESOLVER = { name: "literal-path-resolver", version: "v0.1" };
+const DEFAULT_MAX_EVIDENCE = 1_000_000;
 const PATH_RELATIONS = Object.freeze({
   INCLUDE: "INCLUDES",
   CUSTOM_TAG: "CUSTOM_TAG_CALL",
@@ -81,6 +82,12 @@ function sha256(value) {
 function cloneJson(value) {
   if (value === undefined) return undefined;
   return JSON.parse(JSON.stringify(value));
+}
+
+function normalizePositiveLimit(value, name, fallback) {
+  const result = value ?? fallback;
+  if (!Number.isSafeInteger(result) || result <= 0) throw new TypeError(`${name} must be a positive safe integer`);
+  return result;
 }
 
 function spanFor(value) {
@@ -247,15 +254,48 @@ function validateGraph(graph) {
   return diagnostics;
 }
 
+function enforceEvidenceLimit(graph, maxEvidence) {
+  // Preserve relationship evidence before supporting node evidence when the global cap is tight.
+  const records = [
+    ...graph.edges,
+    ...graph.unresolved,
+    ...graph.nodes,
+  ];
+  let remaining = maxEvidence;
+  let truncated = false;
+  for (const record of records) {
+    const evidence = Array.isArray(record.evidence) ? record.evidence : [];
+    if (evidence.length > remaining) {
+      record.evidence = evidence.slice(0, remaining);
+      truncated = true;
+      remaining = 0;
+    } else {
+      remaining -= evidence.length;
+    }
+  }
+  if (truncated) {
+    graph.complete = false;
+    graph.diagnostics.push({
+      id: `diagnostic:${sha256(["evidence-limit", maxEvidence].join("\0"))}`,
+      severity: "error",
+      code: "RESOURCE_LIMIT",
+      message: `Evidence limit exceeded: ${maxEvidence}.`,
+      details: { max_evidence: maxEvidence },
+    });
+  }
+  graph.stats.evidence_count = [...graph.nodes, ...graph.edges, ...graph.unresolved].reduce((count, record) => count + (record.evidence?.length ?? 0), 0);
+}
+
 /**
  * Build a bounded Graph IR document from Fact IR and resolver output. This
  * creates only evidence-backed nodes/edges; it does not infer missing links.
  */
-export function buildGraph({ factBundle, resolutions = null, snapshot = null, rootGuard, toolVersion = DEFAULT_TOOL_VERSION, createdAt = new Date().toISOString() } = {}) {
+export function buildGraph({ factBundle, resolutions = null, snapshot = null, rootGuard, toolVersion = DEFAULT_TOOL_VERSION, maxEvidence = DEFAULT_MAX_EVIDENCE, createdAt = new Date().toISOString() } = {}) {
   if (!factBundle || !Array.isArray(factBundle.facts) || !Array.isArray(factBundle.source_files)) throw new TypeError("factBundle with facts and source_files is required");
   if (!rootGuard || typeof rootGuard.rootPath !== "string") throw new TypeError("rootGuard must be created by createRootGuard");
   if (typeof createdAt !== "string" || Number.isNaN(Date.parse(createdAt))) throw new TypeError("createdAt must be a date-time string");
   if (typeof toolVersion !== "string" || toolVersion.trim() === "") throw new TypeError("toolVersion must be a non-empty string");
+  const evidenceLimit = normalizePositiveLimit(maxEvidence, "maxEvidence", DEFAULT_MAX_EVIDENCE);
 
   const facts = factBundle.facts.slice().sort(compareFacts);
   const fingerprints = sourceFingerprintMap(factBundle, snapshot);
@@ -435,6 +475,7 @@ export function buildGraph({ factBundle, resolutions = null, snapshot = null, ro
       evidence_count: graphNodes.reduce((count, node) => count + node.evidence.length, 0) + graphEdges.reduce((count, edge) => count + edge.evidence.length, 0) + graphUnresolved.reduce((count, item) => count + item.evidence.length, 0),
     },
   };
+  enforceEvidenceLimit(draft, evidenceLimit);
   const validationDiagnostics = validateGraph(draft);
   for (const [index, item] of validationDiagnostics.entries()) diagnostics.push({ id: `diagnostic:${sha256([item.code, item.message, index].join("\0"))}`, ...item });
   diagnostics.sort((left, right) => compareStrings([left.severity === "info" ? 0 : left.severity === "warning" ? 1 : 2, left.code, left.id].join("\0"), [right.severity === "info" ? 0 : right.severity === "warning" ? 1 : 2, right.code, right.id].join("\0")));

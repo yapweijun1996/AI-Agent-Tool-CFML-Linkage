@@ -36,7 +36,7 @@ Canonicalize the requested root and every discovered/reference path. Reject trav
 
 ### Resource exhaustion
 
-Use hard limits for file size/count, bytes, facts, edges, evidence, traversal depth, output bytes, concurrency, and wall time. On exhaustion, return an explicit incomplete result and budget diagnostic; never silently truncate or continue with an implied complete graph.
+Use hard limits for file size/count, bytes, facts, edges, evidence, traversal depth, output bytes, concurrency, and wall time. The bounded library graph stage enforces `max_evidence`, and the private CLI enforces serialized output bytes. On exhaustion, return an explicit incomplete result and budget diagnostic; never silently truncate or continue with an implied complete graph. Library output/time enforcement remains open.
 
 ### Sensitive data
 
@@ -64,7 +64,7 @@ Before release, test:
 - plugin rejection or containment if plugins exist;
 - CI workflow permissions and action scope remain read-only with no publish/deploy step.
 
-The root-admission, non-execution, dynamic-evidence, SQL, repository/action, bounded query, validated/copied snapshots, composed-orchestration, recognized query-command mapping/validation, complete v0.1 CLI configuration shape/value validation, serialized output-byte bound, and adversarial safe-failure boundaries are verified by focused Node tests. T-047 records a least-privilege workflow definition with `contents: read` and no publish/deploy step; hosted CI execution remains unverified. T-044 records a bounded local credential/file/documentation audit in `docs/audits/release-security-parity-v0.1.json`; no complete analyzer security review, dependency audit, runtime instrumentation, or public release security verification exists.
+The root-admission, non-execution, dynamic-evidence, SQL, repository/action, bounded query, validated/copied snapshots, composed-orchestration, recognized query-command mapping/validation, complete v0.1 CLI configuration shape/value validation, library evidence budget, serialized output-byte bound, and adversarial safe-failure boundaries are verified by focused Node tests. T-047 records a least-privilege workflow definition with `contents: read` and no publish/deploy step; hosted CI execution remains unverified. T-044 records a bounded local credential/file/documentation audit in `docs/audits/release-security-parity-v0.1.json`; no complete analyzer security review, dependency audit, runtime instrumentation, or public release security verification exists.
 
 ## Reporting
 

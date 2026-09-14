@@ -9,7 +9,7 @@
 | Scope | Changes in this repository |
 | Source of truth | Git history and this changelog |
 | Evidence | Initial commit `1b29c0b`; documentation baseline and M1 foundation commits follow |
-| Verification | Documentation consistency checks, bounded query/robustness/adversarial-fixture checks, and `npm test` (74/74) are run during this pass |
+| Verification | Documentation consistency checks, bounded query/robustness/adversarial-fixture/evidence-budget checks, and `npm test` (75/75) are run during this pass |
 | Limitations | No parser/resolver release runtime, public package, CI, or release exists |
 
 ## Unreleased
@@ -55,9 +55,10 @@
 - Added private CLI serialized-output enforcement for `limits.max_output_bytes`, with an explicit `OUTPUT_LIMIT` incomplete result and a documented minimum envelope size.
 - Hardened literal path resolution to require current root-contained target existence, preserving vanished snapshot targets as unresolved evidence.
 - Hardened `createGraphSnapshot` to validate and deep-copy snapshot-shaped input instead of trusting caller mutability.
-- Synchronized ADR verification-count and bounded-status references with the current 74-test suite after T-045; no broader compatibility or release claim was added.
+- Synchronized ADR verification-count and bounded-status references with the then-current 74-test suite after T-045; no broader compatibility or release claim was added.
 - Implemented bounded T-046 CLI configuration validation: the complete v0.1 object shape/value contract and query-request options are rejected before root admission/analysis; library-wide budget enforcement remains open.
 - Added T-047 `.github/workflows/ci.yml`, a least-privilege Node 20.x/22.x/24.x test matrix with no publish/deploy step; hosted workflow execution remains unverified.
+- Implemented T-048 bounded library evidence-budget enforcement through `max_evidence`, with deterministic partial evidence, explicit `RESOURCE_LIMIT` incomplete results, focused coverage, and ADR-025; library output/time budgets remain open.
 
 ### Not claimed
 

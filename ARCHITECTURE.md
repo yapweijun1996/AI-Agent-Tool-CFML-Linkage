@@ -14,7 +14,7 @@
 
 ## 1. Boundary
 
-The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented bounded slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, bounded CLI/library composition, bounded parser scanners, Fact evidence, immutable indexes, conservative literal resolution, dynamic/generated/SQL-dynamic preservation, bounded SQL/queryExecute extraction, structural repository/action resolution, bounded Graph IR/query production, and inert adversarial safe-failure fixtures; bounded Graph IR production/validation is implemented in `src/graph.js`, bounded CFC resolution is implemented in `src/cfc-resolver.js`, bounded shared-scope resolution is implemented in `src/scope-resolver.js`, bounded web-flow resolution is implemented in `src/web-flow-resolver.js`, bounded repository resolution is implemented in `src/repository-resolver.js`, bounded query/evidence explanations are implemented in `src/graph-query.js`, and T-036 composition is implemented in `src/analyzer.js`; broader linkage resolution, query-command orchestration, and public release remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
+The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented bounded slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, bounded CLI/library composition, bounded parser scanners, Fact evidence, immutable indexes, conservative literal resolution, dynamic/generated/SQL-dynamic preservation, bounded SQL/queryExecute extraction, structural repository/action resolution, bounded Graph IR/query production, and inert adversarial safe-failure fixtures; bounded Graph IR production/validation is implemented in `src/graph.js`, bounded CFC resolution is implemented in `src/cfc-resolver.js`, bounded shared-scope resolution is implemented in `src/scope-resolver.js`, bounded web-flow resolution is implemented in `src/web-flow-resolver.js`, bounded repository resolution is implemented in `src/repository-resolver.js`, bounded query/evidence explanations are implemented in `src/graph-query.js`, and T-036 composition is implemented in `src/analyzer.js`; broader linkage resolution and public release remain unimplemented; bounded query-command orchestration is implemented in the private CLI. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
 
 ```text
 Local source + explicit policy
@@ -41,7 +41,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Project index | immutable path, symbol, mapping, application, query, and per-file fact indexes; unique/ambiguous/missing lookup states | mutable resolution state |
 | Resolver passes | bounded candidate/target resolution in `src/path-resolver.js`, `src/cfc-resolver.js`, `src/scope-resolver.js`, `src/web-flow-resolver.js`, and `src/repository-resolver.js`; unresolved/ambiguous/dynamic states | index mutation or authoritative guessing |
 | Evidence policy | evidence merge and confidence classes | parser-specific parsing |
-| Graph builder/validator | Graph IR construction, invariants, serialization readiness | generic business interpretation |
+| Graph builder/validator | Graph IR construction, invariants, serialization readiness, and the bounded global evidence-item budget | generic business interpretation |
 | Cache | optional derived performance state | source of truth or stale-data authority |
 | Query engine | immutable GraphSnapshot, exact selectors, bounded deterministic traversal, evidence slices, and explanations in `src/graph-query.js` | model-written relationships, target guessing, or runtime execution |
 | CLI/library | private invocation, stable envelope, stderr separation, bounded `analyze`/`index`, and private `analyzeProject` export | execution of analyzed source, query-command persistence, or public release |
@@ -97,7 +97,7 @@ The architecture treats incomplete analysis as data:
 - dynamic/generated/SQL-dynamic values retain bounded expressions and dependencies;
 - out-of-root targets are rejected;
 - snapshot drift invalidates completeness;
-- resource caps return `complete=false` and identify the exhausted budget;
+- resource caps return `complete=false` and identify the exhausted budget; the graph stage enforces the configured evidence-item cap in deterministic edge, unresolved-record, and node order;
 - cache corruption causes rebuild, never trusted stale output.
 
 An internal invariant or serialization failure is different: it is an internal error and must not be represented as a clean analysis.

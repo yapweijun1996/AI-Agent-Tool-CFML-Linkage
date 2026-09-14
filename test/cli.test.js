@@ -81,7 +81,19 @@ test("runs the bounded analysis pipeline after validating the root", () => {
     assert.equal(indexResult.stdout.status, "incomplete");
     assert.equal(indexResult.stdout.data.graph.schema_version, "agent-cfml-linkage-graph/v0.1");
 
+    fs.writeFileSync(path.join(root, "other.js"), "const inert = true;\n", "utf8");
+    const evidenceConfig = JSON.parse(fs.readFileSync(path.join(root, "config.json"), "utf8"));
+    evidenceConfig.limits.max_output_bytes = 52428800;
+    evidenceConfig.limits.max_evidence = 1;
+    fs.writeFileSync(path.join(root, "config.json"), JSON.stringify(evidenceConfig), "utf8");
+    const evidenceLimitedResult = runCli(["analyze", "--config", "config.json"], root);
+    assert.equal(evidenceLimitedResult.exitCode, 3);
+    assert.equal(evidenceLimitedResult.stdout.status, "incomplete");
+    assert.equal(evidenceLimitedResult.stdout.data.graph.stats.evidence_count, 1);
+    assert.equal(evidenceLimitedResult.stdout.data.graph.diagnostics.some((item) => item.code === "RESOURCE_LIMIT" && item.details?.max_evidence === 1), true);
+
     const boundedConfig = JSON.parse(fs.readFileSync(path.join(root, "config.json"), "utf8"));
+    boundedConfig.limits.max_evidence = 1000000;
     boundedConfig.limits.max_output_bytes = 512;
     fs.writeFileSync(path.join(root, "config.json"), JSON.stringify(boundedConfig), "utf8");
     const limitedResult = runCli(["analyze", "--config", "config.json"], root);

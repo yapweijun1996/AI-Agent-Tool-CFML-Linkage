@@ -44,6 +44,19 @@ test("produces repeatable aggregate output for the same snapshot and options", (
   assert.deepEqual(first.reverse_adjacency, second.reverse_adjacency);
 });
 
+test("enforces the configured library evidence budget deterministically", () => {
+  const first = analyze("golden/sql-and-repository", { config: { limits: { max_evidence: 1 } } });
+  const second = analyze("golden/sql-and-repository", { config: { limits: { max_evidence: 1 } } });
+  assert.equal(first.complete, false);
+  assert.equal(first.graph.complete, false);
+  assert.equal(first.graph.stats.evidence_count, 1);
+  assert.equal(first.graph.diagnostics.some((item) => item.code === "RESOURCE_LIMIT" && item.details?.max_evidence === 1), true);
+  assert.equal(first.graph.edges.length > 0, true);
+  assert.equal(first.graph.edges.filter((edge) => edge.evidence.length > 0).length, 1);
+  assert.equal(validateGraph(first.graph).length, 0);
+  assert.deepEqual(first.graph, second.graph);
+});
+
 test("keeps the parser boundary fail-closed when no backend is selected", () => {
   const result = analyzeProject({
     rootPath: path.resolve("fixtures/golden/core-cfml-web-surface"),
