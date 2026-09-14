@@ -1,15 +1,15 @@
 # agent-cfml-linkage
 
-> **Status: PROPOSED / M2 IN PROGRESS.** The repository contains a verified M1 safety foundation and parser-adapter boundary; the linkage analyzer, public API, and release are not complete.
+> **Status: PROPOSED / M2 IN PROGRESS.** The repository contains a verified M1 safety foundation and bounded M2 parser/scanner/Fact boundary; the linkage analyzer, public API, and release are not complete.
 
 | Field | Value |
 | --- | --- |
 | Version | 0.1 |
 | Last updated | 2026-09-14 |
 | Scope | Deterministic, read-only, local-first linkage analysis for CFML web applications |
-| Repository evidence | Initial `main` commit `1b29c0b934129fcd005b0575d9b986159043fbc9` contained only `.gitattributes`; this pass adds documentation, not implementation |
+| Repository evidence | Initial `main` commit `1b29c0b934129fcd005b0575d9b986159043fbc9` contained only `.gitattributes`; subsequent local commits add the verified foundation and bounded extractors |
 | Source of truth | Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for actual state |
-| Verification | `npm test` passes 37 focused foundation/parser/scanner/Fact tests; bounded Fact IR validates against schema; broader linkage/runtime/package/release verification is absent |
+| Verification | `npm test` passes 43 focused foundation/parser/scanner/Fact tests; bounded Fact IR validates against schema; broader linkage/runtime/package/release verification is absent |
 | Limitations | Public API, parser, dependencies, runtime matrix, and deployment model are not established |
 
 ## Classification
@@ -34,14 +34,14 @@ The intended output is a deterministic Graph IR/JSON document that agents can qu
 
 ## What exists today
 
-The repository has completed its verified M1 safety foundation and started M2 with a bounded structural scanner and Fact extractor behind the parser adapter. Graph IR/Fact IR/configuration contracts, the M1 foundation, and bounded structural Fact extraction are implemented/verified; full grammar coverage and resolver runtime remain absent. The following remain **planned**, not available:
+The repository has completed its verified M1 safety foundation and advanced M2 with bounded CFML/web scanners and Fact extraction behind the parser adapter. Graph IR/Fact IR/configuration contracts, the M1 foundation, and bounded structural Fact extraction are implemented/verified; full grammar coverage and resolver runtime remain absent. The following remain **planned**, not available:
 
 - full parser/extractor runtime beyond the fixture-backed bounded Fact IR subset
-- project index and multi-pass resolvers
+- multi-pass resolvers (the immutable project indexes are now implemented internally)
 - Graph IR runtime implementation (the proposed JSON Schema contract and example now exist at `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`)
 - public CLI/library API (the private package exposes only an un-released validation envelope)
-- incremental cache and query engine
-- golden/negative/adversarial fixture layout and manifest exist; fixture source inputs, golden outputs, broader tests, CI, and published artifacts remain unavailable
+- full incremental analysis cache and query engine
+- golden/negative/adversarial fixture layout, manifest, inert source inputs, and bounded Fact expectations exist; broader resolver fixtures, tests, CI, and published artifacts remain unavailable
 
 A related external project, `agent-cfml-check`, is separate bounded single-file CFML checking prior art. Its external status must not be read as implementation evidence for this repository.
 
@@ -82,6 +82,8 @@ The eight Core SSOT files are `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROA
 - [`docs/decisions/ADR-009-disposable-cache-invalidation.md`](docs/decisions/ADR-009-disposable-cache-invalidation.md) — disposable cache and invalidation decision
 - [`docs/decisions/ADR-010-parser-adapter-boundary.md`](docs/decisions/ADR-010-parser-adapter-boundary.md) — fail-closed parser boundary decision
 - [`docs/decisions/ADR-011-bounded-fact-extraction.md`](docs/decisions/ADR-011-bounded-fact-extraction.md) — fixture-backed Fact extraction decision
+- [`docs/decisions/ADR-012-bounded-web-fact-extraction.md`](docs/decisions/ADR-012-bounded-web-fact-extraction.md) — bounded mixed-language Fact extraction decision
+- [`docs/decisions/ADR-013-immutable-project-indexes.md`](docs/decisions/ADR-013-immutable-project-indexes.md) — immutable index boundary decision
 - [`AGENTS.md`](AGENTS.md) — repository-specific contribution rules
 
 ## Non-goals
@@ -97,4 +99,4 @@ The planned tool will not:
 
 ## Verification and limitations
 
-Foundation verification has been run with `npm test` (37/37 passed). The private CLI envelope, cache foundation, bounded scanner, and fixture-backed Fact extractor are tested, but no full parser grammar, resolver, full CLI orchestration, browser, engine, package, deployment, or release verification exists; all linkage capabilities and compatibility claims remain proposed.
+Foundation, bounded extraction, and immutable-index verification has been run with `npm test` (43/43 passed). The private CLI envelope, cache foundation, bounded scanner, and fixture-backed Fact extractor are tested, but no full parser grammar, resolver, full CLI orchestration, browser, engine, package, deployment, or release verification exists; all linkage capabilities and compatibility claims remain proposed.

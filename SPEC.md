@@ -8,8 +8,8 @@
 | Last updated | 2026-09-14 |
 | Scope | Static cross-file linkage analysis for CFML-first mixed web projects |
 | Source of truth | This document for the proposed contract; Git history for current code facts |
-| Evidence | Initial repository commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Graph/Fact/config contract checks, produced Fact IR schema validation, and `npm test` foundation/parser/scanner/Fact tests (37/37) pass; linkage contract/runtime verification is incomplete |
+| Evidence | Initial repository commit `1b29c0b` contained only `.gitattributes`; current local source contains the verified foundation and bounded extractors |
+| Verification | Graph/Fact/config contract checks, produced Fact IR schema validation, and `npm test` foundation/parser/scanner/Fact tests (43/43) pass; linkage contract/runtime verification is incomplete |
 | Limitations | Parser coverage, resolver accuracy, performance, compatibility, and release status are unverified |
 
 ## 1. Objective
@@ -27,7 +27,7 @@ The analyzer is a **read-only, deterministic, local-first, non-executing** stati
 - **Unresolved:** available evidence is insufficient to identify a target.
 - **Incomplete:** analysis could not safely cover the full requested input due to limits, unsupported syntax, parse problems, or snapshot drift.
 
-In this version, the project itself is **proposed**. No requirement below is implemented or verified locally.
+In this version, the product remains **proposed**, while the bounded safety, parser, scanner, and Fact extraction slices identified below are implemented and verified locally. The full linkage requirements are not complete.
 
 ## 3. Inputs and policy
 
@@ -39,11 +39,11 @@ The future API accepts:
 
 The implementation MUST canonicalize the root, reject traversal and symlink escapes, enforce root containment, freeze policy before discovery, and report rejected paths explicitly. The v0.1 configuration contract is `schema/agent-cfml-linkage-config-v0.1.schema.json` with example `examples/config-v0.1.json`; its root-safety, prohibited-action, limit, output, and exit-code invariants validate locally. The M1 root guard in `src/root-guard.js`, byte snapshot in `src/snapshot.js`, and strict decoder/map in `src/source-map.js` now implement and test the initial boundary; project-specific mappings are configuration, not hardcoded Globe3 behavior.
 
-The M1 snapshot currently discovers `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.js`, `.mjs`, and `.css` deterministically. The M1 decoder accepts strict UTF-8 only and maps byte offsets to one-based lines and zero-based UTF-16 columns. The M2 parser adapter now owns a fail-closed backend boundary and explicit partial/unsupported diagnostics. A dependency-free bounded CFML structural scanner and fixture-backed Fact extractor are available as explicit components, while the default adapter remains unselected and full grammar coverage/resolution are unresolved. Embedded SQL is a later extraction concern.
+The M1 snapshot currently discovers `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.js`, `.mjs`, `.css`, and `.sql` deterministically. The M1 decoder accepts strict UTF-8 only and maps byte offsets to one-based lines and zero-based UTF-16 columns. The M2 parser adapter now owns a fail-closed backend boundary and explicit partial/unsupported diagnostics. Dependency-free bounded CFML/web structural scanners and a fixture-backed Fact extractor are available as explicit components, while the default adapter remains unselected and full grammar coverage/resolution are unresolved. Visible SQL table extraction is bounded; SQL semantics, dynamic query resolution, and cross-file linkage remain later concerns.
 
 ### 3.1 Current repository contract evidence
 
-The repository now has a private `package.json` with Node `>=20`, an `npm test` script, a private `bin/agent-cfml-linkage.js` entry point, and internal root-guard, snapshot, source-map, CLI, cache, parser-adapter, and bounded scanner modules with focused tests. It has no full parser grammar, public export map, released CLI/API, callers, runtime linkage implementation, third-party dependencies, build workflow, or release artifact. API, CLI names, parser dependency, and public package metadata below remain proposed contracts.
+The repository now has a private `package.json` with Node `>=20`, an `npm test` script, a private `bin/agent-cfml-linkage.js` entry point, and internal root-guard, snapshot, source-map, CLI, cache, parser-adapter, bounded CFML/web scanner, and Fact extractor modules with focused tests. It has no full parser grammar, public export map, released CLI/API, callers, runtime linkage implementation, third-party dependencies, build workflow, or release artifact. API, CLI names, parser dependency, and public package metadata below remain proposed contracts.
 
 ## 4. Analysis contract
 
@@ -51,7 +51,7 @@ The proposed pipeline is:
 
 `Root Guard → Snapshot/Discovery → Decode/Source Map → Parse → Fact Extraction → Project Index → Resolution Passes → Evidence/Confidence → Graph Build → Validate → Cache → Query → CLI/JSON`.
 
-Each stage has typed boundaries and may emit diagnostics. Cross-file stages consume normalized Fact IR rather than parser-specific AST nodes. No stage mutates source files. The implemented parser adapter and bounded Fact extractor do not resolve across files; they normalize parser state and emit fixture-backed structural facts only.
+Each stage has typed boundaries and may emit diagnostics. Cross-file stages consume normalized Fact IR rather than parser-specific AST nodes. No stage mutates source files. The implemented parser adapter and bounded Fact extractor do not resolve across files; they normalize parser state and emit fixture-backed structural facts only. The internal T-023 index builder creates immutable lookup indexes but performs no resolution.
 
 ### 4.0 Fact IR contract
 
@@ -93,7 +93,7 @@ Required planned node kinds include `FILE`, `CFM_PAGE`, `CFC_COMPONENT`, `CFC_ME
 
 Required planned edge families include `INCLUDES`, `CUSTOM_TAG_CALL`, `EXTENDS`, `IMPLEMENTS`, `INSTANTIATES`, `CFINVOKES`, `CALLS_METHOD`, `FORM_SUBMITS_TO`, `REDIRECTS_TO`, `AJAX_CALLS`, `FETCHES`, `QUERY_READS_TABLE`, `QUERY_WRITES_TABLE`, `QUERY_USES_DATASOURCE`, `CALLS_REPOSITORY`, `APPLICATION_GOVERNS`, `REQUEST_HOOK_APPLIES_TO`, `ROUTES_WHEN`, `SCOPE_PRODUCES`, `SCOPE_CONSUMES`, `SCOPE_OVERRIDES`, and `DYNAMIC_REFERENCE`.
 
-This list is the proposed v0.1 contract. The machine-readable Graph IR schema and representative example are now present at `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`; the runtime graph builder and Fact IR remain unimplemented.
+This list is the proposed v0.1 contract. The machine-readable Graph IR schema and representative example are now present at `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`; the runtime graph builder and cross-file resolver remain unimplemented.
 
 ### 4.3 Identity and evidence
 

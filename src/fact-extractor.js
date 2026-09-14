@@ -35,6 +35,7 @@ function languageForPath(filePath) {
   if (extension === ".html" || extension === ".htm") return "html";
   if (extension === ".js" || extension === ".mjs") return "javascript";
   if (extension === ".css") return "css";
+  if (extension === ".sql") return "sql";
   return "unknown";
 }
 
@@ -277,8 +278,44 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
     let methodName = null;
 
     for (const node of nodes) {
-      if (!node || node.kind !== "CFML_TAG") continue;
+      if (!node) continue;
       const enclosingSymbol = methodName ?? componentName;
+      const nodeLanguage = node.kind === "HTML_FORM" ? "html" : node.kind === "JS_FETCH" || node.kind === "JS_AJAX" || node.kind === "JS_ASSET" ? "javascript" : node.kind === "CSS_REFERENCE" ? "css" : node.kind === "SQL_QUERY" ? "sql" : language;
+      if (node.kind === "HTML_FORM") {
+        const action = typeof node.action === "string" ? node.action : "";
+        const dynamic = node.action_dynamic === true || action === "";
+        if (dynamic) addFact(makeDynamicFact({ file, language: nodeLanguage, node, sourceKind: "FORM", expression: action || "form action", enclosingSymbol, ordinal: factOrdinal++ }));
+        else addFact(makeFact({ file, language: nodeLanguage, node, kind: "FORM", normalizedExpression: action, enclosingSymbol, extractionRuleId: "html-form-action-v0.1", attributes: { action, method: normalizeText(node.method) || "GET" }, ordinal: factOrdinal++ }));
+        continue;
+      }
+      if (node.kind === "JS_FETCH" || node.kind === "JS_AJAX") {
+        const target = node.target?.value;
+        const dynamic = node.target?.dynamic === true || node.expression_truncated === true || typeof target !== "string" || target.trim() === "";
+        const kind = node.kind === "JS_FETCH" ? "FETCH" : "AJAX";
+        if (dynamic) addFact(makeDynamicFact({ file, language: nodeLanguage, node, sourceKind: kind, expression: node.expression || `${kind.toLowerCase()} target`, enclosingSymbol, ordinal: factOrdinal++ }));
+        else addFact(makeFact({ file, language: nodeLanguage, node, kind, normalizedExpression: target, enclosingSymbol, extractionRuleId: `${kind.toLowerCase()}-target-v0.1`, attributes: { target, method: normalizeText(node.method?.value) || "GET" }, ordinal: factOrdinal++ }));
+        continue;
+      }
+      if (node.kind === "CSS_REFERENCE") {
+        const target = typeof node.target === "string" ? node.target : "";
+        const dynamic = node.dynamic === true || target.trim() === "";
+        if (dynamic) addFact(makeDynamicFact({ file, language: nodeLanguage, node, sourceKind: "CSS_ASSET", expression: node.expression || "css asset", enclosingSymbol, ordinal: factOrdinal++ }));
+        else addFact(makeFact({ file, language: nodeLanguage, node, kind: "CSS_ASSET", normalizedExpression: target, enclosingSymbol, extractionRuleId: `css-${node.reference_kind ?? "asset"}-v0.1`, attributes: { target, reference_kind: node.reference_kind ?? "asset" }, ordinal: factOrdinal++ }));
+        continue;
+      }
+      if (node.kind === "JS_ASSET") {
+        const target = typeof node.target === "string" ? node.target : "";
+        if (node.dynamic === true || target.trim() === "") addFact(makeDynamicFact({ file, language: nodeLanguage, node, sourceKind: "INCLUDE", expression: node.expression || "script asset", enclosingSymbol, ordinal: factOrdinal++ }));
+        else addFact(makeFact({ file, language: nodeLanguage, node, kind: "INCLUDE", normalizedExpression: target, enclosingSymbol, extractionRuleId: "html-script-src-v0.1", attributes: { template: target, include_phase: "client" }, ordinal: factOrdinal++ }));
+        continue;
+      }
+      if (node.kind === "SQL_QUERY") {
+        const tables = Array.isArray(node.tables) ? node.tables : [];
+        const expression = tables.length > 0 ? tables.join(", ") : "visible sql query";
+        addFact(makeFact({ file, language: nodeLanguage, node, kind: "QUERY", normalizedExpression: expression, enclosingSymbol, extractionRuleId: "visible-sql-tables-v0.1", attributes: { tables, statement_kind: node.statement_kind ?? "visible_sql", datasource: node.datasource ?? null }, ordinal: factOrdinal++ }));
+        continue;
+      }
+      if (node.kind !== "CFML_TAG") continue;
       const nodeExpression = normalizeText(node.expression);
       const nodeAttributes = {};
       for (const item of node.attributes ?? []) {
@@ -311,6 +348,17 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
           methodName = componentName ? `${componentName}.${name}` : name;
           addFact(makeFact({ file, language, node, kind: "METHOD", normalizedExpression: `method ${methodName}`, enclosingSymbol: componentName, extractionRuleId: "cfc-method-v0.1", attributes: { method_name: name, access: literalAttribute(node, "access") }, ordinal: factOrdinal++ }));
         }
+        continue;
+      }
+      if (node.name === "cflocation") {
+        const url = literalAttribute(node, "url");
+        if (url === null || dynamicValue(node, ["url"])) addFact(makeDynamicFact({ file, language, node, sourceKind: "REDIRECT", expression: nodeAttributes.url ?? "redirect url", enclosingSymbol, ordinal: factOrdinal++ }));
+        else addFact(makeFact({ file, language, node, kind: "REDIRECT", normalizedExpression: url, enclosingSymbol, extractionRuleId: "cflocation-url-v0.1", attributes: { url, status_code: literalAttribute(node, "statuscode") }, ordinal: factOrdinal++ }));
+        continue;
+      }
+      if (node.name === "cfquery") {
+        const hasVisibleSqlNode = nodes.some((item) => item?.kind === "SQL_QUERY" && item.container_byte_start === node.byte_start);
+        if (!hasVisibleSqlNode) addFact(makeFact({ file, language, node, kind: "QUERY", normalizedExpression: `query ${literalAttribute(node, "name") ?? file}`, enclosingSymbol, extractionRuleId: "cfquery-container-v0.1", attributes: { query_name: literalAttribute(node, "name"), datasource: literalAttribute(node, "datasource"), datasource_dynamic: dynamicValue(node, ["datasource"]) }, ordinal: factOrdinal++ }));
         continue;
       }
       if (node.name === "cfinclude") {

@@ -1,10 +1,11 @@
 # Golden fixtures
 
-> **Status: VERIFIED / LAYOUT + M2 INPUT BASELINE.** These cases contain inert CFML inputs for the bounded scanner; no full parser or linkage output exists yet.
+> **Status: VERIFIED / BOUNDED FACT BASELINE.** These cases contain inert inputs for bounded CFML/web scanners and Fact extraction; no full parser or linkage output exists yet.
 
 | Case | Coverage | Expected state |
 | --- | --- | --- |
-| `core-cfml-web-surface` | CFML page, include, Application governance, form, redirect, JavaScript fetch, CSS asset, visible SQL | Complete when all declared syntax is supported |
+| `core-cfml-web-surface` | CFML include, mapping, invocation, instantiation, custom tag, condition, and scope-write facts | Bounded Fact output with complete scanner coverage for this subset |
 | `cfc-inheritance-and-scope` | CFC component/method, instantiation, method call, ordered include scope flow, conditions | Complete with confirmed/strong edges and evidence |
+| `web-surface` | HTML forms/assets, JavaScript fetch/AJAX, CSS references, visible SQL | Bounded Fact output with explicit partial coverage |
 
-The current inputs support M2 structural Fact extraction. Add checked-in golden Fact/Graph outputs only after the corresponding producer and resolver contracts are verified.
+The current inputs support bounded M2 structural Fact extraction. Add checked-in golden Graph outputs only after the corresponding resolver and graph contracts are verified.

@@ -1,6 +1,6 @@
 # Fixture baseline
 
-> **Status: VERIFIED / LAYOUT BASELINE.** This directory defines inert inputs and expected-behavior categories for future parser/resolver tests. Nothing here is executed.
+> **Status: VERIFIED / INERT FIXTURE BASELINE.** This directory defines inert inputs and expected-behavior categories for scanner/Fact/parser/resolver tests. Nothing here is executed.
 
 | Field | Value |
 | --- | --- |
@@ -8,9 +8,9 @@
 | Last updated | 2026-09-14 |
 | Scope | Golden, negative, and adversarial fixture organization |
 | Source of truth | `manifest-v0.1.json` and each fixture's README |
-| Evidence | T-006 layout/manifest invariant check |
-| Verification | Layout and manifest consistency checked; parser/runtime behavior unverified |
-| Limitations | Fixture source and golden outputs will be populated after parser/Fact IR implementation |
+| Evidence | T-006 layout/manifest invariant check plus T-021/T-022 bounded Fact fixture checks and T-023 immutable-index checks |
+| Verification | Layout/manifest consistency and bounded CFML/web Fact behavior checked; resolver/runtime behavior remains unverified |
+| Limitations | Broad resolver golden outputs, ambiguity cases, and engine/runtime behavior remain unverified |
 
 ## Layout
 

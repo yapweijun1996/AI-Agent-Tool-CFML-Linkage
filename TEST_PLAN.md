@@ -1,6 +1,6 @@
 # Test Plan: agent-cfml-linkage
 
-> **Status: PROPOSED / M2 IN PROGRESS.** This plan defines future verification; the focused M1 foundation and M2 parser-adapter boundary suite exists.
+> **Status: PROPOSED / M2 IN PROGRESS.** This plan defines future verification; focused M1 and bounded M2 parser/scanner/Fact suites exist.
 
 | Field | Value |
 | --- | --- |
@@ -8,8 +8,8 @@
 | Last updated | 2026-09-14 |
 | Scope | Contract, determinism, safety, linkage, partial-result, and release verification |
 | Source of truth | This plan for intended verification; actual test output and CI for evidence |
-| Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | T-001–T-006 contract checks, produced Fact IR schema validation, and T-010–T-014/T-020/T-021 `npm test` (37/37) passed; broader project test suite does not exist |
+| Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local source includes the verified foundation and bounded extractors |
+| Verification | T-001–T-006 contract checks, produced Fact IR schema validation, and T-010–T-014/T-020–T-023 `npm test` (43/43) passed; broader project test suite does not exist |
 | Limitations | Exact framework, parser fixtures, supported runtimes, and performance targets are not selected |
 
 ## 1. Verification principles
@@ -35,7 +35,7 @@
 
 ## 3. Golden fixture matrix
 
-The first fixture set should cover:
+The current inert fixture set covers bounded cases; the full fixture matrix should cover:
 
 1. ordered `cfinclude` with shared page/request/application scope;
 2. CFC inheritance, implementation, instantiation, imports, and unique method calls;
@@ -86,4 +86,4 @@ The current focused command is `npm test`, using Node's built-in test runner. No
 
 ## 7. Current result
 
-**T-001–T-006, T-010–T-014, and T-020/T-021 passed:** contract schemas/examples, identity/order, confidence/completeness, configuration, fixture-manifest, root-guard containment, deterministic discovery, snapshot fingerprint, symlink, limit, strict decoding, source maps, CLI envelope, stderr separation, cache invalidation/corruption, parser unavailable/partial/failure handling, bounded CFML scanning, structural Fact extraction, golden expectations, unsupported regions, and no-execution checks pass; `npm test` reports 37 passed and 0 failed, and the produced fixture Fact IR validates against schema. This uses no project dependency beyond Node built-ins. Runtime producer repeatability beyond the current foundation tests, broader Fact IR/linkage behavior, package smoke, browser, and engine checks remain unverified.
+**T-001–T-006, T-010–T-014, and T-020–T-023 passed:** contract schemas/examples, identity/order, confidence/completeness, configuration, fixture-manifest, root-guard containment, deterministic discovery, snapshot fingerprint, symlink, limit, strict decoding, source maps, CLI envelope, stderr separation, cache invalidation/corruption, parser unavailable/partial/failure handling, bounded CFML scanning, structural Fact extraction, golden expectations, immutable index lookups, unsupported regions, and no-execution checks pass; `npm test` reports 43 passed and 0 failed, and the produced fixture Fact IR validates against schema. This uses no project dependency beyond Node built-ins. Runtime producer repeatability beyond the current foundation tests, broader Fact IR/linkage behavior, package smoke, browser, and engine checks remain unverified.

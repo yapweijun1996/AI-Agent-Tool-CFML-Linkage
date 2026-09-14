@@ -1,6 +1,6 @@
 # Security: agent-cfml-linkage
 
-> **Status: PROPOSED.** These are security requirements for a future implementation, not evidence of current controls.
+> **Status: PROPOSED / FOUNDATION CONTROLS VERIFIED.** These are security requirements for the complete analyzer; the bounded foundation/scanner controls listed below have local evidence.
 
 | Field | Value |
 | --- | --- |
@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | Threat boundaries for local static analysis |
 | Source of truth | This document for proposed security requirements; implementation and tests for actual controls |
-| Evidence | Initial commit `1b29c0b`; no analyzer code exists |
+| Evidence | Current local source contains root guard, snapshot, decoder, parser/scanner, and Fact extraction controls; resolver/runtime code does not exist |
 | Verification | Root-guard containment/symlink, snapshot no-execution, strict-decoding, CLI safety, cache path/corruption, parser/scanner no-execution, bounded Fact extraction, and diagnostic-bound tests pass; broader security test suite does not exist |
 | Limitations | Threat model, platform sandbox, dependency policy, and disclosure process require implementation-specific review |
 

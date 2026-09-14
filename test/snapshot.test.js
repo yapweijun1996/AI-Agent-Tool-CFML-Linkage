@@ -16,6 +16,7 @@ function makeTemporaryProject() {
   fs.writeFileSync(path.join(root, "src", "nested", "a.cfc"), "a\n");
   fs.writeFileSync(path.join(root, "src", "client.js"), "throw new Error('inert fixture');\n");
   fs.writeFileSync(path.join(root, "src", "style.css"), "body { color: black; }\n");
+  fs.writeFileSync(path.join(root, "src", "query.sql"), "select 1;\n");
   fs.writeFileSync(path.join(root, "README.txt"), "unsupported extension\n");
   fs.writeFileSync(path.join(root, "node_modules", "ignored", "package.cfm"), "ignored\n");
   fs.writeFileSync(path.join(root, "generated", "output.cfm"), "ignored\n");
@@ -33,10 +34,11 @@ test("discovers supported files in sorted order and ignores configured default d
     assert.deepEqual(snapshot.files.map((file) => file.path), [
       "src/client.js",
       "src/nested/a.cfc",
+      "src/query.sql",
       "src/style.css",
       "src/z.cfm",
     ]);
-    assert.equal(snapshot.file_count, 4);
+    assert.equal(snapshot.file_count, 5);
     assert.equal(snapshot.complete, true);
     assert.equal(snapshot.diagnostics.length, 0);
     assert.match(snapshot.source_fingerprint, /^sha256:[0-9a-f]{64}$/u);

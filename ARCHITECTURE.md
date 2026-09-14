@@ -1,6 +1,6 @@
 # Architecture: agent-cfml-linkage
 
-> **Status: PROPOSED / M2 IN PROGRESS.** The M1 foundation and M2 parser-adapter boundary exist; the remaining architecture is not implemented.
+> **Status: PROPOSED / M2 IN PROGRESS.** The M1 foundation and bounded M2 parser/scanner/Fact slices exist; the remaining architecture is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -8,13 +8,13 @@
 | Last updated | 2026-09-14 |
 | Scope | Component boundaries, data flow, ownership, and failure behavior |
 | Source of truth | This document for proposed architecture; Git history for current code facts |
-| Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter tests pass locally; remaining architecture is unverified |
+| Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
+| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact tests pass locally; remaining architecture is unverified |
 | Limitations | Parser feasibility, runtime compatibility, resource costs, and public package compatibility are unknown; M1 uses Node built-ins only |
 
 ## 1. Boundary
 
-The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1 slice currently owns root admission, path containment, byte snapshot/discovery, strict source coordinates, and a private CLI envelope; Graph IR production, linkage evidence, and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
+The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1/M2 slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, a private CLI envelope, bounded parser scanners, and Fact evidence; Graph IR production, linkage resolution, and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
 
 ```text
 Local source + explicit policy
@@ -36,9 +36,9 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Root guard/policy | canonical root, path containment, and snapshot admission in the implemented M1 slice; config-wide policy freezing remains planned | parsing or confidence upgrades |
 | Snapshot/discovery | deterministic file set, content fingerprints, metadata, symlink skipping, and drift diagnostics in M1 | source mutation or runtime discovery |
 | Decoder/source map | decoding state and coordinate conversion | linkage decisions |
-| Parser adapter | explicit backend boundary, bounded structural scanner, syntax trees, parser diagnostics, completeness; default backend remains unselected | cross-file resolution |
-| Fact extractor | normalized Fact IR and extraction evidence | target selection |
-| Project index | immutable path, symbol, mapping, application, query indexes | mutable resolution state |
+| Parser adapter | explicit backend boundary, bounded CFML/web structural scanners, syntax trees, parser diagnostics, completeness; default backend remains unselected | cross-file resolution |
+| Fact extractor | normalized CFML/web Fact IR and extraction evidence | target selection |
+| Project index | immutable path, symbol, mapping, application, query, and per-file fact indexes; unique/ambiguous/missing lookup states | mutable resolution state |
 | Resolver passes | bounded candidate/target resolution | index mutation or authoritative guessing |
 | Evidence policy | evidence merge and confidence classes | parser-specific parsing |
 | Graph builder/validator | Graph IR construction, invariants, serialization readiness | generic business interpretation |
@@ -54,7 +54,7 @@ Core owns stable IDs, confidence policy, root safety, validation, and output con
 2. **Snapshot:** discover and fingerprint files in sorted order.
 3. **Parse:** decode each file and preserve source coordinates.
 4. **Facts:** convert syntax into parser-neutral facts.
-5. **Index:** build complete immutable indexes before resolution.
+5. **Index:** `src/project-index.js` builds complete immutable indexes before resolution.
 6. **Resolve:** run ordered, read-only resolver passes.
 7. **Evidence:** classify each result and retain ambiguity.
 8. **Graph:** create nodes, edges, unresolved records, diagnostics, and stats.

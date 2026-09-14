@@ -15,6 +15,7 @@ const SUPPORTED_CFML_TAGS = new Set([
   "cfimport",
   "cfinvoke",
   "cfinterface",
+  "cflocation",
   "cfloop",
   "cfmodule",
   "cfobject",

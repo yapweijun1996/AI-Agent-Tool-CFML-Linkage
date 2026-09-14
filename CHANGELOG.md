@@ -35,9 +35,11 @@
 - Disposable metadata cache, invalidation fingerprints, corruption handling, focused tests, and ADR-009 for T-014.
 - Fail-closed parser adapter boundary, bounded dependency-free CFML scanner, partial/unsupported diagnostics, focused tests, and ADR-010 for T-020.
 - Fixture-backed bounded CFML/CFC Fact IR extraction, golden expectations, schema validation, focused tests, and ADR-011 for T-021.
+- Bounded mixed-language web scanners/facts for forms, redirects, fetch/AJAX, CSS, visible SQL, inert fixtures, focused tests, and ADR-012 for T-022.
+- Immutable project indexes with deterministic unique/ambiguous/missing lookup states, focused tests, and ADR-013 for T-023.
 
 ### Not claimed
 
-- No analyzer implementation has been added.
-- No parser backend, resolver, full CLI orchestration/public library API, query engine, CI workflow, public package, or release has been added; the private root-guard/snapshot/decoder/CLI/cache/parser-adapter foundation and focused tests are the only runtime slice.
+- No complete analyzer implementation has been added.
+- No full parser backend, resolver, full CLI orchestration/public library API, query engine, CI workflow, public package, or release has been added; the private root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact foundation and focused tests are the only runtime slice.
 - No Lucee, Adobe ColdFusion, browser, database, or network verification has been performed.

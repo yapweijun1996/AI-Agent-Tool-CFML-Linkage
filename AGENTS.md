@@ -8,8 +8,8 @@
 | Last updated | 2026-09-14 |
 | Scope | Repository-specific documentation and implementation rules |
 | Source of truth | This file for local project conventions; higher-priority host instructions still apply |
-| Evidence | Initial `HEAD` contained only `.gitattributes`; this documentation baseline is now the repository guidance |
-| Verification | Guidance is exercised by the private M1 foundation/M2 adapter/scanner/Fact extractor and 37 focused Node tests; full analyzer verification is absent |
+| Evidence | Initial `HEAD` contained only `.gitattributes`; current local HEAD includes the verified foundation and bounded extractors plus this guidance |
+| Verification | Guidance is exercised by the private M1 foundation/M2 adapter/scanner/Fact extractor and 43 focused Node tests; full analyzer verification is absent |
 | Limitations | Parser/resolver, public package/API, CI, and released-runtime conventions are not yet established |
 
 ## Project boundary

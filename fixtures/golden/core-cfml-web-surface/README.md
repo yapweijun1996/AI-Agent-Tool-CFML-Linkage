@@ -1,7 +1,7 @@
 # Golden case: core CFML/web surface
 
-> **Status: PLANNED INPUT.** Directory reserved by the v0.1 fixture manifest; inert source and expected output are pending parser implementation.
+> **Status: VERIFIED / T-021 BOUNDED INPUT.** This inert directory exercises the bounded CFML Fact extractor; no source is executed.
 
-Coverage: Application governance, `cfinclude`, form action, redirect, JavaScript `fetch`, CSS asset, and visible SQL.
+Coverage: `cfinclude`, `cfimport`, `cfinvoke`, `cfobject`, `cfmodule`, `cfif`, and `cfset` structural facts.
 
-Expected artifacts: source inputs plus golden Fact IR and Graph IR documents. Nothing in this case may be executed.
+Expected artifact: `fixtures/golden/expected-facts-v0.1.json`. Graph IR and cross-file resolution remain unimplemented.

@@ -1,5 +1,5 @@
 # Golden case: CFC inheritance and scope
 
-> **Status: PLANNED INPUT.** Directory reserved by the v0.1 fixture manifest; inert source and expected output are pending parser implementation.
+> **Status: VERIFIED / T-021 BOUNDED INPUT.** This inert directory exercises the bounded CFML/CFC Fact extractor; no source is executed.
 
-Coverage: CFC inheritance, instantiation, method calls, ordered includes, shared scope flow, and conditions. Nothing in this case may be executed.
+Coverage: CFC inheritance/implementation, method declaration, instantiation, invocation, mapping, and scope-write structural facts. Graph resolution and full scope flow remain unimplemented.

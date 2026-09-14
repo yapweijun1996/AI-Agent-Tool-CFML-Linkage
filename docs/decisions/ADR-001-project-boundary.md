@@ -1,6 +1,6 @@
 # ADR-001: Keep linkage CFML-first, static, and separate from generic impact analysis
 
-> **Status: PROPOSED.** This decision is approved as design intent only; implementation and verification are absent.
+> **Status: PROPOSED / BOUNDARY VERIFIED.** This decision remains design intent for the complete analyzer; the local foundation and bounded scanner controls are verified.
 
 | Field | Value |
 | --- | --- |
@@ -8,8 +8,8 @@
 | Last updated | 2026-09-14 |
 | Scope | Product boundary and ownership of linkage evidence |
 | Source of truth | This ADR for the decision; `SPEC.md` for the contract; Git history for implementation facts |
-| Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Not run; no implementation exists |
+| Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local source enforces the boundary in root, snapshot, parser/scanner, and Fact slices |
+| Verification | Root containment, no-execution, deterministic, and bounded parser/scanner/Fact tests pass locally; full linkage verification remains open |
 | Limitations | Parser coverage, resolver feasibility, integration contracts, and compatibility remain unknown |
 
 ## Context

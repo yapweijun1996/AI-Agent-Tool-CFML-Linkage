@@ -1,6 +1,6 @@
 # Roadmap: agent-cfml-linkage
 
-> **Status: PROPOSED / NOT STARTED.** The roadmap describes intended delivery; it is not a report of completed code.
+> **Status: PROPOSED / M2 IN PROGRESS.** The roadmap describes intended delivery and records verified bounded slices; it is not a release plan.
 
 | Field | Value |
 | --- | --- |
@@ -8,39 +8,39 @@
 | Last updated | 2026-09-14 |
 | Scope | Ordered delivery of the planned linkage analyzer |
 | Source of truth | This roadmap for sequencing; Git history and tests for completion evidence |
-| Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | M0 contract gate, T-010–T-014/T-020/T-021 foundation/scanner/Fact tests, and produced Fact IR schema validation are verified; later milestones have no evidence |
+| Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
+| Verification | M0 contract gate, T-010–T-014/T-020–T-023 foundation/scanner/Fact/index tests, and produced Fact IR schema validation are verified; later milestones have no evidence |
 | Limitations | Dates, estimates, parser selection, and release targets are intentionally not committed |
 
 ## Current state
 
 | Area | State | Evidence |
 | --- | --- | --- |
-| Repository | Initial implementation baseline plus documentation baseline | Git `main` at `1b29c0b` before this documentation commit |
-| Source implementation | M1 foundation and M2 parser-adapter/bounded scanner/Fact extractor implemented; linkage runtime not started | `src/`, `bin/`, focused tests |
-| Contracts/schema | Graph IR, Fact IR, identity/order, confidence/completeness, and configuration artifacts implemented and validated; runtime producers still absent | `schema/`, `examples/`, `SPEC.md`, ADR-002–ADR-004 |
-| Fixture layout/manifest | Implemented and validated | `fixtures/` and `fixtures/manifest-v0.1.json`; source/golden outputs still pending |
-| Focused tests | T-010–T-014/T-020/T-021 verified | `npm test`: 37 passed |
+| Repository | Private prototype with verified foundation and bounded extractors | Git `main` at the current local commit; no remote publication |
+| Source implementation | M1 foundation, M2 parser-adapter/bounded CFML/web scanner/Fact extractors, and M3 immutable indexes implemented; resolver runtime not started | `src/`, `bin/`, focused tests |
+| Contracts/schema | Graph IR, Fact IR, identity/order, confidence/completeness, and configuration artifacts implemented and validated; broader runtime producers remain absent | `schema/`, `examples/`, `SPEC.md`, ADR-002–ADR-004 |
+| Fixture layout/manifest | Implemented and validated | `fixtures/`, `fixtures/manifest-v0.1.json`, inert golden inputs, and bounded Fact expectations |
+| Focused tests | T-010–T-014/T-020–T-023 verified | `npm test`: 43 passed |
 | CI/package/release | Private package/CLI foundation only; CI/release not started | `package.json`, `bin/`; no workflow, tag, or release |
 | Runtime compatibility | Unknown | No local analyzer exists |
 | Core SSOT documentation | Synchronized planning baseline | `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`, `GOAL_PROMPT.md` |
 
 ## Delivery sequence
 
-The current pass advances M0 to a verified gate, completes M1/T-010–T-014, and verifies bounded M2 parser/scanner/Fact extraction at T-020/T-021; it does not establish full grammar coverage or advance M3–M9. T-022 is the next bounded web-surface task.
+The current pass advances M0 to a verified gate, completes M1/T-010–T-014, verifies bounded M2 parser/scanner/Fact extraction at T-020–T-022, and verifies the first M3 index boundary at T-023; it does not establish full grammar coverage or advance M4–M9. T-024 is the next resolver task.
 
 ### Phase 0 — Contract and safety foundation
 
 **Goal:** make the boundary testable before implementing language behavior.
 
-- M0: Graph IR, Fact IR, diagnostics, confidence, unresolved reasons, IDs, limits, and stable JSON envelope. T-001–T-005 contract slices are verified; remaining M0 contract work is open.
+- M0: Graph IR, Fact IR, diagnostics, confidence, unresolved reasons, IDs, limits, and stable JSON envelope. T-001–T-006 contract slices are verified; remaining M0 contract extensions are open.
 - M1: canonical root guard, path containment, ignore policy, deterministic snapshot/discovery, decoding, source maps, and CLI input validation.
 
 **Exit evidence:** reviewed contracts, verified contract fixtures/manifest, T-010 containment tests, T-011 deterministic snapshot tests, T-012 strict decoding/source-map tests, T-013 CLI envelope tests, planned remaining negative safety tests, and no-execution proof at the process boundary.
 
 ### Phase 1 — CFML extraction and basic linkage
 
-- M2: parser adapter/bounded scanner and normalized CFML/CFC facts (T-020/T-021 verified); HTML/JavaScript/SQL coverage and full grammar remain open.
+- M2: parser adapter/bounded CFML/web scanners and normalized CFML/CFC/web facts (T-020–T-022 verified); full grammar and resolution remain open.
 - M3: literal paths, includes, custom tags, Application governance, conditions, unresolved records, graph construction, validation, and reverse adjacency.
 
 **Exit evidence:** golden fixtures for basic CFML flow, malformed/partial input, ambiguity, and stable IDs/order.

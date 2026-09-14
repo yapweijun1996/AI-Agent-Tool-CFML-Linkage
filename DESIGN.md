@@ -1,6 +1,6 @@
 # Design: agent-cfml-linkage Analysis Pipeline
 
-> **Status: PROPOSED / M2 IN PROGRESS.** This document describes the intended architecture; the M1 foundation and M2 parser-adapter boundary have runtime evidence.
+> **Status: PROPOSED / M2 IN PROGRESS.** This document describes the intended architecture; the M1 foundation and bounded M2 parser/scanner/Fact slices have runtime evidence.
 
 | Field | Value |
 | --- | --- |
@@ -8,15 +8,15 @@
 | Last updated | 2026-09-14 |
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
-| Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Graph/Fact/config checks, produced Fact IR schema validation, and 37 foundation/parser/scanner/Fact tests pass locally; runtime stages below remain unimplemented proposals |
+| Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
+| Verification | Graph/Fact/config checks, produced Fact IR schema validation, and 43 foundation/parser/scanner/Fact/index tests pass locally; runtime stages below remain unimplemented proposals |
 | Limitations | Parser choice, language coverage, performance, and engine compatibility remain unknown |
 
 ## 1. Design goals
 
 The analyzer should give coding agents a small, queryable, evidence-backed view of cross-file relationships without executing the application or guessing dynamic behavior. The design favors narrow stages, immutable intermediate data, explicit incompleteness, and stable output.
 
-**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, private CLI-envelope, cache, parser-adapter, bounded scanner, and bounded Fact extractor modules with focused tests, a private `package.json`, and validated contracts; full parser backend, broader Fact IR, resolver, graph, query orchestration, caller, CI, and release architecture remain unimplemented.
+**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, private CLI-envelope, cache, parser-adapter, bounded CFML/web scanners, and bounded Fact extractor modules with focused tests, a private `package.json`, and validated contracts; full parser backend, broader Fact IR, resolver, graph, query orchestration, caller, CI, and release architecture remain unimplemented.
 
 It is CFML-first: CFM/CFC structure, Application governance, includes, CFC typing, and shared scopes receive priority. HTML, JavaScript, CSS, SQL, and repository relations extend that model where static evidence is available.
 
@@ -48,7 +48,7 @@ The planned stage resolves the canonical root, rejects traversal and symlink esc
 
 ### Stage 1 — Snapshot and discovery
 
-The implemented M1 snapshot walks supported source files deterministically, records root-relative POSIX path, canonical path, bytes, mtime, and content SHA-256, and sorts before later stages. It skips symlinks, reports drift/limits explicitly, and calculates a content-based project fingerprint. The disposable M1 cache consumes that fingerprint with configuration/parser/extractor/resolver fingerprints and never becomes source of truth. A changed file will later invalidate its facts and dependent resolution products; root, configuration, or parser changes invalidate wider scopes.
+The implemented M1 snapshot walks supported source files deterministically, including visible `.sql`, records root-relative POSIX path, canonical path, bytes, mtime, and content SHA-256, and sorts before later stages. It skips symlinks, reports drift/limits explicitly, and calculates a content-based project fingerprint. The disposable M1 cache consumes that fingerprint with configuration/parser/extractor/resolver fingerprints and never becomes source of truth. A changed file will later invalidate its facts and dependent resolution products; root, configuration, or parser changes invalidate wider scopes.
 
 ### Stage 2 — Decode and source map
 
@@ -56,7 +56,7 @@ The implemented M1 decoder accepts strict UTF-8, preserves BOM byte alignment, a
 
 ### Stage 3 — Parser adapter
 
-The implemented adapter in `src/parser-adapter.js` enforces strict decoding handoff, explicit backend selection, normalized diagnostics, and bounded partial/unsupported results. `src/cfml-scanner.js` provides an explicit dependency-free structural backend for a bounded CFML tag subset, and `src/fact-extractor.js` emits fixture-backed Fact IR. The default adapter still has no selected backend and produces `PARSER_UNAVAILABLE` rather than claiming full syntax coverage. The future parser-neutral contract is:
+The implemented adapter in `src/parser-adapter.js` enforces strict decoding handoff, explicit backend selection, normalized diagnostics, and bounded partial/unsupported results. `src/cfml-scanner.js` and `src/web-scanner.js` provide explicit dependency-free structural backends for bounded CFML/web subsets, and `src/fact-extractor.js` emits fixture-backed Fact IR. The default adapter still has no selected backend and produces `PARSER_UNAVAILABLE` rather than claiming full syntax coverage. The future parser-neutral contract is:
 
 ```text
 parse(source, path) -> ParseUnit {
@@ -89,7 +89,7 @@ Build indexes before resolution so file order cannot affect output:
 - `queryIndex`
 - `factByFile`
 
-Indexes retain unique, ambiguous, and unresolved states. `Application.cfc` mappings are indexed only when statically recoverable; runtime-computed mappings remain unknown.
+`src/project-index.js` builds immutable `pathIndex`, `componentIndex`, `methodIndex`, `applicationIndex`, `mappingIndex`, `customTagIndex`, `symbolIndex`, `queryIndex`, and `factByFile` indexes before resolution. Index lookups retain unique, ambiguous, and missing states. `Application.cfc` mappings are indexed only when statically recoverable; runtime-computed mappings remain unknown.
 
 ### Stage 6 — multi-pass resolvers
 
@@ -161,15 +161,14 @@ Correctness comes first. Parse with bounded worker concurrency and merge facts i
 
 ## 7. Proposed implementation sequence
 
-The sequence is dependency-aware but not a schedule. M0's contract gate and T-010–T-014 are verified; parser and resolver implementation remain open.
+The sequence is dependency-aware but not a schedule. M0's contract gate, M1 foundation, and bounded T-020–T-022 extraction are verified; full parser and resolver implementation remain open.
 
 | Milestone | Content | Current status |
 | --- | --- | --- |
 | M0 | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and golden-fixture contract | Verified — T-001–T-006 |
 | M1 | Safe root guard, snapshot, decoder, discovery, cache skeleton, CLI envelope | Verified — T-010–T-014 |
-| M2 | Parser adapter and normalized extraction | In progress — T-020/T-021 bounded parser/Fact subset verified; broader coverage open |
-| M2 | Parser adapter and normalized extraction | Not started |
-| M3 | Basic path/Application/include linkage and graph validation | Not started |
+| M2 | Parser adapter and normalized extraction | In progress — T-020–T-022 bounded parser/Fact subset verified; broader coverage open |
+| M3 | Basic path/Application/include linkage and graph validation | In progress — T-023 immutable indexes verified; T-024 open |
 | M4 | CFC mappings, inheritance, instantiation, and method linkage | Not started |
 | M5 | Shared scope, AJAX/fetch, conditional routers, dynamic evidence | Not started |
 | M6 | SQL, datasource, and repository linkage | Not started |

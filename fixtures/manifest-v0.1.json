@@ -1,6 +1,6 @@
 {
   "schema_version": "agent-cfml-linkage-fixtures/v0.1",
-  "status": "baseline",
+  "status": "bounded-fact-baseline",
   "categories": [
     "golden",
     "negative",
@@ -13,12 +13,11 @@
       "path": "golden/core-cfml-web-surface",
       "covers": [
         "includes",
-        "application-governance",
-        "forms",
-        "redirects",
-        "javascript-fetch",
-        "css-assets",
-        "visible-sql"
+        "mappings",
+        "invokes",
+        "instantiation",
+        "conditions",
+        "scope-writes"
       ],
       "expected": "golden-graph-and-facts",
       "source_execution": false
@@ -35,6 +34,20 @@
         "conditions"
       ],
       "expected": "golden-graph-and-facts",
+      "source_execution": false
+    },
+    {
+      "id": "golden-web-surface",
+      "category": "golden",
+      "path": "golden/web-surface",
+      "covers": [
+        "forms",
+        "javascript-fetch",
+        "javascript-ajax",
+        "css-assets",
+        "visible-sql"
+      ],
+      "expected": "golden-facts",
       "source_execution": false
     },
     {
