@@ -1,6 +1,6 @@
 # agent-cfml-linkage
 
-> **Status: PROPOSED / M2 NOT STARTED.** The repository contains a verified M1 safety foundation and contracts; the linkage analyzer, public API, and release are not complete.
+> **Status: PROPOSED / M2 IN PROGRESS.** The repository contains a verified M1 safety foundation and parser-adapter boundary; the linkage analyzer, public API, and release are not complete.
 
 | Field | Value |
 | --- | --- |
@@ -9,14 +9,14 @@
 | Scope | Deterministic, read-only, local-first linkage analysis for CFML web applications |
 | Repository evidence | Initial `main` commit `1b29c0b934129fcd005b0575d9b986159043fbc9` contained only `.gitattributes`; this pass adds documentation, not implementation |
 | Source of truth | Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for actual state |
-| Verification | `npm test` passes 26 focused root-guard/snapshot/decoder/CLI/cache tests; broader linkage/runtime/package/release verification is absent |
+| Verification | `npm test` passes 32 focused foundation/parser-adapter tests; broader linkage/runtime/package/release verification is absent |
 | Limitations | Public API, parser, dependencies, runtime matrix, and deployment model are not established |
 
 ## Classification
 
 - **Project type:** planned hybrid NPM/library + CLI + AI-agent evidence provider.
-- **Lifecycle:** prototype / M1 safe foundation verified; analyzer not started.
-- **Current state:** M0 contracts and the complete M1 root guard/snapshot/decoder/private CLI/cache foundation are implemented/verified; no linkage parser, resolver, public API, or released package exists.
+- **Lifecycle:** prototype / M1 foundation verified, M2 adapter boundary in progress; analyzer not started.
+- **Current state:** M0 contracts and the complete M1 root guard/snapshot/decoder/private CLI/cache foundation plus the M2 parser-adapter boundary are implemented/verified; no parser backend, resolver, public API, or released package exists.
 
 ## Purpose
 
@@ -34,7 +34,7 @@ The intended output is a deterministic Graph IR/JSON document that agents can qu
 
 ## What exists today
 
-The repository has completed its verified M1 safety foundation. Graph IR/Fact IR/configuration contracts and the root guard/snapshot/decoder/private CLI/cache foundation are implemented/verified; there is still no linkage parser or resolver runtime. The following remain **planned**, not available:
+The repository has completed its verified M1 safety foundation and started M2 at the adapter boundary. Graph IR/Fact IR/configuration contracts, the M1 foundation, and the parser adapter are implemented/verified; there is still no selected parser backend or resolver runtime. The following remain **planned**, not available:
 
 - parser/extractor runtime that produces Fact IR (the Fact IR schema/example contract exists at `schema/agent-cfml-linkage-fact-v0.1.schema.json` and `examples/facts-v0.1.json`)
 - project index and multi-pass resolvers
@@ -80,6 +80,7 @@ The eight Core SSOT files are `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROA
 - [`docs/decisions/ADR-007-strict-decoding-and-source-maps.md`](docs/decisions/ADR-007-strict-decoding-and-source-maps.md) — strict UTF-8 and coordinate decision
 - [`docs/decisions/ADR-008-stable-cli-envelope.md`](docs/decisions/ADR-008-stable-cli-envelope.md) — stable JSON envelope and CLI safety decision
 - [`docs/decisions/ADR-009-disposable-cache-invalidation.md`](docs/decisions/ADR-009-disposable-cache-invalidation.md) — disposable cache and invalidation decision
+- [`docs/decisions/ADR-010-parser-adapter-boundary.md`](docs/decisions/ADR-010-parser-adapter-boundary.md) — fail-closed parser boundary decision
 - [`AGENTS.md`](AGENTS.md) — repository-specific contribution rules
 
 ## Non-goals
@@ -95,4 +96,4 @@ The planned tool will not:
 
 ## Verification and limitations
 
-Foundation verification has been run with `npm test` (26/26 passed). The private CLI envelope and cache foundation are tested, but no parser, resolver, full CLI orchestration, browser, engine, package, deployment, or release verification exists; all linkage capabilities and compatibility claims remain proposed.
+Foundation verification has been run with `npm test` (32/32 passed). The private CLI envelope, cache foundation, and parser-adapter failure boundary are tested, but no parser backend, resolver, full CLI orchestration, browser, engine, package, deployment, or release verification exists; all linkage capabilities and compatibility claims remain proposed.

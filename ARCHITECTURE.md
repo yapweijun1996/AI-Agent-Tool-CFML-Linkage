@@ -1,6 +1,6 @@
 # Architecture: agent-cfml-linkage
 
-> **Status: PROPOSED / M2 NOT STARTED.** The M1 root-guard, byte-snapshot, decoder, private CLI-envelope, and disposable-cache components exist; the remaining architecture is not implemented.
+> **Status: PROPOSED / M2 IN PROGRESS.** The M1 foundation and M2 parser-adapter boundary exist; the remaining architecture is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Scope | Component boundaries, data flow, ownership, and failure behavior |
 | Source of truth | This document for proposed architecture; Git history for current code facts |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Root-guard/snapshot/decoder/CLI/cache tests pass locally; remaining architecture is unverified |
+| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter tests pass locally; remaining architecture is unverified |
 | Limitations | Parser feasibility, runtime compatibility, resource costs, and public package compatibility are unknown; M1 uses Node built-ins only |
 
 ## 1. Boundary
@@ -36,7 +36,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Root guard/policy | canonical root, path containment, and snapshot admission in the implemented M1 slice; config-wide policy freezing remains planned | parsing or confidence upgrades |
 | Snapshot/discovery | deterministic file set, content fingerprints, metadata, symlink skipping, and drift diagnostics in M1 | source mutation or runtime discovery |
 | Decoder/source map | decoding state and coordinate conversion | linkage decisions |
-| Parser adapter | syntax trees, parser diagnostics, completeness | cross-file resolution |
+| Parser adapter | explicit backend boundary, syntax trees, parser diagnostics, completeness; M2 adapter is verified but backend is unselected | cross-file resolution |
 | Fact extractor | normalized Fact IR and extraction evidence | target selection |
 | Project index | immutable path, symbol, mapping, application, query indexes | mutable resolution state |
 | Resolver passes | bounded candidate/target resolution | index mutation or authoritative guessing |

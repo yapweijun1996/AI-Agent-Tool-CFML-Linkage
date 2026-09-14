@@ -1,6 +1,6 @@
 # Epic: Build the CFML-first linkage evidence provider
 
-> **Status: PROPOSED / M2 NOT STARTED.** This epic is planning material; the M1 root-guard/snapshot/decoder/private CLI/cache foundation is verified.
+> **Status: PROPOSED / M2 IN PROGRESS.** This epic is planning material; the M1 foundation and M2 parser-adapter boundary are verified.
 
 | Field | Value |
 | --- | --- |
@@ -11,7 +11,7 @@
 | Lifecycle | Planning / pre-prototype |
 | Source of truth | This epic for outcome and milestones; `SPEC.md` for the contract; Git history for actual completion |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | M0 contract checks and 26 root-guard/snapshot/decoder/CLI/cache tests pass; no CI or linkage verification exists |
+| Verification | M0 contract checks and 32 foundation/parser-adapter tests pass; no CI or linkage verification exists |
 | Limitations | Estimates, sequencing, parser choice, and compatibility are not validated |
 
 ## 1. Problem
@@ -68,7 +68,7 @@ The epic is complete only when all of the following are evidenced:
 
 ## 6. Risks and blockers
 
-Current status: M0 contract work and T-010–T-014 are verified. The root-guard/snapshot/decoder/private CLI/cache foundation is the only runtime slice; parser strategy and supported syntax remain an M2 decision.
+Current status: M0/M1 work and T-010–T-014 plus the T-020 adapter boundary are verified. The root-guard/snapshot/decoder/private CLI/cache/parser-adapter foundation is the only runtime slice; parser backend strategy and supported syntax remain unresolved.
 
 Known technical risks include runtime-computed Application mappings, dynamic `evaluate` and generated names, ambiguous components/method receivers, shared-scope semantics, embedded JavaScript/SQL parsing, and resource exhaustion. These are release risks, not reasons to guess.
 

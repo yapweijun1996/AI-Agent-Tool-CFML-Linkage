@@ -1,6 +1,6 @@
 # Design: agent-cfml-linkage Analysis Pipeline
 
-> **Status: PROPOSED / M2 NOT STARTED.** This document describes the intended architecture; the M1 root-guard, byte-snapshot, strict-decoder, private CLI, and cache foundation has runtime evidence.
+> **Status: PROPOSED / M2 IN PROGRESS.** This document describes the intended architecture; the M1 foundation and M2 parser-adapter boundary have runtime evidence.
 
 | Field | Value |
 | --- | --- |
@@ -9,14 +9,14 @@
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Graph/Fact/config contract checks and 26 root-guard/snapshot/decoder/CLI/cache tests pass locally; runtime stages below remain unimplemented proposals |
+| Verification | Graph/Fact/config contract checks and 32 foundation/parser-adapter tests pass locally; runtime stages below remain unimplemented proposals |
 | Limitations | Parser choice, language coverage, performance, and engine compatibility remain unknown |
 
 ## 1. Design goals
 
 The analyzer should give coding agents a small, queryable, evidence-backed view of cross-file relationships without executing the application or guessing dynamic behavior. The design favors narrow stages, immutable intermediate data, explicit incompleteness, and stable output.
 
-**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, and private CLI-envelope modules with focused tests, a private `package.json`, and validated contracts; parser, resolver, graph, query orchestration, caller, CI, and release architecture remain unimplemented.
+**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, private CLI-envelope, cache, and parser-adapter modules with focused tests, a private `package.json`, and validated contracts; parser backend, Fact IR, resolver, graph, query orchestration, caller, CI, and release architecture remain unimplemented.
 
 It is CFML-first: CFM/CFC structure, Application governance, includes, CFC typing, and shared scopes receive priority. HTML, JavaScript, CSS, SQL, and repository relations extend that model where static evidence is available.
 
@@ -52,11 +52,11 @@ The implemented M1 snapshot walks supported source files deterministically, reco
 
 ### Stage 2 — Decode and source map
 
-The implemented M1 decoder accepts strict UTF-8, preserves BOM byte alignment, and maps byte offsets to one-based lines and zero-based UTF-16 columns. Invalid encoding is explicit incomplete evidence, never silently repaired. One source-map owner ensures all resolvers report consistent coordinates.
+The implemented M1 decoder accepts strict UTF-8, preserves BOM byte alignment, and maps byte offsets to one-based lines and zero-based UTF-16 columns. Invalid encoding is explicit incomplete evidence, never silently repaired. The M2 parser adapter consumes this result and returns explicit unavailable/partial/failure diagnostics. One source-map owner ensures all resolvers report consistent coordinates.
 
 ### Stage 3 — Parser adapter
 
-Expose a parser-neutral contract such as:
+The implemented adapter in `src/parser-adapter.js` enforces strict decoding handoff, explicit backend selection, normalized diagnostics, and bounded partial/unsupported results. It currently has no selected backend and therefore produces `PARSER_UNAVAILABLE` rather than claiming syntax coverage. The future parser-neutral contract is:
 
 ```text
 parse(source, path) -> ParseUnit {
@@ -67,7 +67,7 @@ parse(source, path) -> ParseUnit {
 }
 ```
 
-A CFML Tree-sitter grammar may be used as the preferred foundation, but parser choice stays behind the adapter. The adapter must cover tag CFML, CFScript, and embedded HTML/JavaScript/SQL regions sufficiently for extraction. Recoverable syntax errors yield partial units; unsupported or catastrophic regions yield explicit `PARSE_PARTIAL` diagnostics. Whole-language regex parsing is prohibited.
+A CFML Tree-sitter grammar may be used as the preferred foundation, but parser choice stays behind the adapter and remains unselected. The eventual backend must cover tag CFML, CFScript, and embedded HTML/JavaScript/SQL regions sufficiently for extraction. Recoverable syntax errors yield partial units; unsupported or catastrophic regions yield explicit diagnostics. Whole-language regex parsing is prohibited.
 
 ### Stage 4 — normalized Fact IR
 
@@ -167,6 +167,7 @@ The sequence is dependency-aware but not a schedule. M0's contract gate and T-01
 | --- | --- | --- |
 | M0 | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and golden-fixture contract | Verified — T-001–T-006 |
 | M1 | Safe root guard, snapshot, decoder, discovery, cache skeleton, CLI envelope | Verified — T-010–T-014 |
+| M2 | Parser adapter and normalized extraction | In progress — T-020 adapter boundary verified; backend unselected |
 | M2 | Parser adapter and normalized extraction | Not started |
 | M3 | Basic path/Application/include linkage and graph validation | Not started |
 | M4 | CFC mappings, inheritance, instantiation, and method linkage | Not started |

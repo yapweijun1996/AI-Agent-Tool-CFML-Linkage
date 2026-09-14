@@ -1,6 +1,6 @@
 # Goal: agent-cfml-linkage
 
-> **Status: PROPOSED / M2 NOT STARTED.** This goal describes the intended product outcome; the M1 safety foundation is implemented/verified, but linkage analysis is not implemented.
+> **Status: PROPOSED / M2 IN PROGRESS.** This goal describes the intended product outcome; the M1 safety foundation and M2 parser-adapter boundary are implemented/verified, but linkage analysis is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -10,7 +10,7 @@
 | Lifecycle | Prototype / safe-foundation implementation |
 | Source of truth | This repository's Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for state |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; this pass adds documentation, not implementation |
-| Verification | Root-guard/snapshot/decoder/CLI/cache foundation and 26 focused Node tests pass locally; linkage/runtime/package-release verification is absent |
+| Verification | M1 foundation, M2 parser-adapter boundary, and 32 focused Node tests pass locally; linkage/runtime/package-release verification is absent |
 | Limitations | Public exports/CLI orchestration, parser/resolver, full runtime matrix, deployment model, and release compatibility are not established |
 
 ## Purpose
@@ -52,4 +52,4 @@ The goal is achieved only when a release has:
 
 ## State model
 
-The project must track **Planned → Implemented → Verified → Released** independently. M0 is verified and the M1 root-guard/snapshot/decoder/CLI-envelope/cache slices are implemented/verified; the linkage analyzer, public package, and release remain incomplete/unreleased.
+The project must track **Planned → Implemented → Verified → Released** independently. M0/M1 and the M2 parser-adapter boundary are verified; the parser backend, linkage analyzer, public package, and release remain incomplete/unreleased.

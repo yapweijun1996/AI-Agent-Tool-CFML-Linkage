@@ -9,7 +9,7 @@
 | Scope | Static cross-file linkage analysis for CFML-first mixed web projects |
 | Source of truth | This document for the proposed contract; Git history for current code facts |
 | Evidence | Initial repository commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Graph/Fact/config contract checks and `npm test` root-guard/snapshot/decoder/CLI/cache tests (26/26) pass; linkage contract/runtime verification is incomplete |
+| Verification | Graph/Fact/config contract checks and `npm test` foundation/parser-adapter tests (32/32) pass; linkage contract/runtime verification is incomplete |
 | Limitations | Parser coverage, resolver accuracy, performance, compatibility, and release status are unverified |
 
 ## 1. Objective
@@ -39,11 +39,11 @@ The future API accepts:
 
 The implementation MUST canonicalize the root, reject traversal and symlink escapes, enforce root containment, freeze policy before discovery, and report rejected paths explicitly. The v0.1 configuration contract is `schema/agent-cfml-linkage-config-v0.1.schema.json` with example `examples/config-v0.1.json`; its root-safety, prohibited-action, limit, output, and exit-code invariants validate locally. The M1 root guard in `src/root-guard.js`, byte snapshot in `src/snapshot.js`, and strict decoder/map in `src/source-map.js` now implement and test the initial boundary; project-specific mappings are configuration, not hardcoded Globe3 behavior.
 
-The M1 snapshot currently discovers `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.js`, `.mjs`, and `.css` deterministically. The M1 decoder accepts strict UTF-8 only and maps byte offsets to one-based lines and zero-based UTF-16 columns. Embedded SQL is a later extraction concern; exact parser and embedded-region coverage remain a design detail for M2.
+The M1 snapshot currently discovers `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.js`, `.mjs`, and `.css` deterministically. The M1 decoder accepts strict UTF-8 only and maps byte offsets to one-based lines and zero-based UTF-16 columns. The M2 parser adapter now owns a fail-closed backend boundary and explicit partial/unsupported diagnostics, but no parser backend is selected. Embedded SQL is a later extraction concern; exact parser and embedded-region coverage remain unresolved.
 
 ### 3.1 Current repository contract evidence
 
-The repository now has a private `package.json` with Node `>=20`, an `npm test` script, a private `bin/agent-cfml-linkage.js` entry point, and internal root-guard, snapshot, source-map, CLI, and cache modules with focused tests. It has no public export map, released CLI/API, callers, runtime linkage implementation, third-party dependencies, build workflow, or release artifact. API, CLI names, parser dependency, and public package metadata below remain proposed contracts.
+The repository now has a private `package.json` with Node `>=20`, an `npm test` script, a private `bin/agent-cfml-linkage.js` entry point, and internal root-guard, snapshot, source-map, CLI, cache, and parser-adapter modules with focused tests. It has no selected parser backend, public export map, released CLI/API, callers, runtime linkage implementation, third-party dependencies, build workflow, or release artifact. API, CLI names, parser dependency, and public package metadata below remain proposed contracts.
 
 ## 4. Analysis contract
 
@@ -51,11 +51,11 @@ The proposed pipeline is:
 
 `Root Guard → Snapshot/Discovery → Decode/Source Map → Parse → Fact Extraction → Project Index → Resolution Passes → Evidence/Confidence → Graph Build → Validate → Cache → Query → CLI/JSON`.
 
-Each stage has typed boundaries and may emit diagnostics. Cross-file stages consume normalized Fact IR rather than parser-specific AST nodes. No stage mutates source files.
+Each stage has typed boundaries and may emit diagnostics. Cross-file stages consume normalized Fact IR rather than parser-specific AST nodes. No stage mutates source files. The implemented parser adapter does not produce Fact IR; it only normalizes backend/parser failure state for the future extractor.
 
 ### 4.0 Fact IR contract
 
-The parser-independent Fact IR bundle is defined by `schema/agent-cfml-linkage-fact-v0.1.schema.json` with a representative fixture at `examples/facts-v0.1.json`. It records source files, parser identity/completeness, normalized facts, source spans, enclosing symbols, conditions, extraction rule IDs, diagnostics, and counts. The schema and fixture validate locally; no parser or Fact IR producer is implemented.
+The parser-independent Fact IR bundle is defined by `schema/agent-cfml-linkage-fact-v0.1.schema.json` with a representative fixture at `examples/facts-v0.1.json`. It records source files, parser identity/completeness, normalized facts, source spans, enclosing symbols, conditions, extraction rule IDs, diagnostics, and counts. The schema and fixture validate locally; the parser-adapter boundary exists, but no parser backend or Fact IR producer is implemented.
 
 ### 4.1 Planned linkage families
 
