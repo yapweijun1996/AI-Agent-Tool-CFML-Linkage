@@ -66,6 +66,7 @@ Core documentation coverage is now the current work product: goal, design, speci
 - Added and validated the Graph IR v0.1, Fact IR v0.1, identity/order, confidence/completeness, root/configuration, and fixture-layout artifacts for T-001–T-006.
 - Implemented and verified the Node root guard, deterministic snapshot/discovery, strict decoder/source map, bounded CLI envelope and `analyze`/`index` composition, private library entry, disposable cache, fail-closed parser adapter, bounded CFML/web scanners, fixture-backed Fact extractor, immutable indexes, bounded literal/CFC/scope/web-flow/repository resolvers, dynamic/generated/SQL-dynamic evidence handling, bounded Graph IR builder/validator/reverse adjacency, immutable graph query/evidence explanation engine, inert adversarial safe-failure fixtures, vanished-snapshot-target rejection, bounded CLI output enforcement, bounded check/package smoke evidence, and Node host compatibility evidence for T-010–T-014/T-020–T-036/T-040–T-045; no full parser grammar or broad linkage resolution exists.
 - Preserved the boundary with external `agent-cfml-check`, `agent-code-slice`, `agent-change-impact`, and `agent-test-scope` work.
+- Audited ADR verification counts and bounded-status statements after T-045; synchronized the remaining historical suite references to the current 74-test evidence without changing runtime scope.
 
 ## Blockers and unresolved decisions
 

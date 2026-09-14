@@ -55,6 +55,7 @@
 - Added private CLI serialized-output enforcement for `limits.max_output_bytes`, with an explicit `OUTPUT_LIMIT` incomplete result and a documented minimum envelope size.
 - Hardened literal path resolution to require current root-contained target existence, preserving vanished snapshot targets as unresolved evidence.
 - Hardened `createGraphSnapshot` to validate and deep-copy snapshot-shaped input instead of trusting caller mutability.
+- Synchronized ADR verification-count and bounded-status references with the current 74-test suite after T-045; no broader compatibility or release claim was added.
 
 ### Not claimed
 
