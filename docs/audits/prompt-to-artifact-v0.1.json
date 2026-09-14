@@ -130,8 +130,8 @@
     {
       "id": "loop-8",
       "requirement": "Create one focused local commit after verification; never push, publish, merge, or create a pull request.",
-      "status": "pending_commit",
-      "evidence": ["Current worktree was clean before this audit; the audit changes are intended for one local documentation commit only."],
+      "status": "completed",
+      "evidence": ["The documentation audit was committed locally as e9aa6c6; its baseline metadata was refreshed in the focused local documentation commit 91bef02. No push, publish, merge, or pull request was performed."],
       "prohibited_actions": ["push", "publish", "merge", "pull request"]
     },
     {
