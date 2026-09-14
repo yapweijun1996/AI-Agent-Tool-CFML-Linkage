@@ -10,7 +10,7 @@
 | Source of truth | Git commit, validated artifacts, tests, and this release policy |
 | Evidence | `package.json` is private with Node `>=20`; no public package artifact, tag, workflow, or release exists |
 | Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture tests (73/73), produced Fact/Graph/analysis schema validation, package self-import, offline packed-artifact consumer smoke, and bounded Node host evidence pass; no release candidate exists |
-| Limitations | Query-command/public release contract, runtime support matrix, registry, CI, and maintainer workflow are undecided; the current package remains private |
+| Limitations | Query-command execution/public release contract, runtime support matrix, registry, CI, and maintainer workflow are undecided; recognized query commands currently fail closed and the package remains private |
 
 ## Release principles
 
@@ -65,4 +65,4 @@ T-044 has a bounded local audit of the product source at baseline commit `428feb
 
 ## Current release state
 
-**Unreleased.** A private package manifest/export, bounded `analyzeProject` library entry, and bounded CLI `analyze`/`index` commands exist; local package self-import, offline packed-artifact consumer smoke, `npm pack --dry-run`, CLI smoke, and bounded Node host evidence pass, but there is no public artifact, CI, tag, or release to verify.
+**Unreleased.** A private package manifest/export, bounded `analyzeProject` library entry, and bounded CLI `analyze`/`index` commands exist; recognized query commands fail closed until implemented. Local package self-import, offline packed-artifact consumer smoke, `npm pack --dry-run`, CLI smoke, and bounded Node host evidence pass, but there is no public artifact, CI, tag, or release to verify.

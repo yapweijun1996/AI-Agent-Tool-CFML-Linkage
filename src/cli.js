@@ -16,7 +16,8 @@ const DEFAULT_EXIT_CODES = Object.freeze({
   path_rejected: 4,
 });
 const MAX_CONFIG_BYTES = 1024 * 1024;
-const COMMANDS = Object.freeze(["capabilities", "analyze", "index", "related", "callers", "callees", "trace", "unresolved", "explain", "stats"]);
+const QUERY_COMMANDS = Object.freeze(["related", "callers", "callees", "trace", "unresolved", "explain", "stats"]);
+const COMMANDS = Object.freeze(["capabilities", "analyze", "index", ...QUERY_COMMANDS]);
 
 function diagnostic(code, severity, message, details = {}) {
   return Object.freeze({ code, severity, message, ...details });
@@ -221,6 +222,11 @@ export function runCli(argv, { cwd = process.cwd() } = {}) {
       ? diagnostic(error.code, "error", error.message, error.details)
       : diagnostic("ROOT_ACCESS_ERROR", "error", "Analysis root could not be admitted.");
     return result(parsed.command, "error", [item], null, config.exit_codes.path_rejected);
+  }
+
+  if (QUERY_COMMANDS.includes(parsed.command)) {
+    const item = diagnostic("UNIMPLEMENTED_COMMAND", "warning", `The ${parsed.command} query command is recognized but not implemented.`);
+    return result(parsed.command, "incomplete", [item], null, config.exit_codes.incomplete);
   }
 
   try {

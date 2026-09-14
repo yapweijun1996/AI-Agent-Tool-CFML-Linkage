@@ -29,7 +29,7 @@
 | Contract/schema | Graph IR, Fact IR, diagnostics, unresolved records, CLI envelope | Schema/fixture assertions; T-001–T-006 cover contracts and layout |
 | Golden | End-to-end static linkage for frozen projects | Expected graph/evidence comparison |
 | Adversarial | Ambiguity, malformed syntax, dynamic code, cycles, escapes, drift, caps | Explicit safe failure and `complete=false` where applicable |
-| Integration | CLI/library boundary, cache, query engine | `test/graph-query.test.js` covers immutable snapshots, exact selectors, operation results, explanations, and bounded traversal; `test/analyzer.test.js` and `test/cli.test.js` cover composed Fact/index/resolver/Graph output, explicit parser selection, drift, private import, and bounded `analyze`/`index`; query-command wiring remains open |
+| Integration | CLI/library boundary, cache, query engine | `test/graph-query.test.js` covers immutable snapshots, exact selectors, operation results, explanations, and bounded traversal; `test/analyzer.test.js` and `test/cli.test.js` cover composed Fact/index/resolver/Graph output, explicit parser selection, drift, private import, bounded `analyze`/`index`, and fail-closed recognized query commands; query-command execution remains open |
 | Package smoke | Packed/installable artifact identity and imports | `pack`/offline install/import/CLI evidence; bounded evidence covers package self-import, packed-artifact consumer analysis, and dry-run, while public release remains unavailable |
 | Engine matrix | Only if the analyzer has runtime-adjacent claims | Separate, reproducible environment evidence |
 

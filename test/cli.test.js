@@ -79,6 +79,15 @@ test("runs the bounded analysis pipeline after validating the root", () => {
     assert.equal(indexResult.exitCode, 3);
     assert.equal(indexResult.stdout.status, "incomplete");
     assert.equal(indexResult.stdout.data.graph.schema_version, "agent-cfml-linkage-graph/v0.1");
+
+    for (const command of ["related", "callers", "callees", "trace", "unresolved", "explain", "stats"]) {
+      const queryResult = runCli([command, "--config", "config.json"], root);
+      assert.equal(queryResult.exitCode, 3);
+      assert.equal(queryResult.stdout.status, "incomplete");
+      assert.equal(queryResult.stdout.data, null);
+      assert.equal(queryResult.stdout.diagnostics[0].code, "UNIMPLEMENTED_COMMAND");
+      assert.match(queryResult.stderr, new RegExp(`^WARNING UNIMPLEMENTED_COMMAND: The ${command} query command`));
+    }
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }

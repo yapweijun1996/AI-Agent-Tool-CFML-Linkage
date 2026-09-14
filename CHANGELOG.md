@@ -51,6 +51,7 @@
 - Recorded bounded T-043 compatibility evidence for Node `v25.2.1` on `win32`/`x64`; no Lucee, Adobe ColdFusion, cross-version, cross-platform, browser, database, network, or public-package claim is made.
 - Completed the bounded T-044 release/security/parity audit with exact pre-release package metadata, source commit identity, local security checks, and explicit remaining gates; nothing was published.
 - Implemented bounded T-036 analysis orchestration, private library exports, composed-analysis schema, CLI `analyze`/`index` wiring, parser-time drift checks, and offline packed-artifact consumer smoke; full grammar and query-command integration remain open.
+- Hardened the private CLI so recognized but unimplemented query commands return bounded `UNIMPLEMENTED_COMMAND` evidence instead of running the analysis command.
 
 ### Not claimed
 

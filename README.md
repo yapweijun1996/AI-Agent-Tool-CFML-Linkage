@@ -39,7 +39,7 @@ The repository has completed its verified M1 safety foundation and advanced M2 w
 - full parser/extractor runtime beyond the fixture-backed bounded Fact IR subset
 - broader multi-pass resolvers (bounded literal path/Application, CFC, scope, SQL, and repository resolution are now implemented internally)
 - broader Graph IR linkage and analysis orchestration (bounded Graph construction/validation exists in `src/graph.js`, bounded immutable queries/evidence explanations exist in `src/graph-query.js`, and bounded composition exists in `src/analyzer.js`; the Graph and composed-analysis contracts are `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `schema/agent-cfml-linkage-analysis-v0.1.schema.json`)
-- complete public CLI/library API (the private package exposes bounded `analyzeProject`/`analyze`/`index` entry points; query commands and public release remain open)
+- complete public CLI/library API (the private package exposes bounded `analyzeProject`/`analyze`/`index` entry points; recognized query commands fail closed, while query execution and public release remain open)
 - full incremental analysis/cache, query-command persistence, and public query integration
 - broader golden resolver fixtures and full CLI/library integration; the fixture layout, manifest, inert negative/adversarial source inputs, bounded expectations, T-034 SQL/repository fixture, bounded `analyze`/`index` composition, and local package/CLI smoke exist, while query commands, CI, and published artifacts remain unavailable
 

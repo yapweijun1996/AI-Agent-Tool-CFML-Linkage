@@ -8,13 +8,13 @@
 | Last updated | 2026-09-14 |
 | Scope | CLI arguments, JSON stdout, stderr diagnostics, exit codes, and current capability reporting |
 | Source of truth | `src/cli.js`, `bin/agent-cfml-linkage.js`, `test/cli.test.js`, this ADR, and `SPEC.md` |
-| Evidence | `npm test`: 62 passed, including capabilities, invalid input, config, root rejection, incomplete command, and no-execution cases |
+| Evidence | `npm test`: 73 passed, including capabilities, invalid input, config, root rejection, bounded analysis, explicitly unavailable parser/query command, and no-execution cases |
 | Verification | Local Node subprocess tests pass; package-install, cross-platform, and released CLI checks remain unverified |
-| Limitations | The CLI does not yet orchestrate snapshot, parser, resolver, Graph IR, queries, or cache stages |
+| Limitations | The CLI does not yet expose query execution; bounded `analyze`/`index` orchestration uses the explicit mixed structural scanner and remains private/unreleased |
 
 ## Decision
 
-The private CLI accepts one command and an optional `--config <path>`. `capabilities`, `--help`, and `--version` are available without a configuration. Analysis and query commands require JSON configuration; the current implementation validates the safety-critical contract and root, then returns an explicit incomplete result because later stages do not exist.
+The private CLI accepts one command and an optional `--config <path>`. `capabilities`, `--help`, and `--version` are available without a configuration. Analysis and recognized query commands require JSON configuration. `analyze` and `index` run the bounded private pipeline; recognized query commands fail closed with `UNIMPLEMENTED_COMMAND` and exit code `3` until query-command orchestration is explicitly implemented.
 
 Every invocation writes exactly one JSON object to stdout with this stable top-level shape:
 
@@ -24,7 +24,7 @@ Every invocation writes exactly one JSON object to stdout with this stable top-l
 
 Machine-readable diagnostics remain bounded in the envelope. Human-readable equivalents go to stderr. Exit meanings follow the v0.1 contract: `0` completed, `1` internal failure, `2` invalid input/configuration, `3` incomplete/unimplemented/limited, and `4` root/path/access rejection. No command executes analyzed source or accesses a network, database, shell, or browser.
 
-The CLI resolves a configured relative root against the invocation working directory, admits it through the root guard, and does not claim analysis completion merely because input validation succeeded.
+The CLI resolves a configured relative root against the invocation working directory, admits it through the root guard, rejects recognized-but-unimplemented query commands before analysis, and does not claim analysis completion merely because input validation succeeded.
 
 ## Consequences
 
