@@ -27,7 +27,7 @@ Implement T-034 with two narrow boundaries:
 ## Verification
 
 - `test/repository-resolver.test.js` uses the inert `fixtures/golden/sql-and-repository/` case to verify `cfquery` and `queryExecute` extraction, datasource separation, structural action Facts, unique method-call linkage, repeated Graph output, output limits, and filename-only non-evidence.
-- `npm test` reports 76 passed; produced Fact/Graph output validates against the local contracts, and no source is executed.
+- `npm test` reports 79 passed; produced Fact/Graph output validates against the local contracts, and no source is executed.
 
 ## Limitations
 

@@ -33,5 +33,5 @@ The builder never executes source or resolves a candidate by filename similarity
 ## Verification
 
 - `test/graph.test.js` covers deterministic output, resolved/unresolved preservation, graph completeness, validation, and immutable reverse adjacency.
-- `test/analyzer.test.js` covers configured edge-budget truncation, incomplete diagnostics, and reverse-adjacency consistency; the full `npm test` suite reports 76 passed.
+- `test/analyzer.test.js` covers configured edge-budget truncation, incomplete diagnostics, and reverse-adjacency consistency; the full `npm test` suite reports 79 passed.
 - The bounded graph output passes local Draft 2020-12 validation against `schema/agent-cfml-linkage-graph-v0.1.schema.json`.

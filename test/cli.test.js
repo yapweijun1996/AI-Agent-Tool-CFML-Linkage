@@ -146,6 +146,25 @@ test("runs the bounded analysis pipeline after validating the root", () => {
   }
 });
 
+test("applies configured ignore globs before CLI analysis", () => {
+  const root = temporaryDirectory();
+  try {
+    fs.writeFileSync(path.join(root, "kept.cfm"), "<cfset request.kept = true>\n", "utf8");
+    fs.writeFileSync(path.join(root, "ignored.cfm"), "<cfset request.ignored = true>\n", "utf8");
+    writeConfig(root, { ignore: {
+      globs: ["ignored.cfm"],
+      hidden_files: "ignore",
+      generated_files: "ignore",
+    } });
+    const result = runCli(["analyze", "--config", "config.json"], root);
+    assert.equal(result.exitCode, 3);
+    assert.equal(result.stdout.data.graph.snapshot.file_count, 1);
+    assert.deepEqual(result.stdout.data.fact_bundle.source_files.map((file) => file.file), ["kept.cfm"]);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test("runs a bounded query against the freshly analyzed graph", () => {
   const root = temporaryDirectory();
   try {
@@ -229,10 +248,13 @@ test("rejects malformed JSON and unsafe configuration before analysis", () => {
       (config) => { delete config.analysis.languages; },
       (config) => { config.analysis.languages = ["ruby"]; },
       (config) => { config.limits.max_workers = 0; },
+      (config) => { config.ignore.globs = ["/absolute/**"]; },
+      (config) => { config.ignore.globs = ["../outside/**"]; },
       (config) => { config.exit_codes.completed = 1; },
       (config) => { config.output.include_raw_evidence = "all"; },
     ];
     for (const mutate of invalidMutations) {
+      writeConfig(root);
       const invalidConfig = JSON.parse(fs.readFileSync(path.join(root, "config.json"), "utf8"));
       mutate(invalidConfig);
       fs.writeFileSync(path.join(root, "config.json"), JSON.stringify(invalidConfig), "utf8");

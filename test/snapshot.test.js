@@ -47,6 +47,32 @@ test("discovers supported files in sorted order and ignores configured default d
   }
 });
 
+test("applies root-relative ignore globs without changing deterministic discovery", () => {
+  const root = makeTemporaryProject();
+  try {
+    fs.mkdirSync(path.join(root, "custom", "nested"), { recursive: true });
+    fs.mkdirSync(path.join(root, "pruned"), { recursive: true });
+    fs.writeFileSync(path.join(root, "custom", "ignored.cfm"), "ignored\n");
+    fs.writeFileSync(path.join(root, "custom", "nested", "ignored.cfm"), "ignored\n");
+    fs.writeFileSync(path.join(root, "pruned", "ignored.cfm"), "ignored\n");
+    fs.writeFileSync(path.join(root, "src", "ignored.cfm"), "ignored\n");
+    const snapshot = createSnapshot(createRootGuard(root), {
+      ignoreGlobs: [String.raw`custom\**\*.cfm`, "pruned/**", "src/ignored.cfm"],
+    });
+    assert.deepEqual(snapshot.files.map((file) => file.path), [
+      "src/client.js",
+      "src/nested/a.cfc",
+      "src/query.sql",
+      "src/style.css",
+      "src/z.cfm",
+    ]);
+    assert.equal(snapshot.complete, true);
+    assert.deepEqual(snapshot.diagnostics, []);
+  } finally {
+    removeTemporaryProject(root);
+  }
+});
+
 test("does not execute source while hashing it and produces repeatable fingerprints", () => {
   const root = makeTemporaryProject();
   try {

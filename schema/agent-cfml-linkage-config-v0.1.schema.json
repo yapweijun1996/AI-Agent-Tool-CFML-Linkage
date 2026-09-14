@@ -104,10 +104,12 @@
         "globs": {
           "type": "array",
           "maxItems": 256,
+          "description": "Unique root-relative patterns; separators may be written as slash or backslash and the bounded matcher supports literal segments, *, ?, and recursive **.",
           "items": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 512
+            "maxLength": 512,
+            "pattern": "^(?![/\\\\])(?![A-Za-z]:[/\\\\])(?!.*(?:^|[/\\\\])\\.\\.(?:[/\\\\]|$)).+$"
           },
           "uniqueItems": true
         },

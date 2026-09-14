@@ -290,10 +290,12 @@ export function analyzeProject({
 
   const limits = limitsFrom(config, { ...snapshotOptions, maxFacts, maxEdges, maxResolverRecords, maxEvidence, maxTraversalDepth });
   const extensions = extensionsFor(config, snapshotOptions);
+  const ignoreGlobs = snapshotOptions.ignoreGlobs ?? config?.ignore?.globs;
   const rootGuard = createRootGuard(rootPath);
   const snapshot = createSnapshot(rootGuard, {
     ...snapshotOptions,
     ...(extensions ? { extensions } : {}),
+    ...(ignoreGlobs !== undefined ? { ignoreGlobs } : {}),
     ...(limits.maxFiles ? { maxFiles: limits.maxFiles } : {}),
     ...(limits.maxFileBytes ? { maxFileBytes: limits.maxFileBytes } : {}),
     ...(limits.maxTotalBytes ? { maxTotalBytes: limits.maxTotalBytes } : {}),

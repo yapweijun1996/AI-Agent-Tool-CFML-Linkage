@@ -183,6 +183,10 @@ function validateConfig(config) {
 
   requireConfigObject(config.ignore, "ignore", ["globs", "hidden_files", "generated_files"], new Set(["globs", "hidden_files", "generated_files"]));
   requireConfigArray(config.ignore.globs, "ignore.globs", { maxItems: 256, itemMaxLength: 512 });
+  for (const glob of config.ignore.globs) {
+    const normalized = glob.trim().replaceAll("\\", "/");
+    if (normalized.includes("\0") || normalized.startsWith("/") || normalized.split("/").includes("..") || (normalized.length >= 3 && /^[A-Za-z]:/u.test(normalized) && normalized[2] === "/")) invalidConfig("ignore.globs must contain root-relative patterns without null bytes.");
+  }
   if (!["include", "ignore"].includes(config.ignore.hidden_files) || !["include", "ignore"].includes(config.ignore.generated_files)) invalidConfig("ignore file policies are invalid.");
 
   requireConfigObject(config.analysis, "analysis", ["languages", "mappings", "enabled_plugins"], new Set(["languages", "mappings", "enabled_plugins"]));

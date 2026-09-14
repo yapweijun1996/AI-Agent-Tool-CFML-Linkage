@@ -25,4 +25,4 @@ Existing resolvers correctly refuse most dynamic paths and symbols, but the boun
 ## Verification
 
 - `test/dynamic-evidence.test.js` uses the inert `fixtures/adversarial/dynamic-and-generated/` case to verify deterministic Fact/Graph output, dynamic/generated reason codes, dynamic SQL table and datasource evidence, comment/string filtering, no guessed SQL edges, and Graph validation.
-- `npm test` reports 76 passed; syntax, JSON/manifest, Markdown-link, prompt-length, conservative credential-pattern, and diff checks remain required repository gates.
+- `npm test` reports 79 passed; syntax, JSON/manifest, Markdown-link, prompt-length, conservative credential-pattern, and diff checks remain required repository gates.

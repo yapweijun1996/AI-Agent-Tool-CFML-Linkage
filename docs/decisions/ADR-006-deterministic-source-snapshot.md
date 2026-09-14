@@ -8,9 +8,9 @@
 | Last updated | 2026-09-14 |
 | Scope | Discovery, source fingerprints, metadata, ignores, symlink handling, and snapshot limits |
 | Source of truth | `src/snapshot.js`, `test/snapshot.test.js`, this ADR, and `SPEC.md` |
-| Evidence | `npm test`: 76 passed, including deterministic discovery, repeatability, content change, symlink, limit, and no-execution cases |
+| Evidence | `npm test`: 79 passed, including deterministic discovery, configured ignore-glob matching, repeatability, content change, symlink, limit, and no-execution cases |
 | Verification | Snapshot implementation verified locally on Node `v25.2.1`; cross-platform and parser integration remain unverified |
-| Limitations | Config glob matching, complete drift recovery, worker ordering, cache invalidation, and CI matrix are not implemented |
+| Limitations | Complete drift recovery, worker ordering, cache invalidation, and CI matrix are not implemented; richer glob syntax and hidden/generated-file policy remain bounded/open |
 
 ## Decision
 
@@ -18,7 +18,7 @@ The M1 snapshot reads bytes but never decodes or executes source. It:
 
 - discovers `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.js`, `.mjs`, and `.css` files;
 - sorts directory entries and final files with deterministic code-unit ordering;
-- ignores default dependency/generated/cache/secret directory names;
+- ignores default dependency/generated/cache/secret directory names and configured root-relative `ignoreGlobs` patterns;
 - records root-relative POSIX path, canonical real path, byte count, mtime, and content SHA-256;
 - calculates a project source fingerprint from sorted relative paths and content hashes, excluding mtime and volatile creation time;
 - does not follow symlinks and reports skipped symlinks as incomplete diagnostics;

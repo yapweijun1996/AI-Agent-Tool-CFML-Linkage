@@ -9,6 +9,7 @@ const DEFAULT_LIMITS = Object.freeze({
   maxFileBytes: 10 * 1024 * 1024,
   maxTotalBytes: 1024 * 1024 * 1024,
 });
+const REGEX_SPECIAL_CHARACTERS = new Set(["\\", "^", "$", "+", "?", ".", "(", ")", "|", "{", "}", "[", "]"]);
 
 function compareNames(left, right) {
   if (left < right) return -1;
@@ -61,8 +62,49 @@ function isIgnoredDirectory(name, ignoredDirectoryNames) {
   return ignoredDirectoryNames.has(name);
 }
 
+function globRegExp(pattern) {
+  let source = "^";
+  for (let index = 0; index < pattern.length; index += 1) {
+    const character = pattern[index];
+    if (character === "*" && pattern[index + 1] === "*") {
+      if (pattern[index + 2] === "/") {
+        source += "(?:.*/)?";
+        index += 2;
+      } else {
+        source += ".*";
+        index += 1;
+      }
+      continue;
+    }
+    if (character === "*") {
+      source += "[^/]*";
+      continue;
+    }
+    if (character === "?") {
+      source += "[^/]";
+      continue;
+    }
+    source += REGEX_SPECIAL_CHARACTERS.has(character) ? `\\${character}` : character;
+  }
+  return new RegExp(`${source}$`, "u");
+}
+
+function normalizeIgnoreGlobs(globs) {
+  if (globs === undefined || globs === null) return [];
+  if (!Array.isArray(globs) || globs.length > 256) throw new TypeError("ignoreGlobs must be an array with at most 256 entries");
+  return [...new Set(globs.map((value) => {
+    if (typeof value !== "string" || value.trim() === "") throw new TypeError("each ignore glob must be a non-empty string");
+    if (value.includes("\0")) throw new TypeError("ignore globs must not contain null bytes");
+    let normalized = value.trim().replaceAll("\\", "/");
+    while (normalized.startsWith("./")) normalized = normalized.slice(2);
+    if (normalized === "" || normalized.startsWith("/") || normalized.split("/").includes("..") || (normalized.length >= 3 && /^[A-Za-z]:/u.test(normalized) && normalized[2] === "/")) throw new TypeError("ignore globs must be root-relative paths");
+    return normalized;
+  }))].map(globRegExp);
+}
+
 /**
  * Build a deterministic byte snapshot without decoding or executing source.
+ * Configured ignoreGlobs are matched against normalized root-relative paths.
  *
  * @param {{rootPath: string, resolve: Function}} rootGuard canonical root guard
  * @param {object} options discovery policy and hard limits
@@ -75,6 +117,7 @@ export function createSnapshot(rootGuard, options = {}) {
 
   const extensions = normalizeExtensions(options.extensions);
   const ignoredDirectoryNames = new Set(options.ignoreDirectoryNames ?? DEFAULT_IGNORED_DIRECTORY_NAMES);
+  const ignoreGlobs = normalizeIgnoreGlobs(options.ignoreGlobs);
   const maxFiles = normalizePositiveLimit(options.maxFiles, DEFAULT_LIMITS.maxFiles, "maxFiles");
   const maxFileBytes = normalizePositiveLimit(options.maxFileBytes, DEFAULT_LIMITS.maxFileBytes, "maxFileBytes");
   const maxTotalBytes = normalizePositiveLimit(options.maxTotalBytes, DEFAULT_LIMITS.maxTotalBytes, "maxTotalBytes");
@@ -98,7 +141,8 @@ export function createSnapshot(rootGuard, options = {}) {
       const relativePath = relativeDirectory ? `${relativeDirectory}/${entry.name}` : entry.name;
 
       if (entry.isDirectory()) {
-        if (!isIgnoredDirectory(entry.name, ignoredDirectoryNames)) {
+        const ignoredByGlob = ignoreGlobs.some((glob) => glob.test(relativePath) || glob.test(`${relativePath}/`));
+        if (!isIgnoredDirectory(entry.name, ignoredDirectoryNames) && !ignoredByGlob) {
           walk(path.join(directoryPath, entry.name), relativePath);
         }
         if (stoppedByLimit) return;
@@ -114,6 +158,8 @@ export function createSnapshot(rootGuard, options = {}) {
       if (!entry.isFile() || stoppedByLimit) {
         continue;
       }
+
+      if (ignoreGlobs.some((glob) => glob.test(relativePath))) continue;
 
       const extension = path.extname(entry.name).toLowerCase();
       if (!extensions.has(extension)) {

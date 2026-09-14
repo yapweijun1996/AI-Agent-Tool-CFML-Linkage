@@ -9,7 +9,7 @@
 | Scope | Threat boundaries for local static analysis |
 | Source of truth | This document for proposed security requirements; implementation and tests for actual controls |
 | Evidence | Current local source contains root guard, snapshot, decoder, parser/scanner, Fact extraction, bounded resolvers, dynamic-evidence, SQL, repository/action, query, orchestration, and adversarial safe-failure controls; full runtime code does not exist |
-| Verification | Root-guard containment/symlink, snapshot no-execution, strict-decoding, CLI safety, recognized query-command mapping/validation behavior, serialized output-byte bounds, cache path/corruption, parser/scanner no-execution, bounded Fact extraction, dynamic/generated/SQL-dynamic preservation, bounded SQL/repository linkage, vanished-snapshot-target rejection, validated/copied immutable query snapshots, query bounds, composed orchestration, re-admission, parser-time drift, library edge/evidence budgets, and diagnostic-bound tests pass; broader security test suite does not exist |
+| Verification | Root-guard containment/symlink, snapshot no-execution and configured ignore-glob handling, strict-decoding, CLI safety, recognized query-command mapping/validation behavior, serialized output-byte bounds, cache path/corruption, parser/scanner no-execution, bounded Fact extraction, dynamic/generated/SQL-dynamic preservation, bounded SQL/repository linkage, vanished-snapshot-target rejection, validated/copied immutable query snapshots, query bounds, composed orchestration, re-admission, parser-time drift, library edge/evidence budgets, and diagnostic-bound tests pass; broader security test suite does not exist |
 | Limitations | Threat model, platform sandbox, dependency policy, and disclosure process require implementation-specific review |
 
 ## Security objectives
@@ -32,7 +32,7 @@ CFML, JavaScript, CSS, SQL, comments, strings, and generated content must be tre
 
 ### Filesystem containment
 
-Canonicalize the requested root and every discovered/reference path. Reject traversal, symlink escapes, and out-of-root targets, and do not confirm a target that disappears after snapshot admission. Ignore dependency, generated, cache, and secret-like paths by explicit policy. Path rejection must be distinguishable from an unresolved dynamic relationship.
+Canonicalize the requested root and every discovered/reference path. Reject traversal, symlink escapes, and out-of-root targets, and do not confirm a target that disappears after snapshot admission. Apply bounded root-relative ignore globs before source admission, reading, and hashing; ignore dependency, generated, cache, and secret-like paths by explicit policy. Path rejection must be distinguishable from an unresolved dynamic relationship.
 
 ### Resource exhaustion
 
@@ -64,7 +64,7 @@ Before release, test:
 - plugin rejection or containment if plugins exist;
 - CI workflow permissions and action scope remain read-only with no publish/deploy step.
 
-The root-admission, non-execution, dynamic-evidence, SQL, repository/action, bounded query, validated/copied snapshots, composed-orchestration, recognized query-command mapping/validation, complete v0.1 CLI configuration shape/value validation, library edge/evidence budgets, serialized output-byte bound, and adversarial safe-failure boundaries are verified by focused Node tests. T-047 records a least-privilege workflow definition with `contents: read` and no publish/deploy step; hosted CI execution remains unverified. T-044 records a bounded local credential/file/documentation audit in `docs/audits/release-security-parity-v0.1.json`; no complete analyzer security review, dependency audit, runtime instrumentation, or public release security verification exists.
+The root-admission, non-execution, configured ignore-glob, dynamic-evidence, SQL, repository/action, bounded query, validated/copied snapshots, composed-orchestration, recognized query-command mapping/validation, complete v0.1 CLI configuration shape/value validation, library edge/evidence budgets, serialized output-byte bound, and adversarial safe-failure boundaries are verified by focused Node tests. T-047 records a least-privilege workflow definition with `contents: read` and no publish/deploy step; hosted CI execution remains unverified. T-044 records a bounded local credential/file/documentation audit in `docs/audits/release-security-parity-v0.1.json`; no complete analyzer security review, dependency audit, runtime instrumentation, or public release security verification exists.
 
 ## Reporting
 
