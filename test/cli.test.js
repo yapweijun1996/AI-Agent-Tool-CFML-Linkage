@@ -131,6 +131,17 @@ test("runs a bounded query against the freshly analyzed graph", () => {
     assert.equal(result.stdout.data.operation, "callees");
     assert.equal(result.stdout.data.results.some((item) => item.node.path === "target.cfm"), true);
     assert.equal(result.stdout.data.diagnostics.some((item) => item.code === "QUERY_TARGET_NOT_FOUND"), false);
+
+    const includeEdge = result.stdout.data.results.find((item) => item.edge.type === "INCLUDES")?.edge;
+    assert.notEqual(includeEdge, undefined);
+    const explainConfig = JSON.parse(fs.readFileSync(path.join(root, "config.json"), "utf8"));
+    explainConfig.query = { edge_id: includeEdge.id };
+    fs.writeFileSync(path.join(root, "config.json"), JSON.stringify(explainConfig), "utf8");
+    const explainResult = runCli(["explain", "--config", "config.json"], root);
+    assert.equal(explainResult.exitCode, 3);
+    assert.equal(explainResult.stdout.data.operation, "explain-edge");
+    assert.equal(explainResult.stdout.data.results[0].relation_type, "INCLUDES");
+    assert.match(explainResult.stdout.data.results[0].explanation, /INCLUDES/u);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
