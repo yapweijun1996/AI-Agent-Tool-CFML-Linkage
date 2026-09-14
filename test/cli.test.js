@@ -146,11 +146,12 @@ test("runs the bounded analysis pipeline after validating the root", () => {
   }
 });
 
-test("applies configured ignore globs before CLI analysis", () => {
+test("applies configured discovery policies before CLI analysis", () => {
   const root = temporaryDirectory();
   try {
     fs.writeFileSync(path.join(root, "kept.cfm"), "<cfset request.kept = true>\n", "utf8");
     fs.writeFileSync(path.join(root, "ignored.cfm"), "<cfset request.ignored = true>\n", "utf8");
+    fs.writeFileSync(path.join(root, ".hidden.cfm"), "<cfset request.hidden = true>\n", "utf8");
     writeConfig(root, { ignore: {
       globs: ["ignored.cfm"],
       hidden_files: "ignore",

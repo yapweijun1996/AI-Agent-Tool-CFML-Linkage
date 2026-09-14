@@ -30,7 +30,7 @@ The v0.1 configuration requires:
 - immutable prohibited-action flags: source execution, network, database, shell, and browser are all false;
 - fixed exit meanings `0` completed, `1` internal failure, `2` invalid input, `3` incomplete/unsupported/limited, and `4` path/access rejection.
 
-The machine-readable contract is `schema/agent-cfml-linkage-config-v0.1.schema.json`; its example is `examples/config-v0.1.json`. `src/cli.js` now enforces the complete v0.1 object shape and bounded value contract, including root-relative ignore-glob validation and query-request validation, before root admission/analysis. This validation does not imply that every configured library/runtime budget is implemented: the snapshot stage applies `ignore.globs`, the library graph stage enforces `max_edges` and `max_evidence`, the private CLI enforces the serialized output-byte limit, while library output/time enforcement and other limits remain open or are delegated to bounded stages.
+The machine-readable contract is `schema/agent-cfml-linkage-config-v0.1.schema.json`; its example is `examples/config-v0.1.json`. `src/cli.js` now enforces the complete v0.1 object shape and bounded value contract, including root-relative ignore-glob validation and query-request validation, before root admission/analysis. This validation does not imply that every configured library/runtime budget is implemented: the snapshot stage applies `ignore.globs` and the `hidden_files` policy, the library graph stage enforces `max_edges` and `max_evidence`, the private CLI enforces the serialized output-byte limit, while library output/time enforcement and other limits remain open or are delegated to bounded stages.
 
 ## Consequences
 

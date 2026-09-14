@@ -1,6 +1,6 @@
 # Goal: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M9 IN PROGRESS.** This goal describes the intended product outcome; the M1 safety foundation, configured ignore-glob discovery, bounded M2 parser/scanner/Fact slices, bounded M3 path/Graph slices, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries, bounded M8 robustness/adversarial safe-failure/evidence/edge-budget enforcement, and bounded M9 checks/package smoke/Node host compatibility/release-parity audit are implemented/verified, but full linkage resolution is not implemented.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** This goal describes the intended product outcome; the M1 safety foundation, configured ignore-glob/hidden-file discovery policies, bounded M2 parser/scanner/Fact slices, bounded M3 path/Graph slices, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries, bounded M8 robustness/adversarial safe-failure/evidence/edge-budget enforcement, and bounded M9 checks/package smoke/Node host compatibility/release-parity audit are implemented/verified, but full linkage resolution is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -10,7 +10,7 @@
 | Lifecycle | Prototype / safe-foundation implementation |
 | Source of truth | This repository's Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for state |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; subsequent local commits add the verified foundation and bounded extractors |
-| Verification | M1 foundation, configured ignore-glob discovery, bounded M2 CFML/web parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC resolution, bounded M5 scope/web-flow resolution, bounded M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries/orchestration, bounded M8 robustness/edge-budget evidence, and 79 focused Node tests pass locally; a least-privilege CI workflow is defined but has no hosted run; full linkage/runtime/package-release verification is absent |
+| Verification | M1 foundation, configured ignore-glob/hidden-file discovery policies, bounded M2 CFML/web parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC resolution, bounded M5 scope/web-flow resolution, bounded M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries/orchestration, bounded M8 robustness/edge-budget evidence, and 79 focused Node tests pass locally; a least-privilege CI workflow is defined but has no hosted run; full linkage/runtime/package-release verification is absent |
 | Limitations | Graph persistence, full parser/resolver, full runtime matrix, deployment model, and release compatibility are not established; the bounded analysis/library entry and query APIs remain private |
 
 ## Purpose
@@ -52,4 +52,4 @@ The goal is achieved only when a release has:
 
 ## State model
 
-The project must track **Planned → Implemented → Verified → Released** independently. M0/M1, configured ignore-glob discovery, bounded M2 parser/scanner/Fact extraction, bounded M3–M6 linkage, bounded M7 queries/orchestration, bounded M8 robustness/adversarial safe-failure/edge-budget evidence, and bounded M9 checks/package smoke/Node host compatibility/release-parity audit and the T-047 CI workflow and T-048–T-050 library/discovery budgets are implemented; full parser coverage, graph persistence, public package, and release remain incomplete/unreleased; bounded query-command integration is verified.
+The project must track **Planned → Implemented → Verified → Released** independently. M0/M1, configured ignore-glob/hidden-file discovery policies, bounded M2 parser/scanner/Fact extraction, bounded M3–M6 linkage, bounded M7 queries/orchestration, bounded M8 robustness/adversarial safe-failure/edge-budget evidence, and bounded M9 checks/package smoke/Node host compatibility/release-parity audit and the T-047 CI workflow and T-048–T-051 library/discovery policies are implemented; full parser coverage, graph persistence, public package, and release remain incomplete/unreleased; bounded query-command integration is verified.

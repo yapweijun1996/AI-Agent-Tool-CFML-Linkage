@@ -73,15 +73,16 @@ test("enforces the configured library graph-edge budget deterministically", () =
   assert.deepEqual(first.reverse_adjacency, second.reverse_adjacency);
 });
 
-test("forwards configured ignore globs to deterministic snapshot discovery", () => {
+test("forwards configured discovery policies to deterministic snapshot discovery", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "agent-cfml-linkage-analyzer-ignore-"));
   try {
     fs.writeFileSync(path.join(root, "ignored.cfm"), "<cfset request.ignored = true>\n", "utf8");
+    fs.writeFileSync(path.join(root, ".hidden.cfm"), "<cfset request.hidden = true>\n", "utf8");
     fs.writeFileSync(path.join(root, "kept.cfm"), "<cfset request.kept = true>\n", "utf8");
     const result = analyzeProject({
       rootPath: root,
       ...scannerOptions,
-      config: { ignore: { globs: ["ignored.cfm"] } },
+      config: { ignore: { globs: ["ignored.cfm"], hidden_files: "ignore" } },
     });
     assert.deepEqual(result.graph.snapshot.file_count, 1);
     assert.deepEqual(result.fact_bundle.source_files.map((file) => file.file), ["kept.cfm"]);

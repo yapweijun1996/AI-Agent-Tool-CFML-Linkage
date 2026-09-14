@@ -115,6 +115,7 @@
         },
         "hidden_files": {
           "type": "string",
+          "description": "Whether dot-prefixed files and directories are included or ignored during discovery.",
           "enum": [
             "include",
             "ignore"
@@ -122,6 +123,7 @@
         },
         "generated_files": {
           "type": "string",
+          "description": "Reserved policy for generated-file handling; bounded discovery currently covers configured generated paths through ignore globs/default directories.",
           "enum": [
             "include",
             "ignore"

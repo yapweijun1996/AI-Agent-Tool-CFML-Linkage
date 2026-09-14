@@ -9,7 +9,7 @@
 | Scope | Deterministic, read-only, local-first linkage analysis for CFML web applications |
 | Repository evidence | Initial `main` commit `1b29c0b934129fcd005b0575d9b986159043fbc9` contained only `.gitattributes`; subsequent local commits add the verified foundation, bounded extractors, indexes, resolver, and graph builder |
 | Source of truth | Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for actual state |
-| Verification | `npm test` passes 79 focused foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query/configuration/evidence-budget/edge-budget/ignore-policy tests; bounded Fact/Graph/analysis IR validates against schema; broader linkage/runtime/package/release verification is absent |
+| Verification | `npm test` passes 79 focused foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query/configuration/evidence-budget/edge-budget/ignore-policy/hidden-file-policy tests; bounded Fact/Graph/analysis IR validates against schema; broader linkage/runtime/package/release verification is absent |
 | Limitations | Public API, parser, dependencies, runtime matrix, and deployment model are not established |
 
 ## Classification
@@ -34,13 +34,13 @@ The intended output is a deterministic Graph IR/JSON document that agents can qu
 
 ## What exists today
 
-The repository has completed its verified M1 safety foundation and advanced M2 with bounded CFML/web scanners and Fact extraction behind the parser adapter. Graph IR/Fact IR/configuration contracts, the M1 foundation, deterministic configured ignore-glob discovery, bounded structural Fact extraction, immutable indexes, literal/CFC/scope/web-flow resolution, dynamic/generated/SQL evidence preservation, bounded SQL/queryExecute extraction, structural repository/action resolution, bounded Graph construction, bounded graph queries/evidence explanations, and complete v0.1 private-CLI configuration validation are implemented/verified; full grammar coverage and broader resolver runtime remain absent. The following remain **planned**, not available:
+The repository has completed its verified M1 safety foundation and advanced M2 with bounded CFML/web scanners and Fact extraction behind the parser adapter. Graph IR/Fact IR/configuration contracts, the M1 foundation, deterministic configured ignore-glob/hidden-file discovery policies, bounded structural Fact extraction, immutable indexes, literal/CFC/scope/web-flow resolution, dynamic/generated/SQL evidence preservation, bounded SQL/queryExecute extraction, structural repository/action resolution, bounded Graph construction, bounded graph queries/evidence explanations, and complete v0.1 private-CLI configuration validation are implemented/verified; full grammar coverage and broader resolver runtime remain absent. The following remain **planned**, not available:
 
 - full parser/extractor runtime beyond the fixture-backed bounded Fact IR subset
 - broader multi-pass resolvers (bounded literal path/Application, CFC, scope, SQL, and repository resolution are now implemented internally)
 - broader Graph IR linkage and analysis orchestration (bounded Graph construction/validation exists in `src/graph.js`, bounded immutable queries/evidence explanations exist in `src/graph-query.js`, and bounded composition exists in `src/analyzer.js`; the Graph and composed-analysis contracts are `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `schema/agent-cfml-linkage-analysis-v0.1.schema.json`)
 - complete public CLI/library API (the private package exposes bounded `analyzeProject`/`analyze`/`index` entry points and query commands over fresh analysis graphs; public release remains open)
-- full incremental analysis/cache, library output/time budgets, query-command persistence, and public query integration beyond the private CLI (configured ignore-glob discovery and library edge/evidence budgets are bounded)
+- full incremental analysis/cache, library output/time budgets, query-command persistence, and public query integration beyond the private CLI (configured ignore-glob/hidden-file discovery and library edge/evidence budgets are bounded)
 - broader golden resolver fixtures and full CLI/library integration; the fixture layout, manifest, inert negative/adversarial source inputs, bounded expectations, T-034 SQL/repository fixture, bounded `analyze`/`index` composition, bounded CLI output cap, and local package/CLI smoke exist, while hosted CI runs and published artifacts remain unavailable
 
 A related external project, `agent-cfml-check`, is separate bounded single-file CFML checking prior art. Its external status must not be read as implementation evidence for this repository.
@@ -67,7 +67,7 @@ For example, `node bin/agent-cfml-linkage.js callees --config config.json` analy
 3. **Read-only and non-executing:** The analyzer reads local source only. It does not execute CFML, access databases, or use networks.
 4. **Deterministic:** Identical source snapshot, configuration, and tool version produce semantically stable output.
 5. **Fail closed:** Dynamic expressions, unsupported syntax, path escapes, and snapshot drift are explicit limitations, not guessed relationships.
-6. **Bounded:** File, size, fact, edge, evidence, traversal, output, and time limits are explicit in results; configured ignore globs are applied before source admission.
+6. **Bounded:** File, size, fact, edge, evidence, traversal, output, and time limits are explicit in results; configured ignore globs and hidden-file policy are applied before source admission.
 
 ## Documentation map
 
@@ -113,6 +113,7 @@ The eight Core SSOT files are `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROA
 - [`docs/decisions/ADR-025-bounded-library-evidence-budget.md`](docs/decisions/ADR-025-bounded-library-evidence-budget.md) — bounded library evidence-budget decision
 - [`docs/decisions/ADR-026-bounded-library-edge-budget.md`](docs/decisions/ADR-026-bounded-library-edge-budget.md) — bounded library Graph edge-budget decision
 - [`docs/decisions/ADR-027-configured-ignore-glob-discovery.md`](docs/decisions/ADR-027-configured-ignore-glob-discovery.md) — configured ignore-glob discovery decision
+- [`docs/decisions/ADR-028-hidden-file-policy-discovery.md`](docs/decisions/ADR-028-hidden-file-policy-discovery.md) — hidden-file discovery policy decision
 - [`schema/agent-cfml-linkage-analysis-v0.1.schema.json`](schema/agent-cfml-linkage-analysis-v0.1.schema.json) — composed bounded analysis-result contract
 - [`docs/compatibility/node-v25.2.1-win32-x64.json`](docs/compatibility/node-v25.2.1-win32-x64.json) — retained local Node host evidence
 - [`docs/audits/release-security-parity-v0.1.json`](docs/audits/release-security-parity-v0.1.json) — bounded release, security, and documentation parity audit
@@ -131,4 +132,4 @@ The planned tool will not:
 
 ## Verification and limitations
 
-Foundation, bounded extraction, deterministic configured ignore-glob discovery, immutable-index, literal-resolution, bounded CFC/scope/web-flow/dynamic-evidence/SQL-repository resolution, bounded Graph IR, bounded graph-query verification, bounded analysis orchestration, configured library edge/evidence-budget enforcement, and inert adversarial safe-failure fixture checks have been run with `npm test` (79/79 passed). The private CLI envelope, bounded `analyze`/`index` and query commands, private library export, cache foundation, bounded scanner, fixture-backed Fact extractor, immutable indexes, resolvers, and Graph builder are tested, but no full parser grammar, broader resolver, browser, broader engine compatibility, deployment, or release verification exists; the Node host evidence is limited to the recorded environment and all other linkage/compatibility claims remain proposed.
+Foundation, bounded extraction, deterministic configured ignore-glob/hidden-file discovery policies, immutable-index, literal-resolution, bounded CFC/scope/web-flow/dynamic-evidence/SQL-repository resolution, bounded Graph IR, bounded graph-query verification, bounded analysis orchestration, configured library edge/evidence-budget enforcement, and inert adversarial safe-failure fixture checks have been run with `npm test` (79/79 passed). The private CLI envelope, bounded `analyze`/`index` and query commands, private library export, cache foundation, bounded scanner, fixture-backed Fact extractor, immutable indexes, resolvers, and Graph builder are tested, but no full parser grammar, broader resolver, browser, broader engine compatibility, deployment, or release verification exists; the Node host evidence is limited to the recorded environment and all other linkage/compatibility claims remain proposed.

@@ -17,4 +17,4 @@ Matching directories are pruned before descending, and matching regular files ar
 
 ## Consequences
 
-Configured dependency, generated, cache, secret-like, and project-specific paths can be excluded deterministically without executing or reading their source. Ignore patterns only exclude paths; there is no negation, filesystem glob expansion, case-folding, or hidden/generated-file policy inference in this bounded slice. Broader glob semantics and the remaining library output/time budgets remain open.
+Configured dependency, generated, cache, secret-like, and project-specific paths can be excluded deterministically without executing or reading their source. Ignore patterns only exclude paths; there is no negation, filesystem glob expansion, or case-folding in this bounded slice. The separate dot-prefixed hidden-file policy is covered by ADR-028; generated-file detection, broader glob semantics, and the remaining library output/time budgets remain open.

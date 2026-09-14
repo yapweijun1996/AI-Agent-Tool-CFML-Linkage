@@ -47,18 +47,20 @@ test("discovers supported files in sorted order and ignores configured default d
   }
 });
 
-test("applies root-relative ignore globs without changing deterministic discovery", () => {
+test("applies configured ignore policies without changing deterministic discovery", () => {
   const root = makeTemporaryProject();
   try {
     fs.mkdirSync(path.join(root, "custom", "nested"), { recursive: true });
     fs.mkdirSync(path.join(root, "pruned"), { recursive: true });
+    fs.mkdirSync(path.join(root, ".hidden-directory"), { recursive: true });
     fs.writeFileSync(path.join(root, "custom", "ignored.cfm"), "ignored\n");
     fs.writeFileSync(path.join(root, "custom", "nested", "ignored.cfm"), "ignored\n");
     fs.writeFileSync(path.join(root, "pruned", "ignored.cfm"), "ignored\n");
     fs.writeFileSync(path.join(root, "src", "ignored.cfm"), "ignored\n");
-    const snapshot = createSnapshot(createRootGuard(root), {
-      ignoreGlobs: [String.raw`custom\**\*.cfm`, "pruned/**", "src/ignored.cfm"],
-    });
+    fs.writeFileSync(path.join(root, ".hidden.cfm"), "hidden\n");
+    fs.writeFileSync(path.join(root, ".hidden-directory", "nested.cfm"), "hidden\n");
+    const ignoreGlobs = [String.raw`custom\**\*.cfm`, "pruned/**", "src/ignored.cfm"];
+    const snapshot = createSnapshot(createRootGuard(root), { ignoreGlobs, hiddenFilePolicy: "ignore" });
     assert.deepEqual(snapshot.files.map((file) => file.path), [
       "src/client.js",
       "src/nested/a.cfc",
@@ -68,6 +70,9 @@ test("applies root-relative ignore globs without changing deterministic discover
     ]);
     assert.equal(snapshot.complete, true);
     assert.deepEqual(snapshot.diagnostics, []);
+    const included = createSnapshot(createRootGuard(root), { ignoreGlobs, hiddenFilePolicy: "include" });
+    assert.equal(included.files.some((file) => file.path === ".hidden.cfm"), true);
+    assert.equal(included.files.some((file) => file.path === ".hidden-directory/nested.cfm"), true);
   } finally {
     removeTemporaryProject(root);
   }

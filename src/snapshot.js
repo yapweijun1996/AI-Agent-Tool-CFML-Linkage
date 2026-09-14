@@ -102,9 +102,15 @@ function normalizeIgnoreGlobs(globs) {
   }))].map(globRegExp);
 }
 
+function normalizeFilePolicy(value, name) {
+  const policy = value ?? "include";
+  if (policy !== "include" && policy !== "ignore") throw new TypeError(`${name} must be include or ignore`);
+  return policy;
+}
+
 /**
  * Build a deterministic byte snapshot without decoding or executing source.
- * Configured ignoreGlobs are matched against normalized root-relative paths.
+ * Configured ignoreGlobs and hidden-file policy are applied before source admission.
  *
  * @param {{rootPath: string, resolve: Function}} rootGuard canonical root guard
  * @param {object} options discovery policy and hard limits
@@ -118,6 +124,7 @@ export function createSnapshot(rootGuard, options = {}) {
   const extensions = normalizeExtensions(options.extensions);
   const ignoredDirectoryNames = new Set(options.ignoreDirectoryNames ?? DEFAULT_IGNORED_DIRECTORY_NAMES);
   const ignoreGlobs = normalizeIgnoreGlobs(options.ignoreGlobs);
+  const hiddenFilePolicy = normalizeFilePolicy(options.hiddenFilePolicy, "hiddenFilePolicy");
   const maxFiles = normalizePositiveLimit(options.maxFiles, DEFAULT_LIMITS.maxFiles, "maxFiles");
   const maxFileBytes = normalizePositiveLimit(options.maxFileBytes, DEFAULT_LIMITS.maxFileBytes, "maxFileBytes");
   const maxTotalBytes = normalizePositiveLimit(options.maxTotalBytes, DEFAULT_LIMITS.maxTotalBytes, "maxTotalBytes");
@@ -142,7 +149,8 @@ export function createSnapshot(rootGuard, options = {}) {
 
       if (entry.isDirectory()) {
         const ignoredByGlob = ignoreGlobs.some((glob) => glob.test(relativePath) || glob.test(`${relativePath}/`));
-        if (!isIgnoredDirectory(entry.name, ignoredDirectoryNames) && !ignoredByGlob) {
+        const hidden = entry.name.startsWith(".");
+        if (!isIgnoredDirectory(entry.name, ignoredDirectoryNames) && !ignoredByGlob && !(hiddenFilePolicy === "ignore" && hidden)) {
           walk(path.join(directoryPath, entry.name), relativePath);
         }
         if (stoppedByLimit) return;
@@ -160,6 +168,7 @@ export function createSnapshot(rootGuard, options = {}) {
       }
 
       if (ignoreGlobs.some((glob) => glob.test(relativePath))) continue;
+      if (hiddenFilePolicy === "ignore" && entry.name.startsWith(".")) continue;
 
       const extension = path.extname(entry.name).toLowerCase();
       if (!extensions.has(extension)) {

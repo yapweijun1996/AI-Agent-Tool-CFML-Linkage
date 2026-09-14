@@ -9,7 +9,7 @@
 | Scope | Changes in this repository |
 | Source of truth | Git history and this changelog |
 | Evidence | Initial commit `1b29c0b`; documentation baseline and M1 foundation commits follow |
-| Verification | Documentation consistency checks, bounded query/robustness/adversarial-fixture/evidence/edge-budget/ignore-policy checks, and `npm test` (79/79) are run during this pass |
+| Verification | Documentation consistency checks, bounded query/robustness/adversarial-fixture/evidence/edge-budget/ignore-policy/hidden-file-policy checks, and `npm test` (79/79) are run during this pass |
 | Limitations | No parser/resolver release runtime, public package, hosted CI run, or release exists; the read-only CI workflow is present |
 
 ## Unreleased
@@ -61,6 +61,7 @@
 - Implemented T-048 bounded library evidence-budget enforcement through `max_evidence`, with deterministic partial evidence, explicit `RESOURCE_LIMIT` incomplete results, focused coverage, and ADR-025; library output/time budgets remain open.
 - Implemented T-049 bounded library Graph edge-budget enforcement through `max_edges`, retaining the deterministic edge prefix, rebuilding valid reverse adjacency, marking capped results incomplete, and recording `RESOURCE_LIMIT` details in ADR-026; library serialized-output/time budgets remain open.
 - Implemented T-050 bounded configured ignore-glob discovery through `ignoreGlobs`, with root-relative `*`/`?`/`**` matching before reads and hashing, analyzer/CLI forwarding and validation, focused coverage, and ADR-027; broader glob semantics and library output/time budgets remain open.
+- Implemented T-051 bounded hidden-file discovery policy through `hiddenFilePolicy`, applying `ignore.hidden_files` to dot-prefixed entries before reads and hashing, with analyzer/CLI forwarding, focused coverage, and ADR-028; generated-file detection and library output/time budgets remain open.
 - Refreshed the retained T-043 Node host evidence and ADR-023 to the current 79-test run; the historical T-044 audit remains tied to its original source commit.
 - Corrected the EPIC lifecycle metadata to reflect the current bounded M9 implementation state; full parser, broader linkage, and release work remain open.
 

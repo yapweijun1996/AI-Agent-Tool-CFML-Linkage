@@ -33,8 +33,8 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 
 | Component | Owns | Must not own |
 | --- | --- | --- |
-| Root guard/policy | canonical root, path containment, configured root-relative ignore-glob policy, and snapshot admission in the implemented M1 slice; config-wide policy freezing remains planned | parsing or confidence upgrades |
-| Snapshot/discovery | deterministic file set, configured ignore-glob matching, content fingerprints, metadata, symlink skipping, and drift diagnostics in M1 | source mutation or runtime discovery |
+| Root guard/policy | canonical root, path containment, configured root-relative ignore-glob and hidden-file policies, and snapshot admission in the implemented M1 slice; config-wide policy freezing remains planned | parsing or confidence upgrades |
+| Snapshot/discovery | deterministic file set, configured ignore-glob/hidden-file matching, content fingerprints, metadata, symlink skipping, and drift diagnostics in M1 | source mutation or runtime discovery |
 | Decoder/source map | decoding state and coordinate conversion | linkage decisions |
 | Parser adapter | explicit backend boundary, bounded CFML/web structural scanners, syntax trees, parser diagnostics, completeness; default backend remains unselected | cross-file resolution |
 | Fact extractor | normalized CFML/web Fact IR and extraction evidence | target selection |
@@ -51,7 +51,7 @@ Core owns stable IDs, confidence policy, root safety, validation, and output con
 ## 3. Data flow
 
 1. **Context:** validate root and freeze configuration.
-2. **Snapshot:** apply configured ignore globs, then discover and fingerprint admitted files in sorted order.
+2. **Snapshot:** apply configured ignore globs and hidden-file policy, then discover and fingerprint admitted files in sorted order.
 3. **Parse:** decode each file and preserve source coordinates.
 4. **Facts:** convert syntax into parser-neutral facts.
 5. **Index:** `src/project-index.js` builds complete immutable indexes before resolution.
@@ -97,7 +97,7 @@ The architecture treats incomplete analysis as data:
 - dynamic/generated/SQL-dynamic values retain bounded expressions and dependencies;
 - out-of-root targets are rejected;
 - snapshot drift invalidates completeness;
-- resource caps return `complete=false` and identify the exhausted budget; discovery applies configured ignore globs before source reads, and the graph stage enforces the configured edge cap in deterministic edge order and evidence-item cap in deterministic edge, unresolved-record, and node order;
+- resource caps return `complete=false` and identify the exhausted budget; discovery applies configured ignore globs and hidden-file policy before source reads, and the graph stage enforces the configured edge cap in deterministic edge order and evidence-item cap in deterministic edge, unresolved-record, and node order;
 - cache corruption causes rebuild, never trusted stale output.
 
 An internal invariant or serialization failure is different: it is an internal error and must not be represented as a clean analysis.
