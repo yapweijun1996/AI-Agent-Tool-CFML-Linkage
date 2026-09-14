@@ -97,9 +97,9 @@ This list is the proposed v0.1 contract. The machine-readable Graph IR schema an
 
 ### 4.3 Identity and evidence
 
-Node identity MUST be independent of source content changes and derive from project-relative canonical path plus semantic symbol identity. Source hashes and revisions are freshness fields, not identity.
+Node identity MUST be independent of source content changes and derive from project-relative canonical path plus semantic symbol identity. Source hashes and revisions are freshness fields, not identity. The exact canonical path, node ID, edge ID, duplicate-evidence merge, and output ordering rules are defined in [`ADR-002`](docs/decisions/ADR-002-deterministic-identity-and-ordering.md) and exercised by `examples/identity-order-v0.1.json`.
 
-Edge identity SHOULD derive from relation type, endpoints, and source fact identity/condition. Equivalent semantic edges may be deduplicated while retaining all evidence records.
+For v0.1, node IDs use the versioned SHA-256 identity tuple `(kind, canonical_path, canonical_symbol_or_semantic_name)`. Edge IDs use `(type, from, to, sorted source_fact_ids, condition_key)` after semantic duplicate grouping. Arrays and evidence use specified canonical sort keys; volatile snapshot time is excluded from canonical comparison.
 
 Evidence SHOULD include:
 

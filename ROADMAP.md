@@ -18,7 +18,7 @@
 | --- | --- | --- |
 | Repository | Initial implementation baseline plus documentation baseline | Git `main` at `1b29c0b` before this documentation commit |
 | Source implementation | Not started | No source files tracked |
-| Contracts/schema | Graph IR and Fact IR schema/examples implemented and validated; runtime producers still absent | `schema/agent-cfml-linkage-graph-v0.1.schema.json`, `schema/agent-cfml-linkage-fact-v0.1.schema.json`, examples, `SPEC.md` |
+| Contracts/schema | Graph IR, Fact IR, and identity/order contract artifacts implemented and validated; runtime producers still absent | `schema/`, `examples/`, `SPEC.md`, ADR-002 |
 | Tests/fixtures | Not started | No test files tracked |
 | CI/package/release | Not started | No project manifest or workflow tracked |
 | Runtime compatibility | Unknown | No local analyzer exists |
@@ -32,7 +32,7 @@ The current documentation pass does not advance M0–M9. It records the pre-prot
 
 **Goal:** make the boundary testable before implementing language behavior.
 
-- M0: Graph IR, Fact IR, diagnostics, confidence, unresolved reasons, IDs, limits, and stable JSON envelope. T-001/T-002 schema/example slices are verified; remaining M0 contract work is open.
+- M0: Graph IR, Fact IR, diagnostics, confidence, unresolved reasons, IDs, limits, and stable JSON envelope. T-001–T-003 contract slices are verified; remaining M0 contract work is open.
 - M1: canonical root guard, path containment, ignore policy, deterministic snapshot/discovery, decoding, source maps, and CLI input validation.
 
 **Exit evidence:** reviewed contracts, negative safety tests, deterministic snapshot fixtures, and no-execution proof at the process boundary.

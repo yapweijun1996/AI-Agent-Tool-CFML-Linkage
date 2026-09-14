@@ -120,7 +120,7 @@ A central policy combines resolver evidence and assigns `confirmed`, `strong`, `
 
 ### Stage 8 — graph builder
 
-Transform facts and resolutions into Graph IR nodes, edges, unresolved records, diagnostics, and statistics. Node identity derives from project-relative canonical path plus semantic identity, not source hash. Edge identity derives from relation type, endpoints, source fact, and condition. Deduplication must preserve multiple evidence records, include order, condition, dynamic flags, resolver version, and source fingerprint. Reverse adjacency is built with the forward graph.
+Transform facts and resolutions into Graph IR nodes, edges, unresolved records, diagnostics, and statistics. Node identity derives from project-relative canonical path plus semantic identity, not source hash. Edge identity derives from relation type, endpoints, source fact, and condition. The exact SHA-256 identity and canonical ordering rules are defined in [`ADR-002`](docs/decisions/ADR-002-deterministic-identity-and-ordering.md) and exercised by `examples/identity-order-v0.1.json`. Deduplication must preserve multiple evidence records, include order, condition, dynamic flags, resolver version, and source fingerprint. Reverse adjacency is built with the forward graph.
 
 ### Stage 9 — graph validation
 
@@ -165,7 +165,7 @@ The sequence is dependency-aware but not a schedule. M0 must freeze the contract
 
 | Milestone | Content | Current status |
 | --- | --- | --- |
-| M0 | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and golden-fixture contract | In progress — T-001/T-002 verified |
+| M0 | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and golden-fixture contract | In progress — T-001–T-003 verified |
 | M1 | Safe root guard, snapshot, decoder, discovery, cache skeleton, CLI envelope | Not started |
 | M2 | Parser adapter and normalized extraction | Not started |
 | M3 | Basic path/Application/include linkage and graph validation | Not started |

@@ -26,7 +26,7 @@
 | Layer | Purpose | Evidence required |
 | --- | --- | --- |
 | Unit | IDs, paths, spans, normalization, confidence, limits, and serializers | Focused passing tests |
-| Contract/schema | Graph IR, Fact IR, diagnostics, unresolved records, CLI envelope | Schema validation and fixture assertions; T-001/T-002 cover Graph IR and Fact IR schema/examples |
+| Contract/schema | Graph IR, Fact IR, diagnostics, unresolved records, CLI envelope | Schema validation and fixture assertions; T-001–T-003 cover Graph IR, Fact IR, and identity/order artifacts |
 | Golden | End-to-end static linkage for frozen projects | Expected graph/evidence comparison |
 | Adversarial | Ambiguity, malformed syntax, dynamic code, cycles, escapes, drift, caps | Explicit safe failure and `complete=false` where applicable |
 | Integration | CLI/library boundary, cache, query engine | Public API/CLI tests and readback |
@@ -86,4 +86,4 @@ No command is currently valid because no project manifest or test runner exists.
 
 ## 7. Current result
 
-**T-001/T-002 passed:** both schemas are valid, both representative examples validate, and graph/fact ID, reference, count, source, and span invariants pass. This used an existing local Python module and did not add a project dependency. Project build, test, runtime, browser, and package checks remain unrun because no implementation exists.
+**T-001–T-003 passed:** both schemas are valid, both representative examples validate, and graph/fact ID, reference, count, source, span, stable identity, and ordering invariants pass. This used existing local Python modules and did not add a project dependency. Runtime producer repeatability remains unverified; project build, test, runtime, browser, and package checks remain unrun because no implementation exists.

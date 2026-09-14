@@ -42,7 +42,7 @@ Out of scope: source execution, runtime network/database access, browser automat
 
 | Milestone | Outcome | Dependencies | Status |
 | --- | --- | --- | --- |
-| M0 Contracts | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and fixture rules | None | In progress — T-001/T-002 verified |
+| M0 Contracts | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and fixture rules | None | In progress — T-001–T-003 verified |
 | M1 Safe foundation | Root guard, snapshot, decoding/source maps, discovery, CLI envelope, cache skeleton | M0 | Not started |
 | M2 Parser/extractor | Adapter and normalized facts for priority syntax | M1 | Not started |
 | M3 Basic linkage | Paths, includes, Application governance, unresolved model, graph validator, reverse callers | M2 | Not started |
@@ -68,7 +68,7 @@ The epic is complete only when all of the following are evidenced:
 
 ## 6. Risks and blockers
 
-Current blocker: there is no analyzer implementation baseline. The Graph IR and Fact IR schema slices are validated, but parser strategy, supported syntax subset, configuration format, remaining M0 semantics, and test fixtures still require review before coding.
+Current blocker: there is no analyzer implementation baseline. The Graph IR and Fact IR schema plus identity/order contract slices are validated, but parser strategy, supported syntax subset, configuration format, remaining M0 semantics, and test fixtures still require review before coding.
 
 Known technical risks include runtime-computed Application mappings, dynamic `evaluate` and generated names, ambiguous components/method receivers, shared-scope semantics, embedded JavaScript/SQL parsing, and resource exhaustion. These are release risks, not reasons to guess.
 

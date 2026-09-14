@@ -19,11 +19,12 @@
 - Project classification and status boundaries in `README.md`.
 - Goal, progress state, and autonomous execution contract in `GOAL.md`, `PROGRESS.md`, and `GOAL_PROMPT.md`.
 - Proposed functional contract in `SPEC.md` plus validated Graph IR and Fact IR schema/example contracts in `schema/` and `examples/`.
-- Proposed staged pipeline in `DESIGN.md`; T-001/T-002 schema, reference, count, source, and span validation passed using the existing local Python `jsonschema` module.
+- Proposed staged pipeline in `DESIGN.md`; T-001–T-003 schema, identity, reference, count, source, span, and ordering validation passed using existing local Python modules and a deterministic reference check.
 - Proposed component ownership and data flow in `ARCHITECTURE.md`.
 - Proposed epic, roadmap, task register, and test plan.
 - Repository guidance and Core SSOT rules in `AGENTS.md`.
-- Proposed security, release, and project-boundary ADR documents.
+- Proposed security, release, project-boundary, and deterministic identity/order ADR documents.
+- Identity/order fixture in `examples/identity-order-v0.1.json`.
 
 ### Not claimed
 
