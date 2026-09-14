@@ -204,8 +204,8 @@ function isGraphSnapshot(value) {
  * are read or executed.
  */
 export function createGraphSnapshot(graph) {
-  if (isGraphSnapshot(graph)) return graph;
-  const copy = cloneJson(graph);
+  const source = isGraphSnapshot(graph) ? graph.graph : graph;
+  const copy = cloneJson(source);
   validateGraphInput(copy);
   return deepFreeze({ snapshot_type: SNAPSHOT_TYPE, graph: deepFreeze(copy) });
 }

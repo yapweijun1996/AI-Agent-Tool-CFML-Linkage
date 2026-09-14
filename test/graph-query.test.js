@@ -21,6 +21,11 @@ test("queries an immutable GraphSnapshot with deterministic evidence slices", ()
   assert.equal(Object.isFrozen(snapshot), true);
   assert.equal(Object.isFrozen(snapshot.graph), true);
   assert.equal(Object.isFrozen(snapshot.graph.nodes[0]), true);
+  const suppliedSnapshot = { snapshot_type: "GraphSnapshot/v0.1", graph: JSON.parse(JSON.stringify(graphFixture)) };
+  const copiedSnapshot = createGraphSnapshot(suppliedSnapshot);
+  suppliedSnapshot.graph.nodes[0].name = "mutated-input";
+  assert.notEqual(copiedSnapshot.graph.nodes[0].name, "mutated-input");
+  assert.equal(Object.isFrozen(copiedSnapshot), true);
 
   const callers = queryGraph(snapshot, { operation: "callers", node_id: PAGE });
   assert.equal(callers.complete, true);

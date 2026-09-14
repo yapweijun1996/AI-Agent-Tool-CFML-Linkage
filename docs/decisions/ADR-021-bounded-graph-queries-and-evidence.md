@@ -30,8 +30,8 @@ The query envelope is `agent-cfml-linkage-query/v0.1`. CLI orchestration and a r
 ## Verification
 
 - `test/graph-query.test.js` exercises immutable snapshots, exact selectors, all declared operations, evidence slices, deterministic explanations, unresolved filtering, traversal/result/depth/visited limits, ambiguity, invalid options, and result immutability.
-- `npm test` reports 65 passed; the query module is syntax-checked and uses no third-party dependency or runtime/service access.
+- `npm test` reports 73 passed; the query module re-copies even snapshot-shaped input before freezing, is syntax-checked, and uses no third-party dependency or runtime/service access.
 
 ## Limitations
 
-The implementation does not orchestrate analysis, expose a public package export, validate every JSON Schema property beyond the Graph builder's validator, rank impact, resolve dynamic targets, or claim full parser, runtime, browser, database, or engine behavior.
+The implementation does not expose a public package export, validate every JSON Schema property beyond the Graph builder's validator, rank impact, resolve dynamic targets, or claim full parser, runtime, browser, database, or engine behavior. Analysis orchestration exists only through the private bounded entry point.
