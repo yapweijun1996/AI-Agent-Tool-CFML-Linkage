@@ -37,6 +37,9 @@
 - Fixture-backed bounded CFML/CFC Fact IR extraction, golden expectations, schema validation, focused tests, and ADR-011 for T-021.
 - Bounded mixed-language web scanners/facts for forms, redirects, fetch/AJAX, CSS, visible SQL, inert fixtures, focused tests, and ADR-012 for T-022.
 - Immutable project indexes with deterministic unique/ambiguous/missing lookup states, focused tests, and ADR-013 for T-023.
+- Conservative literal path and Application governance resolution with explicit unresolved states, focused tests, and ADR-014 for T-024.
+- Bounded Graph IR construction/validation, SQL evidence nodes, unresolved preservation, immutable reverse adjacency, focused tests, and ADR-015 for T-025.
+- Bounded CFC/method mapping, inheritance, instantiation, invoke resolution, ambiguity preservation, focused tests, and ADR-016 for T-030.
 
 ### Not claimed
 

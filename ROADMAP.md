@@ -1,6 +1,6 @@
 # Roadmap: agent-cfml-linkage
 
-> **Status: PROPOSED / M2 IN PROGRESS.** The roadmap describes intended delivery and records verified bounded slices; it is not a release plan.
+> **Status: PROPOSED / M2–M4 IN PROGRESS.** The roadmap describes intended delivery and records verified bounded slices; it is not a release plan.
 
 | Field | Value |
 | --- | --- |
@@ -8,8 +8,8 @@
 | Last updated | 2026-09-14 |
 | Scope | Ordered delivery of the planned linkage analyzer |
 | Source of truth | This roadmap for sequencing; Git history and tests for completion evidence |
-| Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
-| Verification | M0 contract gate, T-010–T-014/T-020–T-023 foundation/scanner/Fact/index tests, and produced Fact IR schema validation are verified; later milestones have no evidence |
+| Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation, bounded extractors, indexes, resolvers, and Graph builder |
+| Verification | M0 contract gate, T-010–T-014/T-020–T-030 foundation/scanner/Fact/index/resolution/Graph/CFC tests, and produced Fact/Graph IR schema validation are verified; later milestones have no evidence |
 | Limitations | Dates, estimates, parser selection, and release targets are intentionally not committed |
 
 ## Current state
@@ -17,17 +17,17 @@
 | Area | State | Evidence |
 | --- | --- | --- |
 | Repository | Private prototype with verified foundation and bounded extractors | Git `main` at the current local commit; no remote publication |
-| Source implementation | M1 foundation, M2 parser-adapter/bounded CFML/web scanner/Fact extractors, and M3 immutable indexes implemented; resolver runtime not started | `src/`, `bin/`, focused tests |
+| Source implementation | M1 foundation, M2 parser-adapter/bounded CFML/web scanner/Fact extractors, M3 immutable indexes/literal resolver/bounded Graph builder, and M4 bounded CFC resolver implemented; broader Graph runtime not started | `src/`, `bin/`, focused tests |
 | Contracts/schema | Graph IR, Fact IR, identity/order, confidence/completeness, and configuration artifacts implemented and validated; broader runtime producers remain absent | `schema/`, `examples/`, `SPEC.md`, ADR-002–ADR-004 |
 | Fixture layout/manifest | Implemented and validated | `fixtures/`, `fixtures/manifest-v0.1.json`, inert golden inputs, and bounded Fact expectations |
-| Focused tests | T-010–T-014/T-020–T-023 verified | `npm test`: 43 passed |
+| Focused tests | T-010–T-014/T-020–T-030 verified | `npm test`: 51 passed |
 | CI/package/release | Private package/CLI foundation only; CI/release not started | `package.json`, `bin/`; no workflow, tag, or release |
 | Runtime compatibility | Unknown | No local analyzer exists |
 | Core SSOT documentation | Synchronized planning baseline | `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`, `GOAL_PROMPT.md` |
 
 ## Delivery sequence
 
-The current pass advances M0 to a verified gate, completes M1/T-010–T-014, verifies bounded M2 parser/scanner/Fact extraction at T-020–T-022, and verifies the first M3 index boundary at T-023; it does not establish full grammar coverage or advance M4–M9. T-024 is the next resolver task.
+The current pass advances M0 to a verified gate, completes M1/T-010–T-014, verifies bounded M2 parser/scanner/Fact extraction at T-020–T-022, M3 index/literal resolution/Graph IR boundaries at T-023–T-025, and bounded M4 CFC resolution at T-030; it does not establish full grammar coverage or advance M5–M9. T-031+ remain open.
 
 ### Phase 0 — Contract and safety foundation
 
@@ -41,13 +41,13 @@ The current pass advances M0 to a verified gate, completes M1/T-010–T-014, ver
 ### Phase 1 — CFML extraction and basic linkage
 
 - M2: parser adapter/bounded CFML/web scanners and normalized CFML/CFC/web facts (T-020–T-022 verified); full grammar and resolution remain open.
-- M3: literal paths, includes, custom tags, Application governance, conditions, unresolved records, graph construction, validation, and reverse adjacency.
+- M3: immutable indexes, bounded literal paths, includes, custom tags, Application governance, conditions, unresolved records, Graph construction/validation, and reverse adjacency (T-023–T-025 verified); broader linkage remains open.
 
 **Exit evidence:** golden fixtures for basic CFML flow, malformed/partial input, ambiguity, and stable IDs/order.
 
 ### Phase 2 — CFC and Globe3-critical relationships
 
-- M4: component mappings, `extends`/`implements`, instantiation, `cfinvoke`, imports, and conservative method calls.
+- M4: component mappings, `extends`/`implements`, instantiation, `cfinvoke`, imports, and conservative method calls (T-030 bounded resolver verified; broader type inference remains open).
 - M5: ordered include scope flow, form/AJAX/`fetch`/redirect relations, conditional routers, dynamic expressions, and generated symbols.
 
 **Exit evidence:** unique and ambiguous type/method fixtures, include-order fixtures, browser-facing flow fixtures, and fail-closed dynamic cases.

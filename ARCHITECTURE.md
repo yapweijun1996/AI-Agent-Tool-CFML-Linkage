@@ -14,7 +14,7 @@
 
 ## 1. Boundary
 
-The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1/M2 slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, a private CLI envelope, bounded parser scanners, and Fact evidence; Graph IR production, linkage resolution, and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
+The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1–M3 slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, a private CLI envelope, bounded parser scanners, Fact evidence, immutable indexes, and conservative literal resolution; Bounded Graph IR production/validation is implemented in `src/graph.js`, and bounded CFC resolution is implemented in `src/cfc-resolver.js`; broader linkage resolution and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
 
 ```text
 Local source + explicit policy
@@ -39,7 +39,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Parser adapter | explicit backend boundary, bounded CFML/web structural scanners, syntax trees, parser diagnostics, completeness; default backend remains unselected | cross-file resolution |
 | Fact extractor | normalized CFML/web Fact IR and extraction evidence | target selection |
 | Project index | immutable path, symbol, mapping, application, query, and per-file fact indexes; unique/ambiguous/missing lookup states | mutable resolution state |
-| Resolver passes | bounded candidate/target resolution | index mutation or authoritative guessing |
+| Resolver passes | bounded candidate/target resolution in `src/path-resolver.js` and `src/cfc-resolver.js`; unresolved/ambiguous states | index mutation or authoritative guessing |
 | Evidence policy | evidence merge and confidence classes | parser-specific parsing |
 | Graph builder/validator | Graph IR construction, invariants, serialization readiness | generic business interpretation |
 | Cache | optional derived performance state | source of truth or stale-data authority |
@@ -55,7 +55,7 @@ Core owns stable IDs, confidence policy, root safety, validation, and output con
 3. **Parse:** decode each file and preserve source coordinates.
 4. **Facts:** convert syntax into parser-neutral facts.
 5. **Index:** `src/project-index.js` builds complete immutable indexes before resolution.
-6. **Resolve:** run ordered, read-only resolver passes.
+6. **Resolve:** run ordered, read-only resolver passes; T-024 currently covers literal paths and basic Application governance/hooks.
 7. **Evidence:** classify each result and retain ambiguity.
 8. **Graph:** create nodes, edges, unresolved records, diagnostics, and stats.
 9. **Validate:** check schema, references, determinism, completeness, and safety invariants.
@@ -83,7 +83,7 @@ Linkage answers “what statically relates to what, and why?” Generic impact r
 
 ## 5. Graph model
 
-The proposed Graph IR has semantic nodes such as files, pages, components, methods, forms, JavaScript functions, queries, tables, datasources, scopes, route conditions, external targets, and unresolved targets. It has explicit edge families for includes, calls, web flow, SQL, Application governance, scope flow, and dynamic references.
+The Graph IR has semantic nodes such as files, pages, components, methods, forms, JavaScript functions, queries, tables, datasources, scopes, route conditions, external targets, and unresolved targets. It has explicit edge families for includes, calls, web flow, SQL, Application governance, scope flow, and dynamic references.
 
 Every edge includes endpoints, relation type, source span, evidence, resolver identity, confidence, condition/order where relevant, dynamic state, and freshness information. Node and edge IDs remain stable across content changes when semantic identity is unchanged.
 

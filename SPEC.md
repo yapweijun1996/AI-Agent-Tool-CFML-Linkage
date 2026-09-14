@@ -9,7 +9,7 @@
 | Scope | Static cross-file linkage analysis for CFML-first mixed web projects |
 | Source of truth | This document for the proposed contract; Git history for current code facts |
 | Evidence | Initial repository commit `1b29c0b` contained only `.gitattributes`; current local source contains the verified foundation and bounded extractors |
-| Verification | Graph/Fact/config contract checks, produced Fact IR schema validation, and `npm test` foundation/parser/scanner/Fact tests (43/43) pass; linkage contract/runtime verification is incomplete |
+| Verification | Graph/Fact/config contract checks, produced Fact/Graph IR schema validation, and `npm test` foundation/parser/scanner/Fact/index/resolution/Graph/CFC tests (51/51) pass; linkage contract/runtime verification is incomplete |
 | Limitations | Parser coverage, resolver accuracy, performance, compatibility, and release status are unverified |
 
 ## 1. Objective
@@ -51,7 +51,7 @@ The proposed pipeline is:
 
 `Root Guard → Snapshot/Discovery → Decode/Source Map → Parse → Fact Extraction → Project Index → Resolution Passes → Evidence/Confidence → Graph Build → Validate → Cache → Query → CLI/JSON`.
 
-Each stage has typed boundaries and may emit diagnostics. Cross-file stages consume normalized Fact IR rather than parser-specific AST nodes. No stage mutates source files. The implemented parser adapter and bounded Fact extractor do not resolve across files; they normalize parser state and emit fixture-backed structural facts only. The internal T-023 index builder creates immutable lookup indexes but performs no resolution.
+Each stage has typed boundaries and may emit diagnostics. Cross-file stages consume normalized Fact IR rather than parser-specific AST nodes. No stage mutates source files. The implemented parser adapter and bounded Fact extractor do not resolve across files; they normalize parser state and emit fixture-backed structural facts only. The internal T-023 index builder creates immutable lookup indexes, T-024 provides conservative literal path/Application resolution, and T-025 builds/validates bounded Graph IR and T-030 resolves bounded literal CFC relationships without broader cross-file resolution.
 
 ### 4.0 Fact IR contract
 
@@ -74,7 +74,7 @@ CSS support is intentionally bounded and secondary to CFML/CFC linkage. It must 
 
 ### 4.2 Graph document
 
-A future graph document SHOULD contain:
+The Graph IR document contains:
 
 ```text
 schema_version
@@ -91,9 +91,9 @@ schema_version
 
 Required planned node kinds include `FILE`, `CFM_PAGE`, `CFC_COMPONENT`, `CFC_METHOD`, `CUSTOM_TAG`, `APPLICATION`, `FORM`, `JS_FUNCTION`, `QUERY`, `DATABASE_TABLE`, `DATASOURCE`, `REPOSITORY_ACTION`, `SCOPE_VARIABLE`, `ROUTE_CONDITION`, `EXTERNAL_TARGET`, and `UNRESOLVED_TARGET`.
 
-Required planned edge families include `INCLUDES`, `CUSTOM_TAG_CALL`, `EXTENDS`, `IMPLEMENTS`, `INSTANTIATES`, `CFINVOKES`, `CALLS_METHOD`, `FORM_SUBMITS_TO`, `REDIRECTS_TO`, `AJAX_CALLS`, `FETCHES`, `QUERY_READS_TABLE`, `QUERY_WRITES_TABLE`, `QUERY_USES_DATASOURCE`, `CALLS_REPOSITORY`, `APPLICATION_GOVERNS`, `REQUEST_HOOK_APPLIES_TO`, `ROUTES_WHEN`, `SCOPE_PRODUCES`, `SCOPE_CONSUMES`, `SCOPE_OVERRIDES`, and `DYNAMIC_REFERENCE`.
+Required planned edge families include `INCLUDES`, `CUSTOM_TAG_CALL`, `EXTENDS`, `IMPLEMENTS`, `INSTANTIATES`, `CFINVOKES`, `CALLS_METHOD`, `FORM_SUBMITS_TO`, `REDIRECTS_TO`, `AJAX_CALLS`, `FETCHES`, `QUERY_READS_TABLE`, `QUERY_WRITES_TABLE`, `QUERY_USES_DATASOURCE`, `CALLS_REPOSITORY`, `APPLICATION_GOVERNS`, `REQUEST_HOOK_APPLIES_TO`, `ROUTES_WHEN`, `SCOPE_PRODUCES`, `SCOPE_CONSUMES`, `SCOPE_OVERRIDES`, `DYNAMIC_REFERENCE`, and `CSS_ASSET_REFERENCES`.
 
-This list is the proposed v0.1 contract. The machine-readable Graph IR schema and representative example are now present at `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`; the runtime graph builder and cross-file resolver remain unimplemented.
+This list is the proposed v0.1 contract. The machine-readable Graph IR schema and representative example are now present at `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`; the bounded runtime graph builder/validator is implemented in `src/graph.js`; broader cross-file resolvers remain unimplemented.
 
 ### 4.3 Identity and evidence
 
@@ -121,13 +121,13 @@ The central policy, not individual plugins, assigns confidence:
 
 Numeric scores are optional telemetry and never promote a confidence class. Filename similarity, LLM output, and intuition cannot create a confirmed edge. The exact evidence gates, completeness semantics, diagnostic codes, and policy cases are defined in [`ADR-003`](docs/decisions/ADR-003-confidence-and-completeness.md) and exercised by `examples/confidence-v0.1.json`.
 
-Unresolved records are successful analysis output, not internal errors. Planned reason codes include `DYNAMIC_EXPRESSION`, `AMBIGUOUS_PATH`, `AMBIGUOUS_COMPONENT`, `AMBIGUOUS_METHOD`, `MAPPING_UNKNOWN`, `OUTSIDE_ROOT`, `GENERATED_SYMBOL`, `SQL_DYNAMIC_IDENTIFIER`, `UNSUPPORTED_SYNTAX`, and `PARSE_PARTIAL`. A complete result may contain unresolved dynamic relationships; completeness instead reports whether the declared source and enabled analysis stages were safely covered.
+Unresolved records are successful analysis output, not internal errors. Planned reason codes include `DYNAMIC_EXPRESSION`, `AMBIGUOUS_PATH`, `AMBIGUOUS_COMPONENT`, `AMBIGUOUS_METHOD`, `MAPPING_UNKNOWN`, `OUTSIDE_ROOT`, `PATH_NOT_FOUND`, `EXTERNAL_TARGET`, `GENERATED_SYMBOL`, `SQL_DYNAMIC_IDENTIFIER`, `UNSUPPORTED_SYNTAX`, and `PARSE_PARTIAL`. A complete result may contain unresolved dynamic relationships; completeness instead reports whether the declared source and enabled analysis stages were safely covered.
 
 ## 5. Resolution rules
 
 1. **Path resolver:** resolve literal normalized paths for includes, custom tags, form actions, redirects, AJAX, and `fetch`; enforce root containment.
 2. **Application resolver:** identify the nearest governing `Application.cfc`/`Application.cfm` when statically recoverable; preserve conditional filename exceptions.
-3. **CFC resolver:** resolve imports, mappings, component paths, `extends`, `implements`, `new`, `createObject`, `cfobject`, and `cfinvoke` conservatively.
+3. **CFC resolver:** resolve explicit imports/mappings, component paths, `extends`, `implements`, `cfobject`, and `cfinvoke` conservatively; bounded T-030 does not claim `new`, `createObject`, or runtime type inference.
 4. **Method resolver:** infer receiver types only from bounded evidence such as explicit types, instantiation, properties, arguments, and unique inheritance chains.
 5. **Scope resolver:** preserve ordered `cfinclude` context and emit scope-flow edges only when variable identity and order are supported. `evaluate`, `isDefined`, generated names, and unscoped page variables remain dynamic unless exactly foldable.
 6. **Web-flow resolver:** retain normalized dynamic URL expressions and variable dependencies rather than guessing endpoints.

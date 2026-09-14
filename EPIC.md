@@ -1,6 +1,6 @@
 # Epic: Build the CFML-first linkage evidence provider
 
-> **Status: PROPOSED / M2 IN PROGRESS.** This epic is planning material; the M1 foundation and bounded M2 parser/scanner/Fact slices are verified.
+> **Status: PROPOSED / M2–M4 IN PROGRESS.** This epic is planning material; the M1 foundation, bounded M2 parser/scanner/Fact slices, bounded M3 path/Graph slices, and bounded M4 CFC resolver are verified.
 
 | Field | Value |
 | --- | --- |
@@ -8,10 +8,10 @@
 | Last updated | 2026-09-14 |
 | Scope | A local, deterministic static linkage graph for mixed CFML web projects |
 | Project type | Planned NPM/library + CLI + AI-agent evidence provider |
-| Lifecycle | Prototype / safe foundation |
+| Lifecycle | Prototype / bounded M4 implementation |
 | Source of truth | This epic for outcome and milestones; `SPEC.md` for the contract; Git history for actual completion |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
-| Verification | M0 contract checks, produced Fact IR schema validation, and 43 foundation/parser-adapter/scanner/Fact tests pass; no CI or linkage verification exists |
+| Verification | M0 contract checks, produced Fact/Graph IR schema validation, and 51 foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC tests pass; broader Graph linkage verification remains open |
 | Limitations | Estimates, sequencing, parser choice, and compatibility are not validated |
 
 ## 1. Problem
@@ -45,8 +45,8 @@ Out of scope: source execution, runtime network/database access, browser automat
 | M0 Contracts | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and fixture rules | None | Verified — T-001–T-006 |
 | M1 Safe foundation | Root guard, snapshot, decoding/source maps, discovery, CLI envelope, cache skeleton | M0 | Verified — T-010–T-014 |
 | M2 Parser/extractor | Adapter and normalized facts for priority syntax | M1 | In progress — T-020–T-022 bounded subset verified |
-| M3 Basic linkage | Paths, includes, Application governance, unresolved model, graph validator, reverse callers | M2 | In progress — T-023 indexes verified |
-| M4 CFC linkage | Mappings, inheritance, instantiation, `cfinvoke`, and conservative method resolution | M3 | Not started |
+| M3 Basic linkage | Paths, includes, Application governance, unresolved model, graph validator, reverse callers | M2 | In progress — T-023–T-025 bounded indexes/resolution/Graph IR verified |
+| M4 CFC linkage | Mappings, inheritance, instantiation, `cfinvoke`, and conservative method resolution | M3 | In progress — T-030 bounded resolver verified |
 | M5 Globe3-critical flows | Ordered scope flow, AJAX/fetch, conditions, dynamic/generated evidence | M3 | Not started |
 | M6 SQL/repository | Query/table/datasource and structurally evidenced repository edges | M3, M5 | Not started |
 | M7 Query interface | Related/callers/callees/trace/unresolved/explain/stats/impact-evidence | M3–M6 | Not started |
@@ -68,7 +68,7 @@ The epic is complete only when all of the following are evidenced:
 
 ## 6. Risks and blockers
 
-Current status: M0/M1 work, T-010–T-014/T-020–T-022 bounded parser/scanner/Fact extraction, and T-023 immutable indexes are verified. The root-guard/snapshot/decoder/private CLI/cache/parser/Fact/index foundation is the only runtime slice; full grammar, broader language coverage, and resolution remain open.
+Current status: M0/M1 work, T-010–T-014/T-020–T-022 bounded parser/scanner/Fact extraction, T-023 immutable indexes, and T-024 conservative literal resolution are verified. The root-guard/snapshot/decoder/private CLI/cache/parser/Fact/index foundation is the only runtime slice; full grammar, broader language coverage, and resolution remain open.
 
 Known technical risks include runtime-computed Application mappings, dynamic `evaluate` and generated names, ambiguous components/method receivers, shared-scope semantics, embedded JavaScript/SQL parsing, and resource exhaustion. These are release risks, not reasons to guess.
 

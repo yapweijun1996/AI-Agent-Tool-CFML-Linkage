@@ -6,6 +6,7 @@ const DEFAULT_TOOL_VERSION = "0.1.0";
 const FACT_SCHEMA_VERSION = "agent-cfml-linkage-fact/v0.1";
 const MAX_DIAGNOSTIC_MESSAGE = 2048;
 const MAX_FACTS = 500_000;
+const APPLICATION_HOOK_NAMES = new Set(["onApplicationEnd", "onApplicationStart", "onCFCRequest", "onError", "onMissingTemplate", "onRequest", "onRequestStart", "onSessionEnd", "onSessionStart"].map((name) => name.toLowerCase()));
 
 function isWhitespace(character) {
   if (character === undefined) return false;
@@ -347,6 +348,7 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
         } else {
           methodName = componentName ? `${componentName}.${name}` : name;
           addFact(makeFact({ file, language, node, kind: "METHOD", normalizedExpression: `method ${methodName}`, enclosingSymbol: componentName, extractionRuleId: "cfc-method-v0.1", attributes: { method_name: name, access: literalAttribute(node, "access") }, ordinal: factOrdinal++ }));
+          if (path.basename(file).toLowerCase() === "application.cfc" && APPLICATION_HOOK_NAMES.has(name.toLowerCase())) addFact(makeFact({ file, language, node, kind: "APPLICATION_HOOK", normalizedExpression: `application hook ${name}`, enclosingSymbol: componentName, extractionRuleId: "application-hook-v0.1", attributes: { application_name: file, hook_name: name }, ordinal: factOrdinal++ }));
         }
         continue;
       }

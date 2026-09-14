@@ -1,6 +1,6 @@
 # Autonomous Goal Prompt
 
-> **Status: PROPOSED / M2 IN PROGRESS.** Future-work contract, not an execution record.
+> **Status: PROPOSED / M2–M4 IN PROGRESS.** Future-work contract, not an execution record.
 
 | Field | Value |
 | --- | --- |
@@ -8,11 +8,11 @@
 | Last updated | 2026-09-14 |
 | Scope | Evidence-driven implementation loop |
 | Source of truth | Core SSOT plus Git/tests/runtime/release evidence |
-| Evidence | M0/M1 and T-023 verified; 43 tests pass |
+| Evidence | M0/M1, T-023–T-025, and bounded T-030 verified; 51 tests pass |
 | Verification | Prompt/documentation only |
 | Limitations | Parser, public API, CI, and release remain open |
 
-Work on `agent-cfml-linkage`, the Node `>=20` CFML-first static linkage prototype. M0/M1, bounded M2 adapter/scanner/Fact extraction, and T-023 indexes are verified; private package/CLI exist, but no full parser, resolver, public API, CI, or release. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
+Work on `agent-cfml-linkage`, the Node `>=20` CFML-first static linkage prototype. M0/M1, bounded M2 extraction, T-023–T-025 index/path/Graph IR, and T-030 CFC resolution are verified; private package/CLI exist, but no full parser, broader runtime, public API, CI, or release. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
 
 Repeat:
 

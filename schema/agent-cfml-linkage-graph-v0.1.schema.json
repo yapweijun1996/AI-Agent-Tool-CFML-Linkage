@@ -294,7 +294,8 @@
         "SCOPE_PRODUCES",
         "SCOPE_CONSUMES",
         "SCOPE_OVERRIDES",
-        "DYNAMIC_REFERENCE"
+        "DYNAMIC_REFERENCE",
+        "CSS_ASSET_REFERENCES"
       ]
     },
     "symbol": {
@@ -557,6 +558,8 @@
         "AMBIGUOUS_METHOD",
         "MAPPING_UNKNOWN",
         "OUTSIDE_ROOT",
+        "PATH_NOT_FOUND",
+        "EXTERNAL_TARGET",
         "GENERATED_SYMBOL",
         "SQL_DYNAMIC_IDENTIFIER",
         "UNSUPPORTED_SYNTAX",

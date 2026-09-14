@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | Parser backend injection, strict decoding handoff, partial/unsupported diagnostics, and diagnostic bounds |
 | Source of truth | `src/parser-adapter.js`, `src/cfml-scanner.js`, `test/parser-adapter.test.js`, this ADR, and `SPEC.md` |
-| Evidence | `npm test`: 34 passed, including unavailable backend, bounded scanner tags/opaque regions, invalid encoding, partial output, backend failure, limits, and no-execution cases |
+| Evidence | `npm test`: 51 passed, including unavailable backend, bounded scanner tags/opaque regions, invalid encoding, partial output, backend failure, limits, and no-execution cases |
 | Verification | Adapter behavior passes locally; parser grammar feasibility, syntax coverage, and engine compatibility remain unverified |
 | Limitations | The default backend is deliberately unselected; the scanner is not a general grammar and no Fact IR or CFML linkage evidence is produced |
 

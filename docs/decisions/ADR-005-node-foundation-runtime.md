@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | M1 runtime, module format, dependency policy, and test runner |
 | Source of truth | `package.json`, this ADR, and focused tests; release compatibility remains open |
-| Evidence | Node `v25.2.1` local run; `npm test` passed 6 tests; `src/root-guard.js` and `test/root-guard.test.js` |
+| Evidence | Node `v25.2.1` local run; root-guard tests pass within the current 51-test suite; `src/root-guard.js` and `test/root-guard.test.js` |
 | Verification | Root-guard tests passed locally; cross-version CI/package verification is not available |
 | Limitations | Node minimum, public exports, CLI, package publication, and complete compatibility matrix require release review |
 

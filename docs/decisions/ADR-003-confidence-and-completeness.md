@@ -39,7 +39,7 @@ Unresolved relationships are normal analysis output. Each record keeps the sourc
 
 ### Diagnostics
 
-Diagnostics are structured and bounded. Planned codes include `PARSE_PARTIAL`, `UNSUPPORTED_SYNTAX`, `DYNAMIC_EXPRESSION`, `AMBIGUOUS_TARGET`, `OUTSIDE_ROOT`, `SNAPSHOT_DRIFT`, `RESOURCE_LIMIT`, `CACHE_REBUILT`, and `INTERNAL_INVARIANT`. An internal invariant failure is an internal error, not a clean incomplete result.
+Diagnostics are structured and bounded. Planned codes include `PARSE_PARTIAL`, `UNSUPPORTED_SYNTAX`, `DYNAMIC_EXPRESSION`, `AMBIGUOUS_TARGET`, `OUTSIDE_ROOT`, `PATH_NOT_FOUND`, `EXTERNAL_TARGET`, `SNAPSHOT_DRIFT`, `RESOURCE_LIMIT`, `CACHE_REBUILT`, and `INTERNAL_INVARIANT`. An internal invariant failure is an internal error, not a clean incomplete result.
 
 ## Consequences
 

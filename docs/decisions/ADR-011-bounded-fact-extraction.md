@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | FILE, CFML/CFC structural, mapping, include, invocation, instantiation, condition, scope-write, and dynamic facts |
 | Source of truth | `src/fact-extractor.js`, `src/cfml-scanner.js`, `test/fact-extractor.test.js`, `fixtures/golden/expected-facts-v0.1.json`, this ADR, and `SPEC.md` |
-| Evidence | `npm test`: 43 passed; produced fixture Fact IR validates against the Fact IR schema and repeats identically |
+| Evidence | `npm test`: 51 passed; produced fixture Fact IR validates against the Fact IR schema and repeats identically |
 | Verification | Golden structural expectations, dynamic/opaque cases, missing parser results, fact limits, and schema validation pass locally |
 | Limitations | No HTML/JavaScript/CSS/SQL extraction, full CFML grammar, cross-file resolution, or Graph IR producer exists |
 

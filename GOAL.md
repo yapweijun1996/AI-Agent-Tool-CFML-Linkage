@@ -1,6 +1,6 @@
 # Goal: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M3 IN PROGRESS.** This goal describes the intended product outcome; the M1 safety foundation and bounded M2 parser/scanner/Fact slices are implemented/verified, but linkage resolution is not implemented.
+> **Status: PROPOSED / M2–M4 IN PROGRESS.** This goal describes the intended product outcome; the M1 safety foundation, bounded M2 parser/scanner/Fact slices, bounded M3 path/Graph slices, and bounded M4 CFC resolution are implemented/verified, but full linkage resolution is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -10,7 +10,7 @@
 | Lifecycle | Prototype / safe-foundation implementation |
 | Source of truth | This repository's Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for state |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; subsequent local commits add the verified foundation and bounded extractors |
-| Verification | M1 foundation, bounded M2 CFML/web parser/scanner/Fact extraction, and 43 focused Node tests pass locally; linkage/runtime/package-release verification is absent |
+| Verification | M1 foundation, bounded M2 CFML/web parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC resolution, and 51 focused Node tests pass locally; linkage/runtime/package-release verification is absent |
 | Limitations | Public exports/CLI orchestration, parser/resolver, full runtime matrix, deployment model, and release compatibility are not established |
 
 ## Purpose
