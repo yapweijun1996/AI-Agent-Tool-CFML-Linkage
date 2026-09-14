@@ -98,13 +98,10 @@ function splitList(value) {
 
 function assignmentTarget(expression) {
   if (typeof expression !== "string") return null;
-  let target = "";
-  for (const character of expression) {
-    if (character === "=") break;
-    target += character;
-  }
-  target = normalizeText(target);
-  if (target === "" || target.includes("#") || target.includes(" ")) return null;
+  const equals = expression.indexOf("=");
+  if (equals <= 0) return null;
+  const target = normalizeText(expression.slice(0, equals));
+  if (target === "" || target.includes("#") || target.includes(" ") || /[\[\]()]/u.test(target)) return null;
   return target;
 }
 
@@ -177,7 +174,7 @@ function makeFact({ file, language, node, kind, normalizedExpression, enclosingS
   };
 }
 
-function makeDynamicFact({ file, language, node, sourceKind, expression, enclosingSymbol, condition = null, ordinal }) {
+function makeDynamicFact({ file, language, node, sourceKind, expression, enclosingSymbol, condition = null, unresolvedReason = "DYNAMIC_EXPRESSION", ordinal }) {
   return makeFact({
     file,
     language,
@@ -187,7 +184,7 @@ function makeDynamicFact({ file, language, node, sourceKind, expression, enclosi
     enclosingSymbol,
     condition,
     extractionRuleId: `dynamic-${sourceKind.toLowerCase()}-v0.1`,
-    attributes: { source_kind: sourceKind, dynamic: true },
+    attributes: { source_kind: sourceKind, dynamic: true, ...(unresolvedReason !== "DYNAMIC_EXPRESSION" ? { unresolved_reason: unresolvedReason } : {}) },
     ordinal,
   });
 }
@@ -335,10 +332,14 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
       const enclosingSymbol = methodName ?? componentName;
       const nodeLanguage = node.kind === "HTML_FORM" ? "html" : node.kind === "JS_FETCH" || node.kind === "JS_AJAX" || node.kind === "JS_ASSET" ? "javascript" : node.kind === "CSS_REFERENCE" ? "css" : node.kind === "SQL_QUERY" ? "sql" : language;
       activeCondition = currentCondition(conditionStack);
+      if (node.kind === "OPAQUE_REGION") {
+        if (node.dynamic_constructs?.includes("evaluate")) addFact(makeDynamicFact({ file, language: nodeLanguage, node, sourceKind: "GENERATED_SYMBOL", expression: "evaluate(...)", enclosingSymbol, unresolvedReason: "GENERATED_SYMBOL", ordinal: factOrdinal++ }));
+        continue;
+      }
       if (node.kind === "HTML_FORM") {
         const action = typeof node.action === "string" ? node.action : "";
         const dynamic = node.action_dynamic === true || action === "";
-        if (dynamic) addFact(makeDynamicFact({ file, language: nodeLanguage, node, sourceKind: "FORM", expression: action || "form action", enclosingSymbol, ordinal: factOrdinal++ }));
+        if (dynamic) addFact(makeDynamicFact({ file, language: nodeLanguage, node, sourceKind: "FORM", expression: (node.attributes?.find((item) => item.name === "action")?.value ?? action) || "form action", enclosingSymbol, ordinal: factOrdinal++ }));
         else addFact(makeFact({ file, language: nodeLanguage, node, kind: "FORM", normalizedExpression: action, enclosingSymbol, extractionRuleId: "html-form-action-v0.1", attributes: { action, method: normalizeText(node.method) || "GET" }, ordinal: factOrdinal++ }));
         continue;
       }
@@ -366,7 +367,7 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
       if (node.kind === "SQL_QUERY") {
         const tables = Array.isArray(node.tables) ? node.tables : [];
         const expression = tables.length > 0 ? tables.join(", ") : "visible sql query";
-        addFact(makeFact({ file, language: nodeLanguage, node, kind: "QUERY", normalizedExpression: expression, enclosingSymbol, extractionRuleId: "visible-sql-tables-v0.1", attributes: { tables, statement_kind: node.statement_kind ?? "visible_sql", datasource: node.datasource ?? null }, ordinal: factOrdinal++ }));
+        addFact(makeFact({ file, language: nodeLanguage, node, kind: "QUERY", normalizedExpression: expression, enclosingSymbol, extractionRuleId: "visible-sql-tables-v0.1", attributes: { tables, dynamic_tables: Array.isArray(node.dynamic_tables) ? node.dynamic_tables : [], statement_kind: node.statement_kind ?? "visible_sql", datasource: node.datasource ?? null, datasource_expression: node.datasource_expression ?? null, datasource_dynamic: node.datasource_dynamic === true }, ordinal: factOrdinal++ }));
         continue;
       }
       if (node.kind !== "CFML_TAG") continue;
@@ -420,7 +421,7 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
       }
       if (node.name === "cfquery") {
         const hasVisibleSqlNode = nodes.some((item) => item?.kind === "SQL_QUERY" && item.container_byte_start === node.byte_start);
-        if (!hasVisibleSqlNode) addFact(makeFact({ file, language, node, kind: "QUERY", normalizedExpression: `query ${literalAttribute(node, "name") ?? file}`, enclosingSymbol, extractionRuleId: "cfquery-container-v0.1", attributes: { query_name: literalAttribute(node, "name"), datasource: literalAttribute(node, "datasource"), datasource_dynamic: dynamicValue(node, ["datasource"]) }, ordinal: factOrdinal++ }));
+        if (!hasVisibleSqlNode) addFact(makeFact({ file, language, node, kind: "QUERY", normalizedExpression: `query ${literalAttribute(node, "name") ?? file}`, enclosingSymbol, extractionRuleId: "cfquery-container-v0.1", attributes: { query_name: literalAttribute(node, "name"), datasource: literalAttribute(node, "datasource"), datasource_expression: dynamicValue(node, ["datasource"]) ? nodeAttributes.datasource ?? null : null, dynamic_tables: [], datasource_dynamic: dynamicValue(node, ["datasource"]) }, ordinal: factOrdinal++ }));
         continue;
       }
       if (node.name === "cfinclude") {
@@ -464,7 +465,7 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
       if (node.name === "cfset") {
         const target = assignmentTarget(node.expression);
         if (target !== null) addFact(makeFact({ file, language, node, kind: "SCOPE_WRITE", normalizedExpression: target, enclosingSymbol, extractionRuleId: "cfset-scope-write-v0.1", attributes: { target, references: scopeReferences(node.expression.slice(node.expression.indexOf("=") + 1)) }, ordinal: factOrdinal++ }));
-        else addFact(makeDynamicFact({ file, language, node, sourceKind: "SCOPE_WRITE", expression: node.expression ?? "cfset", enclosingSymbol, ordinal: factOrdinal++ }));
+        else addFact(makeDynamicFact({ file, language, node, sourceKind: "SCOPE_WRITE", expression: node.expression ?? "cfset", enclosingSymbol, unresolvedReason: /(?:^|=)\s*#|[\[\]]|\bevaluate\s*\(/iu.test(node.expression ?? "") ? "GENERATED_SYMBOL" : "DYNAMIC_EXPRESSION", ordinal: factOrdinal++ }));
         continue;
       }
       if (node.name === "cfif" || node.name === "cfelseif") {

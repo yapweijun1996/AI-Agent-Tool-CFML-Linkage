@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | CLI arguments, JSON stdout, stderr diagnostics, exit codes, and current capability reporting |
 | Source of truth | `src/cli.js`, `bin/agent-cfml-linkage.js`, `test/cli.test.js`, this ADR, and `SPEC.md` |
-| Evidence | `npm test`: 59 passed, including capabilities, invalid input, config, root rejection, incomplete command, and no-execution cases |
+| Evidence | `npm test`: 60 passed, including capabilities, invalid input, config, root rejection, incomplete command, and no-execution cases |
 | Verification | Local Node subprocess tests pass; package-install, cross-platform, and released CLI checks remain unverified |
 | Limitations | The CLI does not yet orchestrate snapshot, parser, resolver, Graph IR, queries, or cache stages |
 

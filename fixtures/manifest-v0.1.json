@@ -99,7 +99,7 @@
         "dynamic-sql",
         "runtime-mapping"
       ],
-      "expected": "candidate-or-unresolved-with-expression",
+      "expected": "adversarial-dynamic-v0.1",
       "source_execution": false
     },
     {

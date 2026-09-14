@@ -52,6 +52,44 @@ function isNameCharacter(character) {
   return (code >= 48 && code <= 57) || (code >= 65 && code <= 90) || (code >= 97 && code <= 122) || character === "_" || character === ":" || character === "-";
 }
 
+function containsCall(text, name) {
+  let cursor = 0;
+  let quote = null;
+  while (cursor < text.length) {
+    const character = text[cursor];
+    if (quote !== null) {
+      if (character === "\\") cursor += 2;
+      else {
+        if (character === quote) quote = null;
+        cursor += 1;
+      }
+      continue;
+    }
+    if (text.startsWith("//", cursor)) {
+      const lineEnd = text.indexOf("\n", cursor + 2);
+      cursor = lineEnd === -1 ? text.length : lineEnd + 1;
+      continue;
+    }
+    if (text.startsWith("/*", cursor)) {
+      const blockEnd = text.indexOf("*/", cursor + 2);
+      cursor = blockEnd === -1 ? text.length : blockEnd + 2;
+      continue;
+    }
+    if (character === "\"" || character === "'") {
+      quote = character;
+      cursor += 1;
+      continue;
+    }
+    if (text.slice(cursor, cursor + name.length).toLowerCase() === name.toLowerCase() && !/[A-Za-z0-9_$]/u.test(text[cursor - 1] ?? "") && !/[A-Za-z0-9_$]/u.test(text[cursor + name.length] ?? "")) {
+      let after = cursor + name.length;
+      while (isWhitespace(text[after])) after += 1;
+      if (text[after] === "(") return true;
+    }
+    cursor += 1;
+  }
+  return false;
+}
+
 function isWhitespace(character) {
   if (character === undefined) return false;
   const code = character.charCodeAt(0);
@@ -292,10 +330,13 @@ export function createCfmlScannerBackend({ maxNodes = DEFAULT_MAX_NODES, maxAttr
               break;
             }
             if (closingStart > bodyStart) {
+              const body = text.slice(bodyStart, closingStart);
+              const dynamicConstructs = containsCall(body, "evaluate") ? ["evaluate"] : [];
               if (!addNode(nodes, {
                 kind: "OPAQUE_REGION",
                 name: "cfscript",
                 parsed: false,
+                ...(dynamicConstructs.length > 0 ? { dynamic_constructs: dynamicConstructs } : {}),
                 span: sourceMap.spanFromTextOffsets(bodyStart, closingStart),
                 byte_start: sourceMap.textOffsetToByteOffset(bodyStart),
                 byte_end: sourceMap.textOffsetToByteOffset(closingStart),

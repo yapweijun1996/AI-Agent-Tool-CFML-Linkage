@@ -1,6 +1,6 @@
 # Test Plan: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M5 IN PROGRESS.** This plan defines future verification; focused M1 and bounded M2–M5 parser/scanner/Fact/resolution suites exist.
+> **Status: PROPOSED / M2–M6 IN PROGRESS.** This plan defines future verification; focused M1 and bounded M2–M6 parser/scanner/Fact/resolution suites exist.
 
 | Field | Value |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Scope | Contract, determinism, safety, linkage, partial-result, and release verification |
 | Source of truth | This plan for intended verification; actual test output and CI for evidence |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local source includes the verified foundation and bounded extractors |
-| Verification | T-001–T-006 contract checks, produced Fact/Graph IR schema validation, and T-010–T-014/T-020–T-032 `npm test` (59/59) passed; broader project test suite does not exist |
+| Verification | T-001–T-006 contract checks, produced Fact/Graph IR schema validation, and T-010–T-014/T-020–T-033 `npm test` (60/60) passed; broader project test suite does not exist |
 | Limitations | Exact framework, parser fixtures, supported runtimes, and performance targets are not selected |
 
 ## 1. Verification principles
@@ -46,7 +46,7 @@ The current inert fixture set covers bounded cases; the full fixture matrix shou
 7. `cfquery`/`queryExecute` table reads/writes, datasource expressions, and dynamic identifiers;
 8. repository/action calls with structural evidence and filename-only non-evidence;
 9. CSS imports and statically visible assets;
-10. dynamic `evaluate`, `isDefined`, generated names, dynamic paths, and variable-dependent URLs;
+10. dynamic `evaluate`, `isDefined`, generated names, dynamic paths, variable-dependent URLs, interpolated SQL identifiers, and dynamic datasources;
 11. malformed CFML, embedded-language parse errors, comments/strings resembling syntax, and partial recovery.
 
 Each fixture should assert nodes, edges, confidence, evidence spans, conditions, ordering, unresolved records, diagnostics, and completeness—not just edge counts.
@@ -86,4 +86,4 @@ The current focused command is `npm test`, using Node's built-in test runner. No
 
 ## 7. Current result
 
-**T-001–T-006, T-010–T-014, and T-020–T-031 passed:** contract schemas/examples, identity/order, confidence/completeness, configuration, fixture-manifest, root-guard containment, deterministic discovery, snapshot fingerprint, symlink, limit, strict decoding, source maps, CLI envelope, stderr separation, cache invalidation/corruption, parser unavailable/partial/failure handling, bounded CFML scanning, structural Fact extraction, golden expectations, immutable index lookups, literal path resolution, bounded Graph IR construction/validation, reverse adjacency, bounded CFC mapping/inheritance/instantiation/invoke/method resolution, ordered scope production/consumption/override and resource-limit handling, web-flow condition/wrapper resolution, unsupported regions, and no-execution checks pass; `npm test` reports 59 passed and 0 failed, and the produced Fact/Graph IR validates against schema. This uses no project dependency beyond Node built-ins. Runtime producer repeatability beyond the current foundation tests, broader Graph linkage behavior, package smoke, browser, and engine checks remain unverified.
+**T-001–T-006, T-010–T-014, and T-020–T-033 passed:** contract schemas/examples, identity/order, confidence/completeness, configuration, fixture-manifest, root-guard containment, deterministic discovery, snapshot fingerprint, symlink, limit, strict decoding, source maps, CLI envelope, stderr separation, cache invalidation/corruption, parser unavailable/partial/failure handling, bounded CFML scanning, structural Fact extraction, golden expectations, immutable index lookups, literal path resolution, bounded Graph IR construction/validation, reverse adjacency, bounded CFC mapping/inheritance/instantiation/invoke/method resolution, ordered scope production/consumption/override and resource-limit handling, web-flow condition/wrapper resolution, dynamic/generated/SQL-dynamic preservation, unsupported regions, and no-execution checks pass; `npm test` reports 60 passed and 0 failed, and the produced Fact/Graph IR validates against schema. This uses no project dependency beyond Node built-ins. Runtime producer repeatability beyond the current foundation tests, broader Graph linkage behavior, package smoke, browser, and engine checks remain unverified.

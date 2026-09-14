@@ -423,27 +423,51 @@ function sqlTokens(text, start, end) {
   return tokens;
 }
 
+function isDynamicSqlIdentifier(text, token) {
+  return text[token.start - 1] === "#" || text[token.end] === "#";
+}
+
+function dynamicSqlExpression(text, token, end) {
+  const startsAtMarker = text[token.start - 1] === "#";
+  const opening = startsAtMarker ? token.start - 1 : text[token.end] === "#" ? token.end : -1;
+  const start = startsAtMarker ? token.start - 1 : token.start;
+  const close = opening >= 0 ? text.indexOf("#", opening + 1) : -1;
+  const finish = close >= 0 && close < end ? close + 1 : Math.min(end, token.end);
+  return text.slice(start, finish).trim().slice(0, 256) || `#${token.value}#`;
+}
+
 function sqlTableReferences(text, start, end) {
   const tokens = sqlTokens(text, start, end);
   const tables = [];
+  const dynamicTables = [];
   for (let index = 0; index < tokens.length; index += 1) {
     const keyword = tokens[index].value;
     let tableIndex = -1;
     if (keyword === "from" || keyword === "join" || keyword === "update" || keyword === "into") tableIndex = index + 1;
     else if (keyword === "delete" && tokens[index + 1]?.value === "from") tableIndex = index + 2;
     if (tableIndex < 0 || !tokens[tableIndex]) continue;
-    const table = tokens[tableIndex].value;
-    if (table !== "select" && table !== "(") tables.push(table);
+    const tableToken = tokens[tableIndex];
+    if (tableToken.value === "select" || tableToken.value === "(") continue;
+    if (isDynamicSqlIdentifier(text, tableToken)) dynamicTables.push(dynamicSqlExpression(text, tableToken, end));
+    else tables.push(tableToken.value);
   }
-  return [...new Set(tables)].sort();
+  return {
+    tables: [...new Set(tables)].sort(),
+    dynamicTables: [...new Set(dynamicTables)].sort(),
+  };
 }
 
 function sqlNode(text, start, end, sourceMap, file, attributes = {}) {
-  const tables = sqlTableReferences(text, start, end);
+  const references = sqlTableReferences(text, start, end);
   return {
     kind: "SQL_QUERY",
-    tables,
-    expression: tables.length > 0 ? `sql tables ${tables.join(", ")}` : "visible sql query",
+    tables: references.tables,
+    dynamic_tables: references.dynamicTables,
+    expression: references.tables.length > 0
+      ? `sql tables ${references.tables.join(", ")}`
+      : references.dynamicTables.length > 0
+        ? `sql dynamic identifiers ${references.dynamicTables.join(", ")}`
+        : "visible sql query",
     ...attributes,
     ...nodeSpan(sourceMap, start, end),
   };
@@ -495,7 +519,7 @@ function scanHtml(text, sourceMap, file, maxNodes, maxAttributeBytes, maxExpress
       if (closeStart === -1) {
         diagnostics.push(diagnostic("PARSE_PARTIAL", "error", "CFML query region is not terminated.", file, sourceMap, parsed.next, text.length));
         complete = false;
-      } else if (!addNode(nodes, sqlNode(text, parsed.next, closeStart, sourceMap, file, { statement_kind: "cfquery", datasource: staticAttribute(node, "datasource"), container_byte_start: node.byte_start }), diagnostics, maxNodes, file, sourceMap, cursor)) {
+      } else if (!addNode(nodes, sqlNode(text, parsed.next, closeStart, sourceMap, file, { statement_kind: "cfquery", datasource: staticAttribute(node, "datasource"), datasource_expression: attribute(node, "datasource")?.value ?? null, datasource_dynamic: staticAttribute(node, "datasource") === null && hasDynamicAttribute(node, ["datasource"]), container_byte_start: node.byte_start }), diagnostics, maxNodes, file, sourceMap, cursor)) {
         complete = false;
         break;
       }

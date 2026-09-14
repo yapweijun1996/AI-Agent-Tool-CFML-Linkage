@@ -256,7 +256,7 @@ export function resolveScopeLinks({ factBundle, resolutions = null, indexes = nu
     }
   }
 
-  for (const fact of facts.filter((item) => item.kind === "DYNAMIC_REFERENCE" && item.attributes?.source_kind === "SCOPE_WRITE")) addUnresolved(makeUnresolved({ fact, relationType: SCOPE_RELATIONS.PRODUCES, scopeName: fact.normalized_expression, reason: "DYNAMIC_EXPRESSION" }));
+  for (const fact of facts.filter((item) => item.kind === "DYNAMIC_REFERENCE" && item.attributes?.source_kind === "SCOPE_WRITE")) addUnresolved(makeUnresolved({ fact, relationType: SCOPE_RELATIONS.PRODUCES, scopeName: fact.normalized_expression, reason: fact.attributes?.unresolved_reason ?? "DYNAMIC_EXPRESSION" }));
   if (budget.eventLimit || budget.depthLimit || budget.recordLimit) {
     const limit = budget.eventLimit ? "events" : budget.depthLimit ? "include depth" : "records";
     diagnostics.push({ code: "SCOPE_RESOURCE_LIMIT", severity: "error", message: `Scope resolver limit exceeded: ${limit}.` });

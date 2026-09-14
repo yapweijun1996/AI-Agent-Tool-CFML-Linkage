@@ -150,7 +150,7 @@ export function resolveCfcLinks({ factBundle, indexes } = {}) {
   for (const fact of facts) {
     if (fact.kind === "DYNAMIC_REFERENCE") {
       const sourceKind = attribute(fact, "source_kind");
-      if (["COMPONENT", "METHOD", "INSTANTIATE", "INVOKE"].includes(sourceKind)) unresolved.push(makeUnresolved({ fact, relationType: dynamicRelation(sourceKind), expression: fact.normalized_expression, reason: "DYNAMIC_EXPRESSION", details: { source_kind: sourceKind } }));
+      if (["COMPONENT", "METHOD", "INSTANTIATE", "INVOKE"].includes(sourceKind)) unresolved.push(makeUnresolved({ fact, relationType: dynamicRelation(sourceKind), expression: fact.normalized_expression, reason: fact.attributes?.unresolved_reason ?? "DYNAMIC_EXPRESSION", details: { source_kind: sourceKind } }));
       continue;
     }
     if (fact.kind === "COMPONENT") {

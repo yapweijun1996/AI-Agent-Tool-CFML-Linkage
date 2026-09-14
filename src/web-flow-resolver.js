@@ -131,7 +131,7 @@ export function resolveWebFlowLinks({ factBundle, resolutions = null, maxRecords
         break;
       }
       const pathFailure = pathUnresolved(flowFact, resolutions);
-      const reason = pathFailure?.reason ?? (flowFact.kind === "DYNAMIC_REFERENCE" ? "DYNAMIC_EXPRESSION" : resolutions === null ? "MAPPING_UNKNOWN" : "PATH_NOT_FOUND");
+      const reason = pathFailure?.reason ?? (flowFact.kind === "DYNAMIC_REFERENCE" ? flowFact.attributes?.unresolved_reason ?? "DYNAMIC_EXPRESSION" : resolutions === null ? "MAPPING_UNKNOWN" : "PATH_NOT_FOUND");
       const candidateIds = candidates.length === 1 ? pathFailure?.candidates ?? [] : candidates;
       unresolved.push(makeUnresolved({ flowFact, candidates: candidateIds, reason }));
     }

@@ -280,7 +280,7 @@ export function resolveLiteralPaths({ factBundle, indexes, rootGuard } = {}) {
     if (fact.kind !== "DYNAMIC_REFERENCE") continue;
     const sourceKind = fact.attributes?.source_kind;
     const dynamicRelation = DYNAMIC_RELATIONS[sourceKind];
-    if (dynamicRelation) unresolved.push(makeUnresolved({ fact, relationType: dynamicRelation, reason: "DYNAMIC_EXPRESSION", expression: fact.normalized_expression, details: { source_kind: sourceKind } }));
+    if (dynamicRelation) unresolved.push(makeUnresolved({ fact, relationType: dynamicRelation, reason: fact.attributes?.unresolved_reason ?? "DYNAMIC_EXPRESSION", expression: fact.normalized_expression, details: { source_kind: sourceKind } }));
   }
   addApplicationResolutions({ facts, knownPaths, resolutions });
   resolutions.sort((left, right) => compareStrings([left.from_file, left.relation_type, left.to_file, left.resolution_id].join("\0"), [right.from_file, right.relation_type, right.to_file, right.resolution_id].join("\0")));

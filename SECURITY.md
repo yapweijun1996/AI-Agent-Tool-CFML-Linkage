@@ -8,8 +8,8 @@
 | Last updated | 2026-09-14 |
 | Scope | Threat boundaries for local static analysis |
 | Source of truth | This document for proposed security requirements; implementation and tests for actual controls |
-| Evidence | Current local source contains root guard, snapshot, decoder, parser/scanner, and Fact extraction controls; resolver/runtime code does not exist |
-| Verification | Root-guard containment/symlink, snapshot no-execution, strict-decoding, CLI safety, cache path/corruption, parser/scanner no-execution, bounded Fact extraction, and diagnostic-bound tests pass; broader security test suite does not exist |
+| Evidence | Current local source contains root guard, snapshot, decoder, parser/scanner, Fact extraction, bounded resolver, and dynamic-evidence controls; full runtime code does not exist |
+| Verification | Root-guard containment/symlink, snapshot no-execution, strict-decoding, CLI safety, cache path/corruption, parser/scanner no-execution, bounded Fact extraction, dynamic/generated/SQL-dynamic preservation, and diagnostic-bound tests pass; broader security test suite does not exist |
 | Limitations | Threat model, platform sandbox, dependency policy, and disclosure process require implementation-specific review |
 
 ## Security objectives
@@ -58,12 +58,12 @@ Before release, test:
 - unreadable files and invalid encodings;
 - secret-like source and bounded/redacted diagnostics;
 - maliciously large files and graph explosions;
-- dynamic expressions and embedded code that must not execute;
+- dynamic expressions, generated names, interpolated SQL identifiers, and embedded code that must not execute;
 - network/database/process instrumentation showing no prohibited access;
 - cache isolation, corruption handling, and stale-data invalidation;
 - plugin rejection or containment if plugins exist.
 
-The root-admission boundary is verified by the focused Node tests. No complete analyzer security review, dependency audit, runtime instrumentation, or release security verification exists.
+The root-admission, non-execution, and dynamic-evidence boundaries are verified by focused Node tests. No complete analyzer security review, dependency audit, runtime instrumentation, or release security verification exists.
 
 ## Reporting
 

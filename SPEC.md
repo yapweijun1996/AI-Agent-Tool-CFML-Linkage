@@ -9,7 +9,7 @@
 | Scope | Static cross-file linkage analysis for CFML-first mixed web projects |
 | Source of truth | This document for the proposed contract; Git history for current code facts |
 | Evidence | Initial repository commit `1b29c0b` contained only `.gitattributes`; current local source contains the verified foundation and bounded extractors |
-| Verification | Graph/Fact/config contract checks, produced Fact/Graph IR schema validation, and `npm test` foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow tests (59/59) pass; linkage contract/runtime verification is incomplete |
+| Verification | Graph/Fact/config contract checks, produced Fact/Graph IR schema validation, and `npm test` foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence tests (60/60) pass; linkage contract/runtime verification is incomplete |
 | Limitations | Parser coverage, resolver accuracy, performance, compatibility, and release status are unverified |
 
 ## 1. Objective
@@ -39,7 +39,7 @@ The future API accepts:
 
 The implementation MUST canonicalize the root, reject traversal and symlink escapes, enforce root containment, freeze policy before discovery, and report rejected paths explicitly. The v0.1 configuration contract is `schema/agent-cfml-linkage-config-v0.1.schema.json` with example `examples/config-v0.1.json`; its root-safety, prohibited-action, limit, output, and exit-code invariants validate locally. The M1 root guard in `src/root-guard.js`, byte snapshot in `src/snapshot.js`, and strict decoder/map in `src/source-map.js` now implement and test the initial boundary; project-specific mappings are configuration, not hardcoded Globe3 behavior.
 
-The M1 snapshot currently discovers `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.js`, `.mjs`, `.css`, and `.sql` deterministically. The M1 decoder accepts strict UTF-8 only and maps byte offsets to one-based lines and zero-based UTF-16 columns. The M2 parser adapter now owns a fail-closed backend boundary and explicit partial/unsupported diagnostics. Dependency-free bounded CFML/web structural scanners and a fixture-backed Fact extractor are available as explicit components, while the default adapter remains unselected and full grammar coverage/resolution are unresolved. Visible SQL table extraction is bounded; SQL semantics, dynamic query resolution, and cross-file linkage remain later concerns.
+The M1 snapshot currently discovers `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.js`, `.mjs`, `.css`, and `.sql` deterministically. The M1 decoder accepts strict UTF-8 only and maps byte offsets to one-based lines and zero-based UTF-16 columns. The M2 parser adapter now owns a fail-closed backend boundary and explicit partial/unsupported diagnostics. Dependency-free bounded CFML/web structural scanners and a fixture-backed Fact extractor are available as explicit components, while the default adapter remains unselected and full grammar coverage/resolution are unresolved. Visible SQL table extraction is bounded; T-033 now preserves interpolated SQL identifiers and dynamic datasources as unresolved evidence, while SQL semantics, target resolution, and cross-file linkage remain later concerns.
 
 ### 3.1 Current repository contract evidence
 
@@ -51,7 +51,7 @@ The proposed pipeline is:
 
 `Root Guard → Snapshot/Discovery → Decode/Source Map → Parse → Fact Extraction → Project Index → Resolution Passes → Evidence/Confidence → Graph Build → Validate → Cache → Query → CLI/JSON`.
 
-Each stage has typed boundaries and may emit diagnostics. Cross-file stages consume normalized Fact IR rather than parser-specific AST nodes. No stage mutates source files. The implemented parser adapter and bounded Fact extractor do not resolve across files; they normalize parser state and emit fixture-backed structural facts only. The internal T-023 index builder creates immutable lookup indexes, T-024 provides conservative literal path/Application resolution, and T-025 builds/validates bounded Graph IR, T-030 resolves bounded literal CFC relationships, and T-031 resolves bounded ordered scope relationships, and T-032 resolves bounded web-flow condition relationships without broader cross-file resolution.
+Each stage has typed boundaries and may emit diagnostics. Cross-file stages consume normalized Fact IR rather than parser-specific AST nodes. No stage mutates source files. The implemented parser adapter and bounded Fact extractor do not resolve across files; they normalize parser state, preserve bounded dynamic/generated/SQL-dynamic evidence, and emit fixture-backed structural facts only. The internal T-023 index builder creates immutable lookup indexes; T-024 provides conservative literal path/Application resolution; T-025 builds/validates bounded Graph IR; T-030 resolves bounded literal CFC relationships; T-031/T-032 resolve bounded ordered scope and web-flow condition relationships; and T-033 preserves bounded dynamic/generated/SQL-dynamic evidence without broader cross-file resolution.
 
 ### 4.0 Fact IR contract
 
@@ -131,10 +131,11 @@ Unresolved records are successful analysis output, not internal errors. Planned 
 4. **Method resolver:** infer receiver types only from bounded evidence such as explicit types, instantiation, properties, arguments, and unique inheritance chains.
 5. **Scope resolver:** preserve ordered `cfinclude` context and emit scope-flow edges only when variable identity and order are supported; T-031 implements bounded produces/consumes/overrides evidence. `evaluate`, `isDefined`, generated names, and unscoped page variables remain dynamic unless exactly foldable.
 6. **Web-flow resolver:** connect explicit conditions to unique supplied literal form/AJAX/fetch/redirect targets; retain dynamic URL expressions and variable dependencies rather than guessing endpoints.
-7. **SQL resolver:** parse statically visible SQL and keep datasource expressions separate. SQL edges describe syntax only.
-8. **Conditional router resolver:** attach `if`, `switch`, `cfcase`, ternary, and mapping conditions; do not flatten runtime branches into unconditional calls.
-9. **Repository resolver:** require structural evidence for repository/action relationships; filename-only inference is insufficient.
-10. **CSS resolver:** record statically visible imports/assets without claiming browser or build-tool resolution.
+7. **Dynamic evidence:** preserve generated names, opaque `evaluate(...)`, interpolated SQL identifiers, and dynamic datasources as unresolved records with bounded expressions; never infer targets.
+8. **SQL resolver:** parse statically visible SQL and keep datasource expressions separate. SQL edges describe syntax only; T-033 does not resolve dynamic identifiers.
+9. **Conditional router resolver:** attach `if`, `switch`, `cfcase`, ternary, and mapping conditions; do not flatten runtime branches into unconditional calls.
+10. **Repository resolver:** require structural evidence for repository/action relationships; filename-only inference is insufficient.
+11. **CSS resolver:** record statically visible imports/assets without claiming browser or build-tool resolution.
 
 ## 6. Determinism, limits, and failure
 

@@ -188,7 +188,7 @@ function confidenceReason(resolution) {
 function unresolvedGraphRecord(unresolved, fact, sourceNodeId) {
   const reason = ["DYNAMIC_EXPRESSION", "AMBIGUOUS_PATH", "AMBIGUOUS_COMPONENT", "AMBIGUOUS_METHOD", "MAPPING_UNKNOWN", "OUTSIDE_ROOT", "PATH_NOT_FOUND", "EXTERNAL_TARGET", "GENERATED_SYMBOL", "SQL_DYNAMIC_IDENTIFIER", "UNSUPPORTED_SYNTAX", "PARSE_PARTIAL"].includes(unresolved.reason) ? unresolved.reason : "UNSUPPORTED_SYNTAX";
   return {
-    id: unresolved.unresolved_id?.startsWith("unresolved:") ? unresolved.unresolved_id : `unresolved:${sha256([fact.fact_id, unresolved.relation_type, unresolved.reason].join("\0"))}`,
+    id: unresolved.unresolved_id?.startsWith("unresolved:") ? unresolved.unresolved_id : `unresolved:${sha256([fact.fact_id, unresolved.relation_type, unresolved.reason, unresolved.normalized_expression ?? fact.normalized_expression, ...(Array.isArray(unresolved.candidates) ? unresolved.candidates : [])].join("\0"))}`,
     source_node: sourceNodeId,
     relation_type: unresolved.relation_type,
     expression: String(unresolved.normalized_expression || fact.normalized_expression || fact.kind).slice(0, 4096),
@@ -366,7 +366,11 @@ export function buildGraph({ factBundle, resolutions = null, snapshot = null, ro
       }
     }
     if (relationForFact(fact) && !resolvedFactIds.has(fact.fact_id) && !resolverUnresolvedFactIds.has(fact.fact_id)) addUnresolved({ relation_type: relationForFact(fact), reason: "UNSUPPORTED_SYNTAX", normalized_expression: fact.normalized_expression, span: fact.span }, fact);
-    if (fact.kind === "DYNAMIC_REFERENCE" && !resolverUnresolvedFactIds.has(fact.fact_id)) addUnresolved({ relation_type: unresolvedRelationForFact(fact), reason: "DYNAMIC_EXPRESSION", normalized_expression: fact.normalized_expression, span: fact.span }, fact);
+    if (fact.kind === "DYNAMIC_REFERENCE" && !resolverUnresolvedFactIds.has(fact.fact_id)) addUnresolved({ relation_type: unresolvedRelationForFact(fact), reason: fact.attributes?.unresolved_reason ?? "DYNAMIC_EXPRESSION", normalized_expression: fact.normalized_expression, span: fact.span }, fact);
+    if (fact.kind === "QUERY") {
+      for (const identifier of Array.isArray(fact.attributes?.dynamic_tables) ? fact.attributes.dynamic_tables : []) addUnresolved({ relation_type: "QUERY_READS_TABLE", reason: "SQL_DYNAMIC_IDENTIFIER", normalized_expression: identifier, span: fact.span }, fact);
+      if (fact.attributes?.datasource_dynamic === true) addUnresolved({ relation_type: "QUERY_USES_DATASOURCE", reason: "DYNAMIC_EXPRESSION", normalized_expression: fact.attributes?.datasource_expression ?? fact.normalized_expression, span: fact.span }, fact);
+    }
     if ((fact.kind === "INSTANTIATE" || fact.kind === "INVOKE" || fact.kind === "MAPPING") && !resolvedFactIds.has(fact.fact_id) && !resolverUnresolvedFactIds.has(fact.fact_id)) addUnresolved({ relation_type: unresolvedRelationForFact(fact), reason: "MAPPING_UNKNOWN", normalized_expression: fact.normalized_expression, span: fact.span }, fact);
     if (fact.kind === "COMPONENT") {
       const extendsName = fact.attributes?.extends;

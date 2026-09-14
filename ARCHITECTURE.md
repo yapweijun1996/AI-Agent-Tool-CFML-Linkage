@@ -1,6 +1,6 @@
 # Architecture: agent-cfml-linkage
 
-> **Status: PROPOSED / M2 IN PROGRESS.** The M1 foundation and bounded M2 parser/scanner/Fact slices exist; the remaining architecture is not implemented.
+> **Status: PROPOSED / M2–M6 IN PROGRESS.** The M1 foundation and bounded M2 parser/scanner/Fact slices exist; the remaining architecture is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -9,12 +9,12 @@
 | Scope | Component boundaries, data flow, ownership, and failure behavior |
 | Source of truth | This document for proposed architecture; Git history for current code facts |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
-| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact tests pass locally; remaining architecture is unverified |
+| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/resolver/dynamic-evidence tests pass locally; remaining architecture is unverified |
 | Limitations | Parser feasibility, runtime compatibility, resource costs, and public package compatibility are unknown; M1 uses Node built-ins only |
 
 ## 1. Boundary
 
-The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1–M5 bounded slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, a private CLI envelope, bounded parser scanners, Fact evidence, immutable indexes, and conservative literal resolution; Bounded Graph IR production/validation is implemented in `src/graph.js`, bounded CFC resolution is implemented in `src/cfc-resolver.js`, and bounded shared-scope resolution is implemented in `src/scope-resolver.js`; broader linkage resolution and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
+The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1–M6 bounded slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, a private CLI envelope, bounded parser scanners, Fact evidence, immutable indexes, conservative literal resolution, and dynamic/generated/SQL-dynamic preservation; Bounded Graph IR production/validation is implemented in `src/graph.js`, bounded CFC resolution is implemented in `src/cfc-resolver.js`, bounded shared-scope resolution is implemented in `src/scope-resolver.js`, and bounded web-flow resolution is implemented in `src/web-flow-resolver.js`; broader linkage resolution and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
 
 ```text
 Local source + explicit policy
@@ -39,7 +39,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Parser adapter | explicit backend boundary, bounded CFML/web structural scanners, syntax trees, parser diagnostics, completeness; default backend remains unselected | cross-file resolution |
 | Fact extractor | normalized CFML/web Fact IR and extraction evidence | target selection |
 | Project index | immutable path, symbol, mapping, application, query, and per-file fact indexes; unique/ambiguous/missing lookup states | mutable resolution state |
-| Resolver passes | bounded candidate/target resolution in `src/path-resolver.js`, `src/cfc-resolver.js`, and `src/scope-resolver.js`; unresolved/ambiguous states | index mutation or authoritative guessing |
+| Resolver passes | bounded candidate/target resolution in `src/path-resolver.js`, `src/cfc-resolver.js`, `src/scope-resolver.js`, and `src/web-flow-resolver.js`; unresolved/ambiguous/dynamic states | index mutation or authoritative guessing |
 | Evidence policy | evidence merge and confidence classes | parser-specific parsing |
 | Graph builder/validator | Graph IR construction, invariants, serialization readiness | generic business interpretation |
 | Cache | optional derived performance state | source of truth or stale-data authority |
@@ -56,7 +56,7 @@ Core owns stable IDs, confidence policy, root safety, validation, and output con
 4. **Facts:** convert syntax into parser-neutral facts.
 5. **Index:** `src/project-index.js` builds complete immutable indexes before resolution.
 6. **Resolve:** run ordered, read-only resolver passes; T-024 currently covers literal paths and basic Application governance/hooks.
-7. **Evidence:** classify each result and retain ambiguity.
+7. **Evidence:** classify each result and retain ambiguity, including dynamic/generated/SQL-dynamic reasons.
 8. **Graph:** create nodes, edges, unresolved records, diagnostics, and stats.
 9. **Validate:** check schema, references, determinism, completeness, and safety invariants.
 10. **Serve:** cache validated derived data and answer bounded queries.
@@ -94,7 +94,7 @@ The architecture treats incomplete analysis as data:
 - syntax errors produce partial parse diagnostics where recovery is safe;
 - unsupported syntax produces explicit unresolved evidence;
 - ambiguous names retain candidate targets;
-- dynamic values retain expressions and dependencies;
+- dynamic/generated/SQL-dynamic values retain bounded expressions and dependencies;
 - out-of-root targets are rejected;
 - snapshot drift invalidates completeness;
 - resource caps return `complete=false` and identify the exhausted budget;
