@@ -53,6 +53,10 @@ The proposed pipeline is:
 
 Each stage has typed boundaries and may emit diagnostics. Cross-file stages consume normalized Fact IR rather than parser-specific AST nodes. No stage mutates source files.
 
+### 4.0 Fact IR contract
+
+The parser-independent Fact IR bundle is defined by `schema/agent-cfml-linkage-fact-v0.1.schema.json` with a representative fixture at `examples/facts-v0.1.json`. It records source files, parser identity/completeness, normalized facts, source spans, enclosing symbols, conditions, extraction rule IDs, diagnostics, and counts. The schema and fixture validate locally; no parser or Fact IR producer is implemented.
+
 ### 4.1 Planned linkage families
 
 | Family | Planned relationships |

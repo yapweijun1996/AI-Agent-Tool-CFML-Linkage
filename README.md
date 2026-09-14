@@ -36,7 +36,7 @@ The intended output is a deterministic Graph IR/JSON document that agents can qu
 
 The repository is at contract-only inception. The Graph IR schema/example contract is implemented and locally validated; there is still no analyzer runtime code from which to claim linkage behavior. The following remain **planned**, not available:
 
-- parser and normalized Fact IR
+- parser/extractor runtime that produces Fact IR (the proposed Fact IR schema/example contract now exists at `schema/agent-cfml-linkage-fact-v0.1.schema.json` and `examples/facts-v0.1.json`)
 - project index and multi-pass resolvers
 - Graph IR runtime implementation (the proposed JSON Schema contract and example now exist at `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`)
 - CLI/library API

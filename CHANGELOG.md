@@ -18,8 +18,8 @@
 
 - Project classification and status boundaries in `README.md`.
 - Goal, progress state, and autonomous execution contract in `GOAL.md`, `PROGRESS.md`, and `GOAL_PROMPT.md`.
-- Proposed functional contract in `SPEC.md` plus the validated Graph IR schema/example contract in `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`.
-- Proposed staged pipeline in `DESIGN.md`; T-001 schema/reference/count validation passed using the existing local Python `jsonschema` module.
+- Proposed functional contract in `SPEC.md` plus validated Graph IR and Fact IR schema/example contracts in `schema/` and `examples/`.
+- Proposed staged pipeline in `DESIGN.md`; T-001/T-002 schema, reference, count, source, and span validation passed using the existing local Python `jsonschema` module.
 - Proposed component ownership and data flow in `ARCHITECTURE.md`.
 - Proposed epic, roadmap, task register, and test plan.
 - Repository guidance and Core SSOT rules in `AGENTS.md`.

@@ -25,7 +25,7 @@
 | --- | --- | --- | --- | --- | --- |
 | Goal and product boundary | Yes | No | No | No | `GOAL.md`, ADR-001 |
 | Graph IR JSON Schema/example | Yes | Yes | Yes | No | `schema/agent-cfml-linkage-graph-v0.1.schema.json`, `examples/graph-v0.1.json`, local `jsonschema`/reference/count validation |
-| Fact IR contract | Yes | No | No | No | `SPEC.md`, `DESIGN.md`; T-002 remains open |
+| Fact IR JSON Schema/example | Yes | Yes | Yes | No | `schema/agent-cfml-linkage-fact-v0.1.schema.json`, `examples/facts-v0.1.json`, local validation |
 | Staged architecture | Yes | No | No | No | `DESIGN.md`, `ARCHITECTURE.md` |
 | Parser/extractor/resolvers | Yes | No | No | No | No source files |
 | CLI/library/API | Yes | No | No | No | No manifest or entry point |
@@ -34,7 +34,7 @@
 
 ## Progress basis
 
-The implementation roadmap has 10 milestones, M0–M9. **Completed: 0/10; implemented: 0/10; verified: 0/10; released: 0/10.** M0 is in progress: **T-001 is verified; T-002–T-006 remain open**. The documentation and contract artifacts are not counted as a completed implementation milestone.
+The implementation roadmap has 10 milestones, M0–M9. **Completed: 0/10; implemented: 0/10; verified: 0/10; released: 0/10.** M0 is in progress: **T-001 and T-002 are verified; T-003–T-006 remain open**. The documentation and contract artifacts are not counted as a completed implementation milestone.
 
 Core documentation coverage is now the current work product: goal, design, specification, epic, roadmap, task register, progress report, autonomous goal prompt, architecture, test plan, security, release policy, changelog, and ADR.
 
@@ -44,12 +44,12 @@ Core documentation coverage is now the current work product: goal, design, speci
 - Inspected tracked tree, Git status/history, configuration, manifests, dependencies, source, entry points, tests, scripts, CI, release files, and docs.
 - Confirmed no runnable implementation or product runtime is available.
 - Synchronized the Core SSOT documents without converting proposed runtime design into implementation claims.
-- Added and validated the Graph IR v0.1 schema/example contract for T-001; this does not implement the analyzer runtime.
+- Added and validated the Graph IR v0.1 and Fact IR v0.1 schema/example contracts for T-001/T-002; these do not implement the analyzer runtime.
 - Preserved the boundary with external `agent-cfml-check`, `agent-code-slice`, `agent-change-impact`, and `agent-test-scope` work.
 
 ## Blockers and unresolved decisions
 
-1. **M0 contract freeze:** Fact IR, diagnostics, IDs, limits, configuration, parser boundary, and fixture contract still require review before coding; Graph IR schema/example is the verified first slice.
+1. **M0 contract freeze:** diagnostics, IDs, limits, configuration, parser boundary, remaining semantics, and fixture contract still require review before coding; Graph IR and Fact IR schema/examples are verified first slices.
 2. **Parser strategy:** parser and supported syntax subset are not selected; choose behind the adapter using fixture evidence.
 3. **Package/runtime contract:** package name, language/runtime versions, public exports, CLI commands, and CI matrix are unknown.
 4. **Compatibility evidence:** Lucee/Adobe/browser/runtime claims cannot be made until environments and fixtures exist.
@@ -71,4 +71,4 @@ These are documented planning blockers, not reasons to claim failure. No externa
 
 ## Next task / resume point
 
-**Next task: M0 / T-002–T-006 — define Fact IR, stable IDs, confidence/unresolved semantics, root policy, limits, and initial golden fixtures.** Do not begin broad resolver implementation before the remaining contracts and fixtures are reviewed.
+**Next task: M0 / T-003–T-006 — define stable IDs, confidence/unresolved semantics, root policy, limits, and initial golden fixtures.** Do not begin broad resolver implementation before the remaining contracts and fixtures are reviewed.

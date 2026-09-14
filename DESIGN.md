@@ -9,7 +9,7 @@
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Not run; all stages below are unimplemented proposals |
+| Verification | Graph IR and Fact IR schema/example contracts validate locally; runtime stages below remain unimplemented proposals |
 | Limitations | Parser choice, language coverage, performance, and engine compatibility remain unknown |
 
 ## 1. Design goals
@@ -73,7 +73,7 @@ A CFML Tree-sitter grammar may be used as the preferred foundation, but parser c
 
 Convert parser output into parser-independent facts. Planned facts include `FileFact`, `IncludeFact`, `CustomTagFact`, `ComponentFact`, `MethodFact`, `InstantiateFact`, `InvokeFact`, `FormFact`, `RedirectFact`, `AjaxFact`, `FetchFact`, `QueryFact`, `ScopeReadFact`, `ScopeWriteFact`, `ConditionFact`, `MappingFact`, `ApplicationHookFact`, `DynamicReferenceFact`, and `CssAssetFact`.
 
-Each fact has a stable local `fact_id`, source span, normalized expression, enclosing symbol or condition, and extraction rule ID. Fact extraction does not resolve across files.
+Each fact has a stable local `fact_id`, source span, normalized expression, enclosing symbol or condition, and extraction rule ID. The machine-readable Fact IR contract and fixture are `schema/agent-cfml-linkage-fact-v0.1.schema.json` and `examples/facts-v0.1.json`; both validate locally. Fact extraction does not resolve across files.
 
 ### Stage 5 — immutable project index
 
@@ -165,7 +165,7 @@ The sequence is dependency-aware but not a schedule. M0 must freeze the contract
 
 | Milestone | Content | Current status |
 | --- | --- | --- |
-| M0 | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and golden-fixture contract | Not started |
+| M0 | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and golden-fixture contract | In progress — T-001/T-002 verified |
 | M1 | Safe root guard, snapshot, decoder, discovery, cache skeleton, CLI envelope | Not started |
 | M2 | Parser adapter and normalized extraction | Not started |
 | M3 | Basic path/Application/include linkage and graph validation | Not started |

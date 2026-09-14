@@ -25,7 +25,7 @@
 
 ## Immediate blocker
 
-**BLOCKED — the M0 contract freeze is incomplete.** T-001 now provides a validated Graph IR schema/example, but Fact IR, supported syntax boundary, configuration, parser selection criteria, limits, and golden fixtures remain open before feature implementation can be accepted.
+**BLOCKED — the M0 contract freeze is incomplete.** T-001 and T-002 now provide validated Graph IR and Fact IR schema/examples, but supported syntax boundary, configuration, parser selection criteria, limits, remaining semantics, and golden fixtures remain open before feature implementation can be accepted.
 
 This blocks implementation tasks, not documentation maintenance.
 
@@ -34,7 +34,7 @@ This blocks implementation tasks, not documentation maintenance.
 | ID | Executable work | Priority | Status | Dependencies | Done/evidence |
 | --- | --- | --- | --- | --- | --- |
 | T-001 | Define Graph IR JSON Schema and examples | P0 | Verified | None | `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`; local schema/reference/count validation passed |
-| T-002 | Define normalized Fact IR and source-span rules | P0 | Planned | T-001 | Reviewed types + fixture assertions |
+| T-002 | Define normalized Fact IR and source-span rules | P0 | Verified | T-001 | `schema/agent-cfml-linkage-fact-v0.1.schema.json` and `examples/facts-v0.1.json`; local schema/source/count/span validation passed |
 | T-003 | Define stable IDs, ordering, freshness, and deduplication | P0 | Planned | T-001/T-002 | Repeatability and identity tests |
 | T-004 | Define confidence, unresolved reasons, diagnostics, completeness | P0 | Planned | T-001/T-002 | Contract and negative tests |
 | T-005 | Define root policy, ignores, limits, configuration, and exit codes | P0 | Planned | T-001 | Safety and CLI contract tests |
@@ -70,4 +70,4 @@ This blocks implementation tasks, not documentation maintenance.
 - **M4–M7:** T-030–T-035 — linkage depth and queries.
 - **M8–M9:** T-040–T-044 — verification and release.
 
-T-001 is Verified. T-002–T-006 and all later tasks remain Planned. The next task is T-002, subject to the remaining M0 contract-freeze review.
+T-001 and T-002 are Verified. T-003–T-006 and all later tasks remain Planned. The next task is T-003, subject to the remaining M0 contract-freeze review.
