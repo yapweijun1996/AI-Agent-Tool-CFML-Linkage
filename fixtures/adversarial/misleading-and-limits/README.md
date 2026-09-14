@@ -1,5 +1,5 @@
 # Adversarial case: misleading syntax and limits
 
-> **Status: PLANNED INPUT.** Directory reserved by the v0.1 fixture manifest; inert source and expected output are pending safe-foundation implementation.
+> **Status: VERIFIED / INERT INPUT.** The fixture preserves real bounded evidence while ignoring syntax-like comments and strings; include cycles remain incomplete.
 
-Coverage: comments/strings resembling syntax, cycles, resource caps, output bounds, and snapshot drift. Nothing in this case may be executed.
+Coverage: CFML/HTML/JavaScript/CSS comments and strings, ordered include cycles, and bounded incomplete evidence. `expected-misleading-v0.1.json` records the expected facts and cycle diagnostic; file/graph/output limits remain covered by focused tests. Nothing in this case may be executed.

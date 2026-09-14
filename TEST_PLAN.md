@@ -1,6 +1,6 @@
 # Test Plan: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M8 IN PROGRESS.** This plan defines future verification; focused M1 and bounded M2–M8 parser/scanner/Fact/resolution/query/robustness suites exist.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** This plan defines future verification; focused M1 and bounded M2–M9 parser/scanner/Fact/resolution/query/robustness/adversarial/check suites exist.
 
 | Field | Value |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Scope | Contract, determinism, safety, linkage, partial-result, and release verification |
 | Source of truth | This plan for intended verification; actual test output and CI for evidence |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local source includes the verified foundation and bounded extractors |
-| Verification | T-001–T-006 contract checks, produced Fact/Graph IR schema validation, and T-010–T-014/T-020–T-035/T-040 `npm test` (65/65) passed; broader project test suite does not exist |
+| Verification | T-001–T-006 contract checks, produced Fact/Graph IR schema validation, and T-010–T-014/T-020–T-035/T-040/T-041/T-042 `npm test` (68/68) passed; broader project test suite does not exist |
 | Limitations | Exact framework, parser fixtures, supported runtimes, and performance targets are not selected |
 
 ## 1. Verification principles
@@ -86,4 +86,4 @@ The current focused command is `npm test`, using Node's built-in test runner. No
 
 ## 7. Current result
 
-**T-001–T-006, T-010–T-014, T-020–T-035, and T-040 passed:** contract schemas/examples, identity/order, confidence/completeness, configuration, fixture-manifest, root-guard containment, deterministic discovery, snapshot fingerprint, symlink, limit, strict decoding, source maps, CLI envelope, stderr separation, cache invalidation/corruption, parser unavailable/partial/failure handling, bounded CFML scanning, structural Fact extraction, golden expectations, immutable index lookups, literal path resolution, bounded Graph IR construction/validation, reverse adjacency, bounded CFC mapping/inheritance/instantiation/invoke/method resolution, ordered scope production/consumption/override and resource-limit handling, web-flow condition/wrapper resolution, dynamic/generated/SQL-dynamic preservation, bounded `cfquery`/`queryExecute` SQL and structural repository/action resolution, immutable GraphSnapshot queries, exact-selector ambiguity, deterministic explanations, traversal bounds, repeatability, content drift, cache invalidation/corruption, cycle safety, resource limits, unsupported regions, and no-execution checks pass; `npm test` reports 65 passed and 0 failed, and the produced Fact/Graph IR validates against schema. This uses no project dependency beyond Node built-ins. Runtime producer repeatability beyond the current foundation tests, full CLI orchestration, broader Graph linkage behavior, package smoke, browser, and engine checks remain unverified.
+**T-001–T-006, T-010–T-014, T-020–T-035, and T-040–T-042 passed:** contract schemas/examples, identity/order, confidence/completeness, configuration, fixture-manifest, root-guard containment, deterministic discovery, snapshot fingerprint, symlink, limit, strict decoding, source maps, CLI envelope, stderr separation, cache invalidation/corruption, parser unavailable/partial/failure handling, bounded CFML scanning, structural Fact extraction, golden expectations, immutable index lookups, literal path resolution, bounded Graph IR construction/validation, reverse adjacency, bounded CFC mapping/inheritance/instantiation/invoke/method resolution, ordered scope production/consumption/override and resource-limit handling, web-flow condition/wrapper resolution, dynamic/generated/SQL-dynamic preservation, bounded `cfquery`/`queryExecute` SQL and structural repository/action resolution, immutable GraphSnapshot queries, exact-selector ambiguity, deterministic explanations, traversal bounds, repeatability, content drift, cache invalidation/corruption, cycle safety, resource limits, inert adversarial safe-failure fixtures, unsupported regions, and no-execution checks pass; `npm test` reports 68 passed and 0 failed, and the produced Fact/Graph IR validates against schema. This uses no project dependency beyond Node built-ins. Runtime producer repeatability beyond the current foundation tests, full CLI orchestration, broader Graph linkage behavior, public package publication, browser, and engine checks remain unverified; local private package/CLI smoke passed.

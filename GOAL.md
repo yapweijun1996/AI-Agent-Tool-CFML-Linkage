@@ -1,6 +1,6 @@
 # Goal: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M8 IN PROGRESS.** This goal describes the intended product outcome; the M1 safety foundation, bounded M2 parser/scanner/Fact slices, bounded M3 path/Graph slices, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries, and bounded M8 robustness evidence are implemented/verified, but full linkage resolution is not implemented.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** This goal describes the intended product outcome; the M1 safety foundation, bounded M2 parser/scanner/Fact slices, bounded M3 path/Graph slices, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries, bounded M8 robustness/adversarial safe-failure evidence, and bounded M9 checks/package smoke are implemented/verified, but full linkage resolution is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -10,7 +10,7 @@
 | Lifecycle | Prototype / safe-foundation implementation |
 | Source of truth | This repository's Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for state |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; subsequent local commits add the verified foundation and bounded extractors |
-| Verification | M1 foundation, bounded M2 CFML/web parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC resolution, bounded M5 scope/web-flow resolution, bounded M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries, bounded M8 robustness evidence, and 65 focused Node tests pass locally; linkage/runtime/package-release verification is absent |
+| Verification | M1 foundation, bounded M2 CFML/web parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC resolution, bounded M5 scope/web-flow resolution, bounded M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries, bounded M8 robustness evidence, and 68 focused Node tests pass locally; linkage/runtime/package-release verification is absent |
 | Limitations | Public exports/CLI orchestration, full parser/resolver, full runtime matrix, deployment model, and release compatibility are not established; bounded query APIs remain internal |
 
 ## Purpose
@@ -52,4 +52,4 @@ The goal is achieved only when a release has:
 
 ## State model
 
-The project must track **Planned → Implemented → Verified → Released** independently. M0/M1, bounded M2 parser/scanner/Fact extraction, bounded M3–M6 linkage, bounded M7 queries, and bounded M8 robustness evidence are verified; full parser coverage, orchestration, public package, and release remain incomplete/unreleased.
+The project must track **Planned → Implemented → Verified → Released** independently. M0/M1, bounded M2 parser/scanner/Fact extraction, bounded M3–M6 linkage, bounded M7 queries, bounded M8 robustness/adversarial safe-failure evidence, and bounded M9 checks/package smoke are verified; full parser coverage, orchestration, public package, and release remain incomplete/unreleased.

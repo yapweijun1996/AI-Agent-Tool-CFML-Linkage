@@ -600,6 +600,20 @@ function scanHtml(text, sourceMap, file, maxNodes, maxAttributeBytes, maxExpress
     }
     const node = parsed.node;
     const action = staticAttribute(node, "action");
+    if (CFML_EXTENSIONS.has(extensionFor(file)) && node.name === "cfscript") {
+      const closeStart = findClosingTag(text, "cfscript", parsed.next);
+      if (closeStart === -1) {
+        diagnostics.push(diagnostic("PARSE_PARTIAL", "error", "CFScript region is not terminated.", file, sourceMap, parsed.next, text.length));
+        complete = false;
+        break;
+      }
+      cursor = closeStart;
+      continue;
+    }
+    if (CFML_EXTENSIONS.has(extensionFor(file)) && node.name.startsWith("cf") && node.name !== "cfquery") {
+      cursor = parsed.next;
+      continue;
+    }
     if (node.name === "cfquery") {
       const closeStart = findClosingTag(text, "cfquery", parsed.next);
       if (closeStart === -1) {
@@ -608,6 +622,9 @@ function scanHtml(text, sourceMap, file, maxNodes, maxAttributeBytes, maxExpress
       } else if (!addNode(nodes, sqlNode(text, parsed.next, closeStart, sourceMap, file, { statement_kind: "cfquery", datasource: staticAttribute(node, "datasource"), datasource_expression: attribute(node, "datasource")?.value ?? null, datasource_dynamic: staticAttribute(node, "datasource") === null && hasDynamicAttribute(node, ["datasource"]), container_byte_start: node.byte_start }), diagnostics, maxNodes, file, sourceMap, cursor)) {
         complete = false;
         break;
+      } else {
+        cursor = closeStart;
+        continue;
       }
     } else if (node.name === "form") {
       const closeStart = findClosingTag(text, "form", parsed.next);

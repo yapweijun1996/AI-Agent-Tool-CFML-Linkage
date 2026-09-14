@@ -1,5 +1,5 @@
 # Negative case: malformed and partial input
 
-> **Status: PLANNED INPUT.** Directory reserved by the v0.1 fixture manifest; inert source and expected output are pending parser implementation.
+> **Status: VERIFIED / INERT INPUT.** The injected bounded scanner preserves safe failure and does not execute or interpret unsupported regions as confirmed facts.
 
-Coverage: malformed CFML, embedded-language errors, unsupported syntax, diagnostics, and `complete=false` behavior.
+Coverage: syntax-like comments/strings, malformed CFML, unsupported tags, parser diagnostics, and `complete=false` behavior. `expected-malformed-v0.1.json` records the bounded expectations.

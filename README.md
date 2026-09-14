@@ -1,6 +1,6 @@
 # agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M8 IN PROGRESS.** The repository contains verified M1 safety and bounded M2–M8 parser/scanner/Fact/resolution/query/robustness slices; the full linkage analyzer, public API, and release are not complete.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** The repository contains verified M1 safety and bounded M2–M9 parser/scanner/Fact/resolution/query/robustness/adversarial/check slices; the full linkage analyzer, public API, and release are not complete.
 
 | Field | Value |
 | --- | --- |
@@ -9,14 +9,14 @@
 | Scope | Deterministic, read-only, local-first linkage analysis for CFML web applications |
 | Repository evidence | Initial `main` commit `1b29c0b934129fcd005b0575d9b986159043fbc9` contained only `.gitattributes`; subsequent local commits add the verified foundation, bounded extractors, indexes, resolver, and graph builder |
 | Source of truth | Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for actual state |
-| Verification | `npm test` passes 65 focused foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query tests; bounded Fact/Graph IR validates against schema; broader linkage/runtime/package/release verification is absent |
+| Verification | `npm test` passes 68 focused foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture tests; bounded Fact/Graph IR validates against schema; broader linkage/runtime/package/release verification is absent |
 | Limitations | Public API, parser, dependencies, runtime matrix, and deployment model are not established |
 
 ## Classification
 
 - **Project type:** planned hybrid NPM/library + CLI + AI-agent evidence provider.
-- **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction, M3 bounded resolution/Graph IR, M4 bounded CFC, M5 scope/web-flow, M6 bounded dynamic/SQL/repository linkage, M7 bounded graph queries, and M8 bounded robustness evidence in progress; broader resolver not started.
-- **Current state:** M0 contracts, the complete M1 foundation, bounded M2 parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, M7 graph query/evidence slices, and M8 robustness evidence are implemented/verified; no full parser grammar, broader resolver, public API, or released package exists.
+- **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction, M3 bounded resolution/Graph IR, M4 bounded CFC, M5 scope/web-flow, M6 bounded dynamic/SQL/repository linkage, M7 bounded graph queries, and M8 bounded robustness/adversarial evidence in progress; broader resolver not started.
+- **Current state:** M0 contracts, the complete M1 foundation, bounded M2 parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, M7 graph query/evidence slices, M8 robustness/adversarial safe-failure evidence, and M9 local checks/package smoke are implemented/verified; no full parser grammar, broader resolver, public API, or released package exists.
 
 ## Purpose
 
@@ -41,7 +41,7 @@ The repository has completed its verified M1 safety foundation and advanced M2 w
 - broader Graph IR linkage and analysis orchestration (bounded Graph construction/validation exists in `src/graph.js`, and bounded immutable queries/evidence explanations exist in `src/graph-query.js`; the proposed JSON Schema contract and example remain at `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`)
 - public CLI/library API (the private package exposes only an un-released validation envelope)
 - full incremental analysis orchestration/cache and public query integration
-- broader golden/negative/adversarial resolver fixtures and the full CLI/library integration; the fixture layout, manifest, inert source inputs, bounded Fact expectations, and T-034 SQL/repository fixture exist, while CI and published artifacts remain unavailable
+- broader golden resolver fixtures and the full CLI/library integration; the fixture layout, manifest, inert negative/adversarial source inputs, bounded expectations, T-034 SQL/repository fixture, and local package/CLI smoke exist, while CI and published artifacts remain unavailable
 
 A related external project, `agent-cfml-check`, is separate bounded single-file CFML checking prior art. Its external status must not be read as implementation evidence for this repository.
 
@@ -92,6 +92,7 @@ The eight Core SSOT files are `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROA
 - [`docs/decisions/ADR-019-bounded-dynamic-generated-and-sql-evidence.md`](docs/decisions/ADR-019-bounded-dynamic-generated-and-sql-evidence.md) — bounded dynamic, generated, and SQL evidence decision
 - [`docs/decisions/ADR-020-bounded-sql-and-repository-linkage.md`](docs/decisions/ADR-020-bounded-sql-and-repository-linkage.md) — bounded SQL and repository linkage decision
 - [`docs/decisions/ADR-021-bounded-graph-queries-and-evidence.md`](docs/decisions/ADR-021-bounded-graph-queries-and-evidence.md) — bounded graph queries and evidence explanation decision
+- [`docs/decisions/ADR-022-adversarial-fixture-safe-failure.md`](docs/decisions/ADR-022-adversarial-fixture-safe-failure.md) — adversarial fixture and safe-failure boundary decision
 - [`AGENTS.md`](AGENTS.md) — repository-specific contribution rules
 
 ## Non-goals
@@ -107,4 +108,4 @@ The planned tool will not:
 
 ## Verification and limitations
 
-Foundation, bounded extraction, immutable-index, literal-resolution, bounded CFC/scope/web-flow/dynamic-evidence/SQL-repository resolution, bounded Graph IR, and bounded graph-query verification has been run with `npm test` (65/65 passed). The private CLI envelope, cache foundation, bounded scanner, fixture-backed Fact extractor, immutable indexes, literal/CFC/scope/web-flow/repository resolvers, and Graph builder are tested, but no full parser grammar, broader resolver, full CLI orchestration, browser, engine, package, deployment, or release verification exists; all linkage capabilities and compatibility claims remain proposed.
+Foundation, bounded extraction, immutable-index, literal-resolution, bounded CFC/scope/web-flow/dynamic-evidence/SQL-repository resolution, bounded Graph IR, bounded graph-query verification, and inert adversarial safe-failure fixture checks have been run with `npm test` (68/68 passed). The private CLI envelope, cache foundation, bounded scanner, fixture-backed Fact extractor, immutable indexes, literal/CFC/scope/web-flow/repository resolvers, and Graph builder are tested, but no full parser grammar, broader resolver, full CLI orchestration, browser, engine compatibility, deployment, or release verification exists; all linkage capabilities and compatibility claims remain proposed.

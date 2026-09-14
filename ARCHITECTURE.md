@@ -1,6 +1,6 @@
 # Architecture: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M7 IN PROGRESS.** The M1 foundation and bounded M2–M7 parser/scanner/Fact/resolver/query slices exist; the remaining architecture is not implemented.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** The M1 foundation and bounded M2–M9 parser/scanner/Fact/resolver/query/robustness/adversarial/check slices exist; the remaining architecture is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -9,12 +9,12 @@
 | Scope | Component boundaries, data flow, ownership, and failure behavior |
 | Source of truth | This document for proposed architecture; Git history for current code facts |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
-| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/resolver/dynamic-evidence/SQL-repository tests pass locally; remaining architecture is unverified |
+| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/resolver/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture tests pass locally; remaining architecture is unverified |
 | Limitations | Parser feasibility, runtime compatibility, resource costs, and public package compatibility are unknown; M1 uses Node built-ins only |
 
 ## 1. Boundary
 
-The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1–M7 bounded slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, a private CLI envelope, bounded parser scanners, Fact evidence, immutable indexes, conservative literal resolution, dynamic/generated/SQL-dynamic preservation, bounded SQL/queryExecute extraction, structural repository/action resolution, and bounded Graph IR/query production; bounded Graph IR production/validation is implemented in `src/graph.js`, bounded CFC resolution is implemented in `src/cfc-resolver.js`, bounded shared-scope resolution is implemented in `src/scope-resolver.js`, bounded web-flow resolution is implemented in `src/web-flow-resolver.js`, bounded repository resolution is implemented in `src/repository-resolver.js`, and bounded query/evidence explanations are implemented in `src/graph-query.js`; broader linkage resolution and CLI orchestration remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
+The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1–M8 bounded slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, a private CLI envelope, bounded parser scanners, Fact evidence, immutable indexes, conservative literal resolution, dynamic/generated/SQL-dynamic preservation, bounded SQL/queryExecute extraction, structural repository/action resolution, bounded Graph IR/query production, and inert adversarial safe-failure fixtures; bounded Graph IR production/validation is implemented in `src/graph.js`, bounded CFC resolution is implemented in `src/cfc-resolver.js`, bounded shared-scope resolution is implemented in `src/scope-resolver.js`, bounded web-flow resolution is implemented in `src/web-flow-resolver.js`, bounded repository resolution is implemented in `src/repository-resolver.js`, and bounded query/evidence explanations are implemented in `src/graph-query.js`; broader linkage resolution and CLI orchestration remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
 
 ```text
 Local source + explicit policy

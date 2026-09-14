@@ -1,6 +1,6 @@
 # Design: agent-cfml-linkage Analysis Pipeline
 
-> **Status: PROPOSED / M2–M8 IN PROGRESS.** This document describes the intended architecture; the M1 foundation, bounded M2 parser/scanner/Fact slices, and bounded M3 resolution/Graph, M4 CFC, M5 scope/web-flow, M6 SQL/repository, M7 graph-query, and M8 robustness-test slices have runtime evidence.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** This document describes the intended architecture; the M1 foundation, bounded M2 parser/scanner/Fact slices, and bounded M3 resolution/Graph, M4 CFC, M5 scope/web-flow, M6 SQL/repository, M7 graph-query, M8 robustness/adversarial, and M9 check/package-smoke slices have runtime evidence.
 
 | Field | Value |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
-| Verification | Graph/Fact/config checks, produced Fact/Graph IR schema validation, and 65 foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query tests pass locally; broader runtime stages below remain unimplemented proposals |
+| Verification | Graph/Fact/config checks, produced Fact/Graph IR schema validation, and 68 foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture tests pass locally; broader runtime stages below remain unimplemented proposals |
 | Limitations | Parser choice, language coverage, performance, and engine compatibility remain unknown |
 
 ## 1. Design goals
@@ -174,8 +174,8 @@ The sequence is dependency-aware but not a schedule. M0's contract gate, M1 foun
 | M5 | Shared scope, AJAX/fetch, conditional routers | In progress — T-031/T-032 bounded scope and web-flow/condition resolvers verified; broader flow open |
 | M6 | Dynamic/generated/SQL-dynamic evidence and SQL/repository linkage | In progress — T-033 preservation and bounded T-034 SQL/repository linkage verified; broader SQL semantics remain open |
 | M7 | Query engine and bounded impact evidence | Verified — T-035 bounded query/evidence engine |
-| M8 | Incremental invalidation, workers, budgets, repeatability | In progress — T-040 bounded robustness evidence; orchestration remains open |
-| M9 | Golden suite, adversarial tests, package/CLI smoke, and separately evidenced engine checks | Not started |
+| M8 | Incremental invalidation, workers, budgets, repeatability | In progress — T-040/T-041 bounded robustness and adversarial safe-failure evidence; orchestration remains open |
+| M9 | Golden suite, adversarial tests, package/CLI smoke, and separately evidenced engine checks | In progress — T-042 bounded checks/package smoke; compatibility remains open |
 
 ## 8. Design risks
 

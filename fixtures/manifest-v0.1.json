@@ -87,7 +87,7 @@
         "ambiguous-mappings",
         "path-escape"
       ],
-      "expected": "candidate-unresolved-or-path-rejection",
+      "expected": "negative-v0.1",
       "source_execution": false
     },
     {
@@ -99,7 +99,7 @@
         "partial-parse",
         "unsupported-syntax"
       ],
-      "expected": "diagnostic-and-incomplete-result",
+      "expected": "malformed-v0.1",
       "source_execution": false
     },
     {
@@ -126,7 +126,7 @@
         "resource-limits",
         "snapshot-drift"
       ],
-      "expected": "no-false-facts-and-bounded-incomplete-result",
+      "expected": "misleading-and-limits-v0.1",
       "source_execution": false
     }
   ]

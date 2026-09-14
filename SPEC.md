@@ -9,7 +9,7 @@
 | Scope | Static cross-file linkage analysis for CFML-first mixed web projects |
 | Source of truth | This document for the proposed contract; Git history for current code facts |
 | Evidence | Initial repository commit `1b29c0b` contained only `.gitattributes`; current local source contains the verified foundation and bounded extractors |
-| Verification | Graph/Fact/config contract checks, produced Fact/Graph IR schema validation, and `npm test` foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query tests (65/65) pass; linkage contract/runtime verification is incomplete |
+| Verification | Graph/Fact/config contract checks, produced Fact/Graph IR schema validation, and `npm test` foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture tests (68/68) pass; linkage contract/runtime verification is incomplete |
 | Limitations | Parser coverage, resolver accuracy, performance, compatibility, and release status are unverified |
 
 ## 1. Objective

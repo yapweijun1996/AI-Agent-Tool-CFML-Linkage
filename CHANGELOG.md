@@ -9,7 +9,7 @@
 | Scope | Changes in this repository |
 | Source of truth | Git history and this changelog |
 | Evidence | Initial commit `1b29c0b`; documentation baseline and M1 foundation commits follow |
-| Verification | Documentation consistency checks, bounded query/robustness checks, and `npm test` (65/65) are run during this pass |
+| Verification | Documentation consistency checks, bounded query/robustness/adversarial-fixture checks, and `npm test` (68/68) are run during this pass |
 | Limitations | No parser/resolver release runtime, public package, CI, or release exists |
 
 ## Unreleased
@@ -46,6 +46,8 @@
 - Bounded `cfquery`/literal-`queryExecute` table and datasource extraction plus structural repository/action Facts, resolutions, Graph edges, filename-only negative evidence, fixtures/tests, and ADR-020 for T-034.
 - Bounded immutable GraphSnapshot queries, exact selector handling, deterministic evidence explanations, traversal/result limits, focused tests, and ADR-021 for T-035.
 - Consolidated bounded repeatability, content-drift, cache invalidation/corruption, cycle-safety, and resource-limit evidence for T-040; no full orchestration or in-read mutation proof is claimed.
+- Added inert negative/adversarial fixtures and tests for ambiguity, path escape, malformed/unsupported syntax, comment/string filtering, and include cycles for T-041; no parser execution or full grammar coverage is claimed.
+- Completed bounded T-042 verification: 68 tests, contract/example checks, CLI/package smoke, syntax/fixture/document checks, and conservative credential scan pass; lint/type scripts and Secretlint are unavailable locally.
 
 ### Not claimed
 
