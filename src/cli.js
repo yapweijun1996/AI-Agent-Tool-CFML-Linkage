@@ -16,6 +16,7 @@ const DEFAULT_EXIT_CODES = Object.freeze({
   path_rejected: 4,
 });
 const MAX_CONFIG_BYTES = 1024 * 1024;
+const MIN_OUTPUT_BYTES = 300;
 const QUERY_COMMANDS = Object.freeze(["related", "callers", "callees", "trace", "unresolved", "explain", "stats"]);
 const COMMANDS = Object.freeze(["capabilities", "analyze", "index", ...QUERY_COMMANDS]);
 
@@ -161,6 +162,9 @@ function validateConfig(config) {
       throw diagnostic("INVALID_CONFIG", "error", `exit_codes.${key} must be a non-negative safe integer.`);
     }
   }
+  if (!Number.isSafeInteger(config.limits.max_output_bytes) || config.limits.max_output_bytes < MIN_OUTPUT_BYTES) {
+    throw diagnostic("INVALID_CONFIG", "error", `limits.max_output_bytes must be at least ${MIN_OUTPUT_BYTES} bytes.`);
+  }
   return config;
 }
 
@@ -171,9 +175,18 @@ function stderrFor(diagnostics) {
   }).join("");
 }
 
-function result(command, status, diagnostics, data, exitCode) {
-  const output = envelope(command, status, diagnostics, data);
-  return { exitCode, envelope: output, stdout: `${JSON.stringify(output)}\n`, stderr: stderrFor(diagnostics) };
+function result(command, status, diagnostics, data, exitCode, { maxOutputBytes = null, incompleteExitCode = exitCode } = {}) {
+  let output = envelope(command, status, diagnostics, data);
+  let stdout = `${JSON.stringify(output)}\n`;
+  let outputDiagnostics = diagnostics;
+  let finalExitCode = exitCode;
+  if (maxOutputBytes !== null && Buffer.byteLength(stdout, "utf8") > maxOutputBytes) {
+    outputDiagnostics = [diagnostic("OUTPUT_LIMIT", "error", `JSON output exceeded configured maximum of ${maxOutputBytes} bytes.`)];
+    output = envelope(command, "incomplete", outputDiagnostics, null);
+    stdout = `${JSON.stringify(output)}\n`;
+    finalExitCode = incompleteExitCode;
+  }
+  return { exitCode: finalExitCode, envelope: output, stdout, stderr: stderrFor(outputDiagnostics) };
 }
 
 /**
@@ -226,7 +239,7 @@ export function runCli(argv, { cwd = process.cwd() } = {}) {
 
   if (QUERY_COMMANDS.includes(parsed.command)) {
     const item = diagnostic("UNIMPLEMENTED_COMMAND", "warning", `The ${parsed.command} query command is recognized but not implemented.`);
-    return result(parsed.command, "incomplete", [item], null, config.exit_codes.incomplete);
+    return result(parsed.command, "incomplete", [item], null, config.exit_codes.incomplete, { maxOutputBytes: config.limits.max_output_bytes });
   }
 
   try {
@@ -247,7 +260,7 @@ export function runCli(argv, { cwd = process.cwd() } = {}) {
       fact_bundle: analysis.fact_bundle,
       resolutions: analysis.resolutions,
       stats: analysis.stats,
-    }, exitCode);
+    }, exitCode, { maxOutputBytes: config.limits.max_output_bytes, incompleteExitCode: config.exit_codes.incomplete });
   } catch (error) {
     if (error?.code === "NO_SOURCE_FILES") {
       const item = diagnostic("NO_SOURCE_FILES", "warning", error.message);

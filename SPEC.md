@@ -133,7 +133,7 @@ The supported operations are `related`, `callers`, `callees`, `includes`, `inclu
 
 T-036 exposes `analyzeProject({ rootPath, config, parserBackend | parserAdapter, ...options })` through the private package entry. It creates the root guard, discovers a deterministic snapshot, reads and parses each admitted file, extracts Fact IR, builds immutable indexes, runs the bounded path/CFC/scope/web-flow/repository passes, merges resolution and diagnostic evidence by stable IDs, builds Graph IR, and returns immutable reverse adjacency. The default parser backend remains unselected and therefore returns `PARSER_UNAVAILABLE`; the CLI explicitly injects `mixed-structural-scanner/v0.1`. Source metadata/content is checked after parsing, and drift makes the result incomplete. The result contract is `schema/agent-cfml-linkage-analysis-v0.1.schema.json`.
 
-The orchestrator currently applies configured language and file/fact/resolver/traversal limits that are supported by the underlying bounded stages. Ignore glob semantics, edge/evidence/output/time budgets, query-command persistence, full parser coverage, and public release remain open and are not implied by this API.
+The orchestrator currently applies configured language and file/fact/resolver/traversal limits that are supported by the underlying bounded stages. The private CLI enforces `limits.max_output_bytes` for serialized analysis envelopes, returning `complete=false`/exit `3` with `OUTPUT_LIMIT` when exceeded; values below 300 bytes are rejected because the stable fallback envelope cannot fit. Ignore glob semantics, library edge/evidence/output/time budgets, query-command persistence, full parser coverage, and public release remain open and are not implied by this API.
 
 ## 5. Resolution rules
 
@@ -156,7 +156,7 @@ The future implementation MUST:
 - sort discovered files and merged facts before resolution;
 - use deterministic IDs, ordering, serialization, and resolver versions;
 - detect source snapshot drift before final output;
-- enforce file count/size, fact, edge, evidence, traversal-depth, output-size, and wall-time limits;
+- enforce file count/size, fact, edge, evidence, traversal-depth, output-size, and wall-time limits; the current private CLI output-size enforcement is bounded to serialized envelopes;
 - return `complete=false` with the exact exhausted budget when a limit prevents complete coverage;
 - treat cache corruption or version mismatch as a rebuild condition;
 - emit machine-readable JSON on stdout and human diagnostics on stderr.

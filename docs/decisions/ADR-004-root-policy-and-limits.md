@@ -1,6 +1,6 @@
 # ADR-004: Make root safety and resource limits explicit configuration
 
-> **Status: PROPOSED / CONTRACT SLICE.** The configuration contract and example are checked; no root-guard runtime exists.
+> **Status: PROVISIONAL / BOUNDED.** The configuration contract, root guard, and private CLI limit boundary are implemented for bounded scopes; broader policy enforcement remains open.
 
 | Field | Value |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Scope | Analysis root, path safety, ignores, limits, output, prohibited actions, and exit codes |
 | Source of truth | This ADR and `SPEC.md`; runtime enforcement must preserve the contract |
 | Evidence | `schema/agent-cfml-linkage-config-v0.1.schema.json`, `examples/config-v0.1.json`, local schema/policy check |
-| Verification | Configuration schema and safety invariant check passed; runtime enforcement remains unverified |
+| Verification | Configuration schema and safety invariant checks pass; root-guard and bounded CLI output-limit tests pass; broader policy enforcement remains unverified |
 | Limitations | Platform-specific permission behavior, glob semantics, and operational defaults require implementation tests |
 
 ## Context
@@ -25,12 +25,12 @@ The v0.1 configuration requires:
 - no symlink following and no absolute reference acceptance;
 - explicit ignore globs for dependency, generated, cache, and secret-like paths;
 - an allowlist of analyzed languages, explicit mappings, and explicitly enabled plugins;
-- hard positive limits for files, bytes, facts, edges, evidence, traversal depth, output, wall time, and workers;
+- hard positive limits for files, bytes, facts, edges, evidence, traversal depth, output, wall time, and workers; the stable CLI envelope requires `max_output_bytes >= 300` so an output-limit diagnostic can itself fit within the cap;
 - JSON output with diagnostics on stderr and only bounded/optional raw evidence;
 - immutable prohibited-action flags: source execution, network, database, shell, and browser are all false;
 - fixed exit meanings `0` completed, `1` internal failure, `2` invalid input, `3` incomplete/unsupported/limited, and `4` path/access rejection.
 
-The machine-readable contract is `schema/agent-cfml-linkage-config-v0.1.schema.json`; its example is `examples/config-v0.1.json`. The configuration schema does not itself prove that a runtime enforces these values; root-guard and limit tests remain required.
+The machine-readable contract is `schema/agent-cfml-linkage-config-v0.1.schema.json`; its example is `examples/config-v0.1.json`. The configuration schema does not itself prove that a runtime enforces these values; root-guard and limit tests remain required. The current private CLI enforces only the serialized output-byte limit; other configured limits are delegated to bounded stages or remain open.
 
 ## Consequences
 

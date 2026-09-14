@@ -14,7 +14,7 @@
 
 ## Decision
 
-The private CLI accepts one command and an optional `--config <path>`. `capabilities`, `--help`, and `--version` are available without a configuration. Analysis and recognized query commands require JSON configuration. `analyze` and `index` run the bounded private pipeline; recognized query commands fail closed with `UNIMPLEMENTED_COMMAND` and exit code `3` until query-command orchestration is explicitly implemented.
+The private CLI accepts one command and an optional `--config <path>`. `capabilities`, `--help`, and `--version` are available without a configuration. Analysis and recognized query commands require JSON configuration. `analyze` and `index` run the bounded private pipeline; recognized query commands fail closed with `UNIMPLEMENTED_COMMAND` and exit code `3` until query-command orchestration is explicitly implemented. Serialized analysis output is capped by `limits.max_output_bytes`; an exceeded cap returns `OUTPUT_LIMIT`, `data: null`, and exit code `3`.
 
 Every invocation writes exactly one JSON object to stdout with this stable top-level shape:
 

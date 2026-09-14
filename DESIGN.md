@@ -143,7 +143,7 @@ Selectors are exact node IDs or exact path/canonical-name/name values; ambiguous
 
 The implemented private CLI boundary emits one stable JSON envelope on stdout and human diagnostics on stderr; it exposes `capabilities`, help, version, input validation, and bounded `analyze`/`index` commands. `src/analyzer.js` composes the bounded stages and `src/index.js` exports `analyzeProject`, `queryGraph`, `createGraphSnapshot`, and the explicit mixed scanner backend under the private package `exports` boundary. The `agent-cfml-linkage-analysis/v0.1` result contains Fact IR, merged resolution evidence, Graph IR, immutable reverse adjacency, diagnostics, and stats. Query execution remains planned; recognized query commands fail closed with `UNIMPLEMENTED_COMMAND`; full parser coverage and public release remain open. Proposed commands are `capabilities`, `index`/`analyze`, `related`, `callers`, `callees`, `trace`, `unresolved`, `explain`, and `stats`.
 
-Proposed exit semantics: `0` completed, `1` internal failure, `2` invalid input, `3` incomplete/unsupported/resource limit, and `4` root/path/access rejection. Exit `3` is not a clean result.
+Proposed exit semantics: `0` completed, `1` internal failure, `2` invalid input, `3` incomplete/unsupported/resource limit, and `4` root/path/access rejection. The private CLI uses exit `3` for an exceeded serialized output budget; exit `3` is not a clean result.
 
 ## 4. Extension points
 
@@ -151,7 +151,7 @@ Plugins remain narrow and deterministic: `ParserAdapter`, `FactExtractor`, `Reso
 
 ## 5. Performance strategy
 
-Correctness comes first. Parse with bounded worker concurrency and merge facts in sorted path order. Use map/set indexes instead of all-pairs symbol comparison. Cache source hashes and Fact IR. Enforce hard caps for files, bytes, facts, edges, evidence, traversal depth, output bytes, and wall time. A cap hit returns partial evidence and identifies the exhausted budget; it never silently truncates.
+Correctness comes first. Parse with bounded worker concurrency and merge facts in sorted path order. Use map/set indexes instead of all-pairs symbol comparison. Cache source hashes and Fact IR. Enforce hard caps for files, bytes, facts, edges, evidence, traversal depth, output bytes, and wall time. The private CLI currently enforces the serialized output-byte cap with an explicit incomplete envelope; library output and wall-time enforcement remain open. A cap hit returns partial evidence and identifies the exhausted budget; it never silently truncates.
 
 ## 6. Boundary with related tools
 
@@ -174,7 +174,7 @@ The sequence is dependency-aware but not a schedule. M0's contract gate, M1 foun
 | M5 | Shared scope, AJAX/fetch, conditional routers | In progress — T-031/T-032 bounded scope and web-flow/condition resolvers verified; broader flow open |
 | M6 | Dynamic/generated/SQL-dynamic evidence and SQL/repository linkage | In progress — T-033 preservation and bounded T-034 SQL/repository linkage verified; broader SQL semantics remain open |
 | M7 | Query engine and bounded impact evidence | In progress — T-035 bounded query/evidence engine and T-036 bounded analysis composition/private entry points verified |
-| M8 | Incremental invalidation, workers, budgets, repeatability | In progress — T-040/T-041 bounded robustness and adversarial safe-failure evidence; full output/time budgets remain open |
+| M8 | Incremental invalidation, workers, budgets, repeatability | In progress — T-040/T-041 bounded robustness/adversarial safe-failure evidence and private CLI output-budget enforcement; library output and wall-time budgets remain open |
 | M9 | Golden suite, adversarial tests, package/CLI smoke, and separately evidenced engine checks | In progress — T-042 checks/package smoke, T-043 Node host evidence, and T-044 bounded release/security/parity audit; broader compatibility/public release remains open |
 
 ## 8. Design risks

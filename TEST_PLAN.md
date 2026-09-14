@@ -60,7 +60,7 @@ Each fixture should assert nodes, edges, confidence, evidence spans, conditions,
 - include and graph cycles;
 - snapshot mutation during analysis, including parser-time source drift;
 - corrupt, stale, or version-mismatched cache;
-- file/byte/fact/edge/evidence/traversal/output/time limits and query result/depth/visited-node limits;
+- file/byte/fact/edge/evidence/traversal/output/time limits and query result/depth/visited-node limits; the private CLI serialized `max_output_bytes` cap is verified, while library output/time caps remain open;
 - bounded evidence that does not copy full source files;
 - proof that source constructs are parsed, never executed;
 - deterministic ordering across worker concurrency settings.
@@ -73,7 +73,7 @@ A future release must satisfy all required gates:
 - golden and adversarial fixtures pass;
 - stable-ID and repeatability assertions pass;
 - safety and root-containment tests pass;
-- incomplete and exit-code semantics are verified;
+- incomplete and exit-code semantics are verified, including bounded CLI output-limit exit `3`;
 - cache invalidation tests pass or cache is disabled for that release;
 - CLI stdout/stderr separation is verified;
 - package/install/library smoke tests pass;

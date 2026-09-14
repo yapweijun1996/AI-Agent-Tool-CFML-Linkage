@@ -80,6 +80,16 @@ test("runs the bounded analysis pipeline after validating the root", () => {
     assert.equal(indexResult.stdout.status, "incomplete");
     assert.equal(indexResult.stdout.data.graph.schema_version, "agent-cfml-linkage-graph/v0.1");
 
+    const boundedConfig = JSON.parse(fs.readFileSync(path.join(root, "config.json"), "utf8"));
+    boundedConfig.limits.max_output_bytes = 512;
+    fs.writeFileSync(path.join(root, "config.json"), JSON.stringify(boundedConfig), "utf8");
+    const limitedResult = runCli(["analyze", "--config", "config.json"], root);
+    assert.equal(limitedResult.exitCode, 3);
+    assert.equal(limitedResult.stdout.status, "incomplete");
+    assert.equal(limitedResult.stdout.data, null);
+    assert.equal(limitedResult.stdout.diagnostics[0].code, "OUTPUT_LIMIT");
+    assert.ok(Buffer.byteLength(JSON.stringify(limitedResult.stdout), "utf8") + 1 <= 512);
+
     for (const command of ["related", "callers", "callees", "trace", "unresolved", "explain", "stats"]) {
       const queryResult = runCli([command, "--config", "config.json"], root);
       assert.equal(queryResult.exitCode, 3);
@@ -122,6 +132,14 @@ test("rejects malformed JSON and unsafe configuration before analysis", () => {
       shell: false,
       browser: false,
     } });
+    result = runCli(["analyze", "--config", "config.json"], root);
+    assert.equal(result.exitCode, 2);
+    assert.equal(result.stdout.diagnostics[0].code, "INVALID_CONFIG");
+
+    writeConfig(root);
+    const invalidOutputConfig = JSON.parse(fs.readFileSync(path.join(root, "config.json"), "utf8"));
+    invalidOutputConfig.limits.max_output_bytes = 299;
+    fs.writeFileSync(path.join(root, "config.json"), JSON.stringify(invalidOutputConfig), "utf8");
     result = runCli(["analyze", "--config", "config.json"], root);
     assert.equal(result.exitCode, 2);
     assert.equal(result.stdout.diagnostics[0].code, "INVALID_CONFIG");

@@ -62,7 +62,7 @@ The current pass advances M0 to a verified gate, completes M1/T-010–T-014, ver
 
 ### Phase 4 — Incremental operation and release
 
-- M8: cache invalidation, bounded concurrency, hard resource limits, repeatability, and snapshot drift handling; T-040/T-041 verify the bounded repeat/drift/cache/cycle/limit and adversarial safe-failure subset, while full output/time budgets remain open.
+- M8: cache invalidation, bounded concurrency, hard resource limits, repeatability, and snapshot drift handling; T-040/T-041 verify the bounded repeat/drift/cache/cycle/limit and adversarial safe-failure subset, and the private CLI enforces serialized output limits, while library output and wall-time budgets remain open.
 - M9: package/library/CLI smoke, golden and adversarial suites, documentation synchronization, and separately evidenced Lucee/Adobe compatibility; T-042 verifies local checks/package smoke, T-043 records Node host evidence, and T-036 provides bounded composition, while broader compatibility/query-command integration remains open; T-037–T-039 remain reserved without executable definitions.
 
 **Exit evidence:** release checklist in `RELEASE.md`, reproducible artifact readback, CI results, and a versioned release note.

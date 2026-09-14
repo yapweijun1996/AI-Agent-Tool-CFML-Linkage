@@ -52,6 +52,7 @@
 - Completed the bounded T-044 release/security/parity audit with exact pre-release package metadata, source commit identity, local security checks, and explicit remaining gates; nothing was published.
 - Implemented bounded T-036 analysis orchestration, private library exports, composed-analysis schema, CLI `analyze`/`index` wiring, parser-time drift checks, and offline packed-artifact consumer smoke; full grammar and query-command integration remain open.
 - Hardened the private CLI so recognized but unimplemented query commands return bounded `UNIMPLEMENTED_COMMAND` evidence instead of running the analysis command.
+- Added private CLI serialized-output enforcement for `limits.max_output_bytes`, with an explicit `OUTPUT_LIMIT` incomplete result and a documented minimum envelope size.
 
 ### Not claimed
 

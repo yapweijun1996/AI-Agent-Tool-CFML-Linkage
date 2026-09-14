@@ -197,7 +197,8 @@
           "$ref": "#/$defs/positiveInteger"
         },
         "max_output_bytes": {
-          "$ref": "#/$defs/positiveInteger"
+          "type": "integer",
+          "minimum": 300
         },
         "max_wall_time_ms": {
           "$ref": "#/$defs/positiveInteger"
