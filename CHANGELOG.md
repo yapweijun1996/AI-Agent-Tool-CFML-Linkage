@@ -9,7 +9,7 @@
 | Scope | Changes in this repository |
 | Source of truth | Git history and this changelog |
 | Evidence | Initial commit `1b29c0b`; documentation baseline and M1 foundation commits follow |
-| Verification | Documentation consistency checks, bounded query/robustness/adversarial-fixture/evidence/edge-budget/ignore-policy/hidden-file-policy checks, and `npm test` (79/79) are run during this pass |
+| Verification | Documentation consistency checks and retained bounded query/robustness/adversarial-fixture/evidence/edge-budget/ignore-policy/hidden-file-policy/`npm test` (79/79) evidence are recorded; the current pass adds the prompt-to-artifact audit without executing project source |
 | Limitations | No parser/resolver release runtime, public package, hosted CI run, or release exists; the read-only CI workflow is present |
 
 ## Unreleased
@@ -64,6 +64,7 @@
 - Implemented T-051 bounded hidden-file discovery policy through `hiddenFilePolicy`, applying `ignore.hidden_files` to dot-prefixed entries before reads and hashing, with analyzer/CLI forwarding, focused coverage, and ADR-028; generated-file detection and library output/time budgets remain open.
 - Refreshed the retained T-043 Node host evidence and ADR-023 to the current 79-test run; the historical T-044 audit remains tied to its original source commit.
 - Corrected the EPIC lifecycle metadata to reflect the current bounded M9 implementation state; full parser, broader linkage, and release work remain open.
+- Added `docs/audits/prompt-to-artifact-v0.1.json`, mapping the explicit execution loop, Core SSOT files, named deliverables, checks, gates, success criteria, and blockers; the audit deliberately records the overall goal as incomplete.
 
 ### Not claimed
 

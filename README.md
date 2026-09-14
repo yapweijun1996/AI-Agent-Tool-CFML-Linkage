@@ -117,6 +117,7 @@ The eight Core SSOT files are `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROA
 - [`schema/agent-cfml-linkage-analysis-v0.1.schema.json`](schema/agent-cfml-linkage-analysis-v0.1.schema.json) — composed bounded analysis-result contract
 - [`docs/compatibility/node-v25.2.1-win32-x64.json`](docs/compatibility/node-v25.2.1-win32-x64.json) — retained local Node host evidence
 - [`docs/audits/release-security-parity-v0.1.json`](docs/audits/release-security-parity-v0.1.json) — bounded release, security, and documentation parity audit
+- [`docs/audits/prompt-to-artifact-v0.1.json`](docs/audits/prompt-to-artifact-v0.1.json) — current prompt-to-artifact completion audit and blockers
 - [`AGENTS.md`](AGENTS.md) — repository-specific contribution rules
 
 ## Non-goals

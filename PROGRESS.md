@@ -1,6 +1,6 @@
 # Progress: agent-cfml-linkage
 
-> **Status: CLI CONFIGURATION + LIBRARY EVIDENCE/EDGE BUDGET + IGNORE/HIDDEN-FILE POLICY VERIFIED / M1 FOUNDATION VERIFIED / M2–M9 BOUNDED IMPLEMENTATION PARTIAL.** This report is evidence-based and intentionally separates plan from product state.
+> **Status: PROMPT-TO-ARTIFACT AUDIT COMPLETE / CLI CONFIGURATION + LIBRARY EVIDENCE/EDGE BUDGET + IGNORE/HIDDEN-FILE POLICY VERIFIED / M1 FOUNDATION VERIFIED / M2–M9 BOUNDED IMPLEMENTATION PARTIAL.** This report is evidence-based and intentionally separates plan from product state.
 
 | Field | Value |
 | --- | --- |
@@ -8,8 +8,8 @@
 | Last updated | 2026-09-14 |
 | Scope | Current repository, implementation, verification, release, blockers, and next action |
 | Source of truth | Git history/worktree, executable checks, and release readback; planning intent is in `GOAL.md`/`SPEC.md` |
-| Evidence | Initial `HEAD` `1b29c0b`; current local HEAD includes the verified foundation, bounded extractors, fixtures, tests, and package/CLI smoke evidence |
-| Verification | Contract/fixture checks, produced Fact/Graph IR/analysis schema validation, and `npm test` foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/evidence-budget/edge-budget/ignore-policy/hidden-file-policy tests passed (79/79); broader implementation checks remain unavailable |
+| Evidence | Initial `HEAD` `1b29c0b`; current local HEAD includes the verified foundation, bounded extractors, fixtures, tests, package/CLI smoke evidence, and the prompt-to-artifact audit at `docs/audits/prompt-to-artifact-v0.1.json` |
+| Verification | Prompt-to-artifact audit, contract/fixture checks, produced Fact/Graph IR/analysis schema validation, and retained `npm test` foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/evidence-budget/edge-budget/ignore-policy/hidden-file-policy evidence passed (79/79); broader implementation checks remain unavailable |
 | Limitations | No full parser/broader resolver, public release API, hosted CI verification, runtime linkage, package artifact, tag, deployment, or release exists; a least-privilege CI workflow is implemented, and bounded analysis/library orchestration and query-command CLI remain private |
 
 ## Project classification
@@ -49,7 +49,7 @@
 | Disposable cache | Yes | Yes | Yes | No | `src/cache.js`, `test/cache.test.js`, invalidation/corruption/path checks |
 | Fixture layout/manifest | Yes | Yes | Yes | No | `fixtures/manifest-v0.1.json`, category/case directories, inert web/negative/adversarial inputs and expectations, manifest/source-execution invariant check |
 | Focused tests | Yes | Yes | Yes | No | Node foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/evidence-budget/edge-budget/ignore-policy/hidden-file-policy suite: 79 passed on Node `v25.2.1`; `.github/workflows/ci.yml` is implemented but has no hosted run |
-| Package/release | Yes | Partial | Partial | No | Private package metadata/export, CLI capabilities/version/analyze smoke, offline packed-artifact consumer smoke, `npm pack --dry-run`, and bounded Node host evidence pass; CI workflow is present but has no hosted run, and no published package, tag, or release exists |
+| Package/release | Yes | Partial | Partial | No | Private package metadata/export, CLI capabilities/version/analyze smoke, offline packed-artifact consumer smoke, `npm pack --dry-run`, bounded Node host evidence, and prompt-to-artifact audit pass for their recorded scopes; CI workflow is present but has no hosted run, and no published package, tag, or release exists |
 
 ## Progress basis
 
@@ -58,6 +58,8 @@ The implementation roadmap has 10 milestones, M0–M9. **M0 contract gate: verif
 Core documentation coverage is now the current work product: goal, design, specification, epic, roadmap, task register, progress report, autonomous goal prompt, architecture, test plan, security, release policy, changelog, and ADRs including ADR-026–ADR-028.
 
 ## Completed in this pass
+
+- Completed the required prompt-to-artifact audit in `docs/audits/prompt-to-artifact-v0.1.json`; it maps the explicit loop, Core SSOT files, named deliverables, checks, gates, success criteria, and blockers, and deliberately records `goal_achieved: false` because full product and release requirements remain unmet.
 
 - Inspected repository rules and found the repository `AGENTS.md`; no repository `CLAUDE.md` or `CONTRIBUTING.md` exists.
 - Inspected tracked tree, Git status/history, configuration, manifests, dependencies, source, entry points, tests, scripts, CI, release files, and docs.
@@ -101,11 +103,11 @@ These are documented planning blockers, not reasons to claim failure. No externa
 | Markdown metadata/trailing-whitespace check | Passed | Documentation-only check |
 | GOAL_PROMPT character limit | Passed (under 2,000 characters) | Enforced at 2,000 characters |
 | Local Markdown link check | Passed | Does not validate external links |
-| Build/type/lint/unit/integration/E2E | Partial: `npm test` passed 79 foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query/configuration/evidence-budget/edge-budget/ignore-policy/hidden-file-policy tests; T-047 workflow is structurally reviewed but not hosted-run | No broader Graph linkage build/type/lint/integration/E2E suite exists |
+| Build/type/lint/unit/integration/E2E | Partial: retained `npm test` evidence records 79 foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query/configuration/evidence-budget/edge-budget/ignore-policy/hidden-file-policy tests; T-047 workflow is structurally reviewed but not hosted-run | No broader Graph linkage build/type/lint/integration/E2E suite exists; this pass did not execute project source |
 | Package/import/CLI smoke | Passed (bounded) | Private package self-reference/import, offline packed-artifact consumer analysis, CLI capabilities/version/analyze, and `npm pack --dry-run` pass; package remains private and unpublished |
 | Node host compatibility | Passed (bounded) | `docs/compatibility/node-v25.2.1-win32-x64.json`; only Node `v25.2.1` on `win32`/`x64` is evidenced |
 | Browser/accessibility/runtime linkage/security probes | Unrun | No user-facing product or complete analyzer exists |
 
 ## Next task / resume point
 
-**Resume blocker: T-037–T-039 are reserved without executable definitions.** T-050 and T-051 are complete for their bounded configured discovery-policy scopes; define any future output/time-budget acceptance criteria before implementation, preserve the private/unreleased boundary, and do not publish or claim broader compatibility.
+**Resume blocker: T-037–T-039 are reserved without executable definitions.** T-050 and T-051 are complete for their bounded configured discovery-policy scopes, and T-052 records the incomplete prompt-to-artifact audit; define any future output/time-budget acceptance criteria before implementation, preserve the private/unreleased boundary, and do not publish or claim broader compatibility.

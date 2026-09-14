@@ -23,7 +23,7 @@
 | Focused tests | T-010–T-014/T-020–T-036/T-040/T-041/T-045/T-046/T-048/T-049/T-050/T-051 verified | `npm test`: 79 passed |
 | CI/package/release | Private package/CLI foundation and CI workflow implemented; hosted CI/release not verified | `package.json`, `bin/`, `.github/workflows/ci.yml`; no hosted run, tag, or release |
 | Runtime compatibility | Partial | Node `v25.2.1` on `win32`/`x64` is evidenced for the bounded test suite; Lucee/Adobe/browser/database/network/application-runtime compatibility remains unknown |
-| Core SSOT documentation | Synchronized planning baseline | `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`, `GOAL_PROMPT.md` |
+| Core SSOT documentation | Synchronized planning baseline plus prompt-to-artifact completion audit | `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`, `GOAL_PROMPT.md`, `docs/audits/prompt-to-artifact-v0.1.json` |
 
 ## Delivery sequence
 
@@ -65,7 +65,7 @@ The current pass advances M0 to a verified gate, completes M1/T-010–T-014 plus
 - M8: cache invalidation, bounded concurrency, hard resource limits, repeatability, and snapshot drift handling; T-040/T-041 verify the bounded repeat/drift/cache/cycle/limit and adversarial safe-failure subset, T-048 verifies the library evidence budget, T-049 verifies the final Graph edge budget, T-050 verifies configured ignore-glob discovery policy, T-051 verifies the configured hidden-file policy, and the private CLI enforces serialized output limits, while library output and wall-time budgets remain open.
 - M9: package/library/CLI smoke, golden and adversarial suites, documentation synchronization, and separately evidenced Lucee/Adobe compatibility; T-042 verifies local checks/package smoke, T-043 records Node host evidence, and T-036/T-045/T-046 provide bounded composition, query-command integration, and CLI configuration enforcement; T-047 provides the unverified CI workflow, T-049 adds bounded Graph edge-budget evidence, T-050 adds bounded ignore-glob policy evidence, T-051 adds bounded hidden-file policy evidence, while broader compatibility and graph persistence remain open; T-037–T-039 remain reserved without executable definitions.
 
-**Exit evidence:** release checklist in `RELEASE.md`, reproducible artifact readback, CI results, and a versioned release note.
+**Exit evidence:** release checklist in `RELEASE.md`, reproducible artifact readback, CI results, a versioned release note, and the prompt-to-artifact audit; the current audit records the project as not achieved because required release/runtime evidence is missing.
 
 ## Ordering constraints
 

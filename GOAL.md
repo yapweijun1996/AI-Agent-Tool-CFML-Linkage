@@ -9,9 +9,9 @@
 | Project type | Planned NPM/library + CLI + AI-agent evidence provider; CFML-first static analyzer |
 | Lifecycle | Prototype / safe-foundation implementation |
 | Source of truth | This repository's Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for state |
-| Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; subsequent local commits add the verified foundation and bounded extractors |
+| Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; subsequent local commits add the verified foundation, bounded extractors, and `docs/audits/prompt-to-artifact-v0.1.json` |
 | Verification | M1 foundation, configured ignore-glob/hidden-file discovery policies, bounded M2 CFML/web parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, bounded M4 CFC resolution, bounded M5 scope/web-flow resolution, bounded M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries/orchestration, bounded M8 robustness/edge-budget evidence, and 79 focused Node tests pass locally; a least-privilege CI workflow is defined but has no hosted run; full linkage/runtime/package-release verification is absent |
-| Limitations | Graph persistence, full parser/resolver, full runtime matrix, deployment model, and release compatibility are not established; the bounded analysis/library entry and query APIs remain private |
+| Limitations | Graph persistence, full parser/resolver, full runtime matrix, deployment model, and release compatibility are not established; the bounded analysis/library entry and query APIs remain private, and the prompt-to-artifact audit records the overall goal as not achieved until the gaps are closed |
 
 ## Purpose
 

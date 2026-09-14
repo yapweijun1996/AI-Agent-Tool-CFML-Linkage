@@ -9,7 +9,7 @@
 | Scope | Versioning, release gates, artifact traceability, and compatibility claims |
 | Source of truth | Git commit, validated artifacts, tests, and this release policy |
 | Evidence | `package.json` is private with Node `>=20`; `.github/workflows/ci.yml` defines a read-only test matrix, but no hosted run, public package artifact, tag, or release exists |
-| Verification | Root-guard/snapshot/configured-ignore/hidden-file/decoder/CLI/cache/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/configuration/evidence/edge-budget tests (79/79), validated/copied query snapshots, vanished-snapshot-target rejection, serialized CLI output-bound evidence, produced Fact/Graph/analysis schema validation, package self-import, offline packed-artifact consumer smoke, and bounded Node host evidence pass; the CI workflow is structurally reviewed but has no hosted run, and no release candidate exists |
+| Verification | Root-guard/snapshot/configured-ignore/hidden-file/decoder/CLI/cache/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/configuration/evidence/edge-budget tests (79/79), validated/copied query snapshots, vanished-snapshot-target rejection, serialized CLI output-bound evidence, produced Fact/Graph/analysis schema validation, package self-import, offline packed-artifact consumer smoke, bounded Node host evidence, and the prompt-to-artifact audit pass for their recorded scopes; the CI workflow is structurally reviewed but has no hosted run, and no release candidate exists |
 | Limitations | Graph persistence, library serialized-output/time budgets, generated-file detection, public release contract, runtime support matrix, registry, hosted CI verification, and maintainer workflow are undecided; query commands remain bounded/private and the package remains private |
 
 ## Release principles
@@ -62,6 +62,10 @@ Do not claim full Lucee or Adobe ColdFusion compatibility from parser tests or f
 ## Bounded pre-release audit
 
 T-044 has a bounded local audit of the product source at baseline commit `428feb76c77bec1c865bf6963d67f7cb932e8e9f`; the audit-only documentation commit is separate. A single `npm pack --dry-run --json` invocation identified `agent-cfml-linkage-0.1.0.tgz` with shasum `4862072d2bbb9c72c2cea36f5570f2b999f64fe9`; the tarball was not retained or published, and reproducibility is not claimed. Later packaging of the post-audit tree is not the same artifact input because the audit document is included. Security, documentation-parity, test, fixture, and static checks pass within their recorded scope. The post-T-046 package smoke was run from source commit `b608b66`; the temporary tarball was removed and hosted CI remains unverified. The complete audit record is [`docs/audits/release-security-parity-v0.1.json`](docs/audits/release-security-parity-v0.1.json).
+
+## Prompt-to-artifact audit
+
+`docs/audits/prompt-to-artifact-v0.1.json` is the current completion audit. It maps every explicit execution-loop item, Core SSOT file, named deliverable, check, gate, and measurable goal criterion to repository evidence. Its decision is intentionally `not_achieved`: bounded local evidence exists, but full parser/resolver coverage, library output/time enforcement, hosted CI, broader compatibility, public packaging, and release gates remain open.
 
 ## Current release state
 

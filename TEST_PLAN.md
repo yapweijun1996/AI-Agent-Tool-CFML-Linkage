@@ -9,7 +9,7 @@
 | Scope | Contract, determinism, safety, linkage, partial-result, and release verification |
 | Source of truth | This plan for intended verification; actual test output and CI for evidence |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local source includes the verified foundation and bounded extractors |
-| Verification | T-001–T-006 contract checks, produced Fact/Graph/analysis IR schema validation, and T-010–T-014/T-020–T-036/T-040–T-046/T-048–T-051 `npm test` (79/79) plus bounded T-043 Node host evidence passed; T-047 defines a Node CI matrix but has no hosted execution evidence; broader project test suite does not exist |
+| Verification | T-001–T-006 contract checks, produced Fact/Graph/analysis IR schema validation, and retained T-010–T-014/T-020–T-036/T-040–T-046/T-048–T-051 `npm test` (79/79) plus bounded T-043 Node host evidence passed; T-047 defines a Node CI matrix but has no hosted execution evidence; T-052 records the prompt-to-artifact audit; broader project test suite does not exist |
 | Limitations | Exact framework, parser fixtures, supported runtimes, and performance targets are not selected |
 
 ## 1. Verification principles
@@ -32,6 +32,7 @@
 | Integration | CLI/library boundary, cache, query engine | `test/graph-query.test.js` covers immutable snapshots, exact selectors, operation results, explanations, and bounded traversal; `test/analyzer.test.js` and `test/cli.test.js` cover composed Fact/index/resolver/Graph output, explicit parser selection, drift, private import, bounded `analyze`/`index`, query-command mapping/validation, and bounded query output; graph persistence remains open |
 | Package smoke | Packed/installable artifact identity and imports | `pack`/offline install/import/CLI evidence; bounded evidence covers package self-import, packed-artifact consumer analysis, and dry-run, while public release remains unavailable |
 | Engine matrix | Only if the analyzer has runtime-adjacent claims | Separate, reproducible environment evidence |
+| Prompt-to-artifact audit | Verify every explicit task requirement, named artifact, check, gate, and completion criterion is mapped before any completion claim | `docs/audits/prompt-to-artifact-v0.1.json`; current result is explicitly not achieved because required full-product and release evidence is missing |
 
 ## 3. Golden fixture matrix
 
