@@ -9,14 +9,14 @@
 | Scope | Current repository, implementation, verification, release, blockers, and next action |
 | Source of truth | Git history/worktree, executable checks, and release readback; planning intent is in `GOAL.md`/`SPEC.md` |
 | Evidence | Starting `HEAD` `1b29c0b`; only `.gitattributes` tracked before this documentation pass |
-| Verification | Contract/fixture checks and `npm test` root-guard tests passed; broader implementation checks remain unavailable |
+| Verification | Contract/fixture checks and `npm test` foundation tests passed (16/16); broader implementation checks remain unavailable |
 | Limitations | No parser/resolver/CLI, third-party dependencies, CI, runtime linkage, package artifact, tag, or deployment exists |
 
 ## Project classification
 
 - **Type:** planned hybrid of NPM/library, CLI, and AI-agent evidence provider.
 - **Lifecycle:** prototype / safe-foundation implementation.
-- **Current product boundary:** one planned static linkage analyzer with an implemented internal root-guard slice; no public package boundary exists.
+- **Current product boundary:** one planned static linkage analyzer with implemented internal root-guard, snapshot, and decoder slices; no public package boundary exists.
 - **Runtime/browser state:** not applicable yet. No product can be started or inspected, and no browser journey exists.
 
 ## Evidence-backed state
@@ -30,17 +30,17 @@
 | Confidence/completeness policy | Yes | Yes | Yes | No | ADR-003, `examples/confidence-v0.1.json`, policy invariant check |
 | Root/configuration/limits contract | Yes | Yes | Yes | No | ADR-004, config schema/example, policy invariant check |
 | Staged architecture | Yes | No | No | No | `DESIGN.md`, `ARCHITECTURE.md` |
-| Root guard | Yes | Yes | Yes | No | `src/root-guard.js`, `test/root-guard.test.js`, `npm test` 11/11 combined |
+| Root guard | Yes | Yes | Yes | No | `src/root-guard.js`, `test/root-guard.test.js`, 6 focused cases; suite 16/16 |
 | Snapshot/discovery | Yes | Yes | Yes | No | `src/snapshot.js`, `test/snapshot.test.js`, deterministic/drift/limit/symlink checks |
 | Parser/extractor/resolvers | Yes | No | No | No | No linkage source files |
 | CLI/library/API | Yes | No | No | No | Private `package.json` test script only; no public entry point |
 | Fixture layout/manifest | Yes | Yes | Yes | No | `fixtures/manifest-v0.1.json`, category/case directories, invariant check |
-| Focused tests | Yes | Yes | Yes | No | Node root-guard suite: 6 passed; no CI workflow |
+| Focused tests | Yes | Yes | Yes | No | Node foundation suite: 16 passed; no CI workflow |
 | Package/release | Yes | No | No | No | No package, tag, or release |
 
 ## Progress basis
 
-The implementation roadmap has 10 milestones, M0–M9. **M0 contract gate: verified (T-001–T-006). M1: T-010/T-011 verified, T-012–T-014 open; M2–M9 not started.** Runtime milestone completion remains 0/9; the root-guard/snapshot foundation is not a completed linkage milestone.
+The implementation roadmap has 10 milestones, M0–M9. **M0 contract gate: verified (T-001–T-006). M1: T-010–T-012 verified, T-013–T-014 open; M2–M9 not started.** Runtime milestone completion remains 0/9; the root-guard/snapshot/decoder foundation is not a completed linkage milestone.
 
 Core documentation coverage is now the current work product: goal, design, specification, epic, roadmap, task register, progress report, autonomous goal prompt, architecture, test plan, security, release policy, changelog, and ADR.
 
@@ -51,12 +51,12 @@ Core documentation coverage is now the current work product: goal, design, speci
 - Confirmed no complete linkage implementation or product runtime is available; the root-guard/snapshot foundation is runnable.
 - Synchronized the Core SSOT documents without converting proposed runtime design into implementation claims.
 - Added and validated the Graph IR v0.1, Fact IR v0.1, identity/order, confidence/completeness, root/configuration, and fixture-layout artifacts for T-001–T-006.
-- Implemented and verified the Node root guard and deterministic snapshot/discovery for T-010/T-011; they do not implement linkage parsing, resolution, or graph generation.
+- Implemented and verified the Node root guard, deterministic snapshot/discovery, and strict decoder/source map for T-010–T-012; they do not implement linkage parsing, resolution, or graph generation.
 - Preserved the boundary with external `agent-cfml-check`, `agent-code-slice`, `agent-change-impact`, and `agent-test-scope` work.
 
 ## Blockers and unresolved decisions
 
-1. **M1 continuation:** root guard and snapshot/discovery are verified; decoding/source maps, CLI envelope, and cache skeleton remain. Parser choice remains an M2 decision.
+1. **M1 continuation:** root guard, snapshot/discovery, and decoding/source maps are verified; CLI envelope and cache skeleton remain. Parser choice remains an M2 decision.
 2. **Parser strategy:** parser and supported syntax subset are not selected; choose behind the adapter using fixture evidence.
 3. **Public package/runtime contract:** Node `>=20` and a private package manifest are established for the foundation; public exports, CLI commands, CI matrix, and release metadata remain unknown.
 4. **Compatibility evidence:** Lucee/Adobe/browser/runtime claims cannot be made until environments and fixtures exist.
@@ -72,10 +72,10 @@ These are documented planning blockers, not reasons to claim failure. No externa
 | Markdown metadata/trailing-whitespace check | Passed | Documentation-only check |
 | GOAL_PROMPT character limit | Passed (1,987 characters) | Enforced at 2,000 characters |
 | Local Markdown link check | Passed | Does not validate external links |
-| Build/type/lint/unit/integration/E2E | Partial: `npm test` passed 11 root-guard/snapshot tests | No linkage build/type/lint/integration/E2E suite exists |
+| Build/type/lint/unit/integration/E2E | Partial: `npm test` passed 16 root-guard/snapshot/decoder tests | No linkage build/type/lint/integration/E2E suite exists |
 | Package/import/CLI smoke | Unrun | Private manifest only; no public artifact or CLI |
 | Browser/accessibility/runtime linkage/security probes | Unrun | No user-facing product or complete analyzer exists |
 
 ## Next task / resume point
 
-**Next task: M1 / T-012 — implement safe decoding and byte/line/column source maps.** Continue with T-013–T-014 before parser/resolver implementation.
+**Next task: M1 / T-013 — implement CLI input envelope and validation.** Continue with T-014 before parser/resolver implementation.

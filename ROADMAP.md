@@ -9,7 +9,7 @@
 | Scope | Ordered delivery of the planned linkage analyzer |
 | Source of truth | This roadmap for sequencing; Git history and tests for completion evidence |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | M0 contract gate and T-010 root-guard tests are verified; later milestones have no evidence |
+| Verification | M0 contract gate and T-010–T-012 foundation tests are verified; later milestones have no evidence |
 | Limitations | Dates, estimates, parser selection, and release targets are intentionally not committed |
 
 ## Current state
@@ -36,7 +36,7 @@ The current pass advances M0 to a verified gate and M1/T-010/T-011 to verified, 
 - M0: Graph IR, Fact IR, diagnostics, confidence, unresolved reasons, IDs, limits, and stable JSON envelope. T-001–T-005 contract slices are verified; remaining M0 contract work is open.
 - M1: canonical root guard, path containment, ignore policy, deterministic snapshot/discovery, decoding, source maps, and CLI input validation.
 
-**Exit evidence:** reviewed contracts, verified contract fixtures/manifest, T-010 containment tests, T-011 deterministic snapshot tests, planned remaining negative safety tests, and no-execution proof at the process boundary.
+**Exit evidence:** reviewed contracts, verified contract fixtures/manifest, T-010 containment tests, T-011 deterministic snapshot tests, T-012 strict decoding/source-map tests, planned remaining negative safety tests, and no-execution proof at the process boundary.
 
 ### Phase 1 — CFML extraction and basic linkage
 

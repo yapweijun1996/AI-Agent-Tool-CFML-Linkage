@@ -1,6 +1,6 @@
 # Design: agent-cfml-linkage Analysis Pipeline
 
-> **Status: PROPOSED / M1 PARTIAL.** This document describes the intended architecture; only the safe root-guard and byte-snapshot foundation has runtime evidence.
+> **Status: PROPOSED / M1 PARTIAL.** This document describes the intended architecture; only the safe root-guard, byte-snapshot, and strict-decoder foundation has runtime evidence.
 
 | Field | Value |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Graph/Fact/config contract checks and 11 root-guard/snapshot tests pass locally; runtime stages below remain unimplemented proposals |
+| Verification | Graph/Fact/config contract checks and 16 root-guard/snapshot/decoder tests pass locally; runtime stages below remain unimplemented proposals |
 | Limitations | Parser choice, language coverage, performance, and engine compatibility remain unknown |
 
 ## 1. Design goals
@@ -44,7 +44,7 @@ Every stage has a typed input/output boundary. Stages may emit diagnostics but n
 
 ### Stage 0 — Root guard and policy
 
-Resolve the canonical root, reject traversal and symlink escapes, load the explicit v0.1 configuration (`schema/agent-cfml-linkage-config-v0.1.schema.json`), apply mappings and limits, and freeze the `AnalysisContext`. This M1 root-guard slice is implemented in `src/root-guard.js` and covered by `test/root-guard.test.js`. No database, network, or CFML execution is permitted. Globe3-specific mappings are configuration rather than hardcoded rules.
+The planned stage resolves the canonical root, rejects traversal and symlink escapes, loads the explicit v0.1 configuration (`schema/agent-cfml-linkage-config-v0.1.schema.json`), applies mappings and limits, and freezes the `AnalysisContext`. The implemented M1 root-guard slice covers canonicalization and containment in `src/root-guard.js`; adjacent snapshot and decoder slices are covered by focused tests. Configuration loading, policy freezing, and mapping application remain open. No database, network, or CFML execution is permitted. Globe3-specific mappings are configuration rather than hardcoded rules.
 
 ### Stage 1 — Snapshot and discovery
 
@@ -52,7 +52,7 @@ The implemented M1 snapshot walks supported source files deterministically, reco
 
 ### Stage 2 — Decode and source map
 
-Decode source safely while preserving byte-to-line/column mappings. Invalid encoding is explicit incomplete evidence, never silently repaired. One source-map owner ensures all resolvers report consistent coordinates.
+The implemented M1 decoder accepts strict UTF-8, preserves BOM byte alignment, and maps byte offsets to one-based lines and zero-based UTF-16 columns. Invalid encoding is explicit incomplete evidence, never silently repaired. One source-map owner ensures all resolvers report consistent coordinates.
 
 ### Stage 3 — Parser adapter
 
@@ -161,7 +161,7 @@ Correctness comes first. Parse with bounded worker concurrency and merge facts i
 
 ## 7. Proposed implementation sequence
 
-The sequence is dependency-aware but not a schedule. M0's contract gate and T-010 are verified; T-011–T-014 remain before parser and resolver implementation.
+The sequence is dependency-aware but not a schedule. M0's contract gate and T-010–T-012 are verified; T-013–T-014 remain before parser and resolver implementation.
 
 | Milestone | Content | Current status |
 | --- | --- | --- |

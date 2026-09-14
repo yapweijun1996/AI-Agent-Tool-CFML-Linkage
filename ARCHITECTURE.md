@@ -33,7 +33,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 
 | Component | Owns | Must not own |
 | --- | --- | --- |
-| Root guard/policy | canonical root and path containment in the implemented M1 slice; planned ignores, limits, and frozen policy | parsing or confidence upgrades |
+| Root guard/policy | canonical root, path containment, and snapshot admission in the implemented M1 slice; config-wide policy freezing remains planned | parsing or confidence upgrades |
 | Snapshot/discovery | deterministic file set, content fingerprints, metadata, symlink skipping, and drift diagnostics in M1 | source mutation or runtime discovery |
 | Decoder/source map | decoding state and coordinate conversion | linkage decisions |
 | Parser adapter | syntax trees, parser diagnostics, completeness | cross-file resolution |
@@ -104,7 +104,7 @@ An internal invariant or serialization failure is different: it is an internal e
 
 ## 7. Security boundaries
 
-The implemented root guard reads filesystem metadata only to canonicalize and contain paths; it does not read analyzed source. The future process must read only authorized local paths beneath the canonical root and configured safe metadata. It must not evaluate CFML expressions, execute JavaScript or SQL, spawn application commands, access a database, or make network requests. Diagnostics and graph evidence must be bounded and must not disclose secret contents.
+The implemented root guard reads filesystem metadata only to canonicalize and contain paths; the snapshot reads bounded source bytes without decoding or executing them. The future process must read only authorized local paths beneath the canonical root and configured safe metadata. It must not evaluate CFML expressions, execute JavaScript or SQL, spawn application commands, access a database, or make network requests. Diagnostics and graph evidence must be bounded and must not disclose secret contents.
 
 ## 8. Extensibility
 

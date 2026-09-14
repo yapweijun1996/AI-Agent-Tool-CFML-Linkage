@@ -9,7 +9,7 @@
 | Scope | Executable work required to implement and verify the planned analyzer |
 | Source of truth | This register for planned work; repository source, tests, runtime checks, and release evidence for actual status |
 | Evidence | Initial `HEAD` `1b29c0b`; only `.gitattributes` is tracked before the documentation commit |
-| Verification | T-001–T-006 contract checks and T-010/T-011 root-guard/snapshot tests pass locally |
+| Verification | T-001–T-006 contract checks and T-010–T-012 foundation tests pass locally (16/16) |
 | Limitations | Owners, dates, package/runtime choices, and estimates are not assigned |
 
 ## Status and completion rules
@@ -25,7 +25,7 @@
 
 ## Immediate blocker
 
-**M0 contract gate verified.** T-001–T-006 provide validated contracts/fixtures. T-010 root guard and T-011 snapshot/discovery are implemented and verified; T-012–T-014 remain for the rest of M1 safe foundation.
+**M0 contract gate verified.** T-001–T-006 provide validated contracts/fixtures. T-010 root guard, T-011 snapshot/discovery, and T-012 strict decoding/source maps are implemented and verified; T-013–T-014 remain for the rest of M1 safe foundation.
 
 This blocks implementation tasks, not documentation maintenance.
 
@@ -39,9 +39,9 @@ This blocks implementation tasks, not documentation maintenance.
 | T-004 | Define confidence, unresolved reasons, diagnostics, completeness | P0 | Verified | T-001/T-002 | ADR-003 + `examples/confidence-v0.1.json`; policy invariant check passed |
 | T-005 | Define root policy, ignores, limits, configuration, and exit codes | P0 | Verified | T-001 | `schema/agent-cfml-linkage-config-v0.1.schema.json`, `examples/config-v0.1.json`, ADR-004; local policy invariant check passed |
 | T-006 | Create golden, negative, and adversarial fixture layout | P0 | Verified | T-001–T-005 | `fixtures/manifest-v0.1.json` and category/case directories; manifest/path/source-execution check passed |
-| T-010 | Implement canonical root guard and symlink/traversal rejection | P0 | Verified | T-005 | `src/root-guard.js`, `test/root-guard.test.js`; `npm test` 6/6 passed |
+| T-010 | Implement canonical root guard and symlink/traversal rejection | P0 | Verified | T-005 | `src/root-guard.js`, `test/root-guard.test.js`; focused root-guard cases pass within `npm test` 16/16 |
 | T-011 | Implement deterministic discovery and snapshot fingerprint | P0 | Verified | T-005 | `src/snapshot.js`, `test/snapshot.test.js`; `npm test` 11/11 passed |
-| T-012 | Implement safe decoding and source maps | P1 | Planned | T-005 | Encoding/span tests |
+| T-012 | Implement safe decoding and source maps | P1 | Verified | T-005 | `src/source-map.js`, `test/source-map.test.js`; `npm test` 16/16 passed |
 | T-013 | Implement stable CLI JSON envelope and stderr diagnostics | P1 | Planned | T-001/T-005 | Public CLI contract tests |
 | T-014 | Add disposable cache skeleton and invalidation fingerprints | P1 | Planned | T-003/T-011 | Corruption/staleness tests |
 | T-020 | Add parser adapter with partial/unsupported diagnostics | P0 | Planned | T-006/T-012 | Parser fixtures and diagnostics |
@@ -70,4 +70,4 @@ This blocks implementation tasks, not documentation maintenance.
 - **M4–M7:** T-030–T-035 — linkage depth and queries.
 - **M8–M9:** T-040–T-044 — verification and release.
 
-T-001–T-006 and T-010–T-011 are Verified. T-012–T-014 and all M2+ tasks remain Planned. The next task is T-012, safe decoding and source maps.
+T-001–T-006 and T-010–T-012 are Verified. T-013–T-014 and all M2+ tasks remain Planned. The next task is T-013, CLI input envelope and validation.

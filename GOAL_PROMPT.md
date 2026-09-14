@@ -8,11 +8,11 @@
 | Last updated | 2026-09-14 |
 | Scope | Evidence-driven implementation loop |
 | Source of truth | Core SSOT plus Git/tests/runtime/release evidence |
-| Evidence | M0 contracts verified; M1 root guard/snapshot and 11 tests pass |
+| Evidence | M0 contracts verified; M1 root guard/snapshot/decoder and 16 tests pass |
 | Verification | Prompt/documentation only |
 | Limitations | Parser, public API, CI, and release remain open |
 
-Work on `agent-cfml-linkage`, a Node `>=20` prototype NPM/library + CLI + AI-agent evidence provider for CFML-first static linkage. M0 contracts are verified; M1 has only a private package, root guard, and focused tests. No parser, resolver, public CLI/exports, CI, or release exists. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
+Work on `agent-cfml-linkage`, a Node `>=20` prototype NPM/library + CLI + AI-agent evidence provider for CFML-first static linkage. M0 contracts are verified; M1 has only a private package, root guard/snapshot/decoder, and focused tests. No parser, resolver, public CLI/exports, CI, or release exists. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
 
 Repeat:
 

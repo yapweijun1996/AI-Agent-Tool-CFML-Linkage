@@ -9,7 +9,7 @@
 | Scope | Versioning, release gates, artifact traceability, and compatibility claims |
 | Source of truth | Git commit, validated artifacts, tests, and this release policy |
 | Evidence | `package.json` is private with Node `>=20`; no public package artifact, tag, workflow, or release exists |
-| Verification | Root-guard/snapshot tests pass; no release candidate exists |
+| Verification | Root-guard/snapshot/decoder tests pass; no release candidate exists |
 | Limitations | Public exports, runtime support matrix, registry, CI, and maintainer workflow are undecided |
 
 ## Release principles
@@ -28,7 +28,7 @@ Use semantic versioning after the package and public contract are established:
 - `1.0`: Graph IR, CLI, library, safety, and completeness contracts are reviewed and stable.
 - Patch releases must preserve the documented contract and correct defects without weakening safety.
 
-The current repository has no release version. `0.1` is a design/documentation version only; the private `package.json` and root-guard/snapshot foundation are not a released package or linkage runtime.
+The current repository has no release version. `0.1` is a design/documentation version only; the private `package.json` and root-guard/snapshot/decoder foundation are not a released package or linkage runtime.
 
 ## Release gates
 
@@ -61,4 +61,4 @@ Do not claim full Lucee or Adobe ColdFusion compatibility from parser tests or f
 
 ## Current release state
 
-**Unreleased.** A private foundation package manifest and root-guard source exist; there is no public artifact, CI, tag, or release to verify.
+**Unreleased.** A private foundation package manifest and root-guard/snapshot/decoder sources exist; there is no public artifact, CI, tag, or release to verify.

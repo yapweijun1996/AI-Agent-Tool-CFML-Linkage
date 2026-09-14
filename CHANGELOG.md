@@ -30,9 +30,10 @@
 - Versioned golden/negative/adversarial fixture layout and manifest under `fixtures/` for T-006.
 - Node `>=20` private foundation, root guard, focused tests, and ADR-005 for T-010.
 - Deterministic byte snapshot/discovery, focused tests, and ADR-006 for T-011.
+- Strict UTF-8 decoding, byte/line/column source maps, focused tests, and ADR-007 for T-012.
 
 ### Not claimed
 
 - No analyzer implementation has been added.
-- No parser, resolver, public CLI/library API, cache, query engine, CI workflow, public package, or release has been added; the private foundation and focused root-guard test are the only runtime slice.
+- No parser, resolver, public CLI/library API, cache, query engine, CI workflow, public package, or release has been added; the private foundation and focused root-guard/snapshot/decoder tests are the only runtime slice.
 - No Lucee, Adobe ColdFusion, browser, database, or network verification has been performed.

@@ -9,7 +9,7 @@
 | Scope | Static cross-file linkage analysis for CFML-first mixed web projects |
 | Source of truth | This document for the proposed contract; Git history for current code facts |
 | Evidence | Initial repository commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Graph/Fact/config contract checks and `npm test` root-guard/snapshot tests (11/11) pass; linkage contract/runtime verification is incomplete |
+| Verification | Graph/Fact/config contract checks and `npm test` root-guard/snapshot/decoder tests (16/16) pass; linkage contract/runtime verification is incomplete |
 | Limitations | Parser coverage, resolver accuracy, performance, compatibility, and release status are unverified |
 
 ## 1. Objective
@@ -37,13 +37,13 @@ The future API accepts:
 - optional configuration for ignore rules, file limits, mappings, parser selection, and resolver policy;
 - an optional target or query after graph construction.
 
-The implementation MUST canonicalize the root, reject traversal and symlink escapes, enforce root containment, freeze policy before discovery, and report rejected paths explicitly. The v0.1 configuration contract is `schema/agent-cfml-linkage-config-v0.1.schema.json` with example `examples/config-v0.1.json`; its root-safety, prohibited-action, limit, output, and exit-code invariants validate locally. The M1 root guard in `src/root-guard.js` and byte snapshot in `src/snapshot.js` now implement and test the initial boundary; project-specific mappings are configuration, not hardcoded Globe3 behavior.
+The implementation MUST canonicalize the root, reject traversal and symlink escapes, enforce root containment, freeze policy before discovery, and report rejected paths explicitly. The v0.1 configuration contract is `schema/agent-cfml-linkage-config-v0.1.schema.json` with example `examples/config-v0.1.json`; its root-safety, prohibited-action, limit, output, and exit-code invariants validate locally. The M1 root guard in `src/root-guard.js`, byte snapshot in `src/snapshot.js`, and strict decoder/map in `src/source-map.js` now implement and test the initial boundary; project-specific mappings are configuration, not hardcoded Globe3 behavior.
 
-The M1 snapshot currently discovers `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.js`, `.mjs`, and `.css` deterministically. Embedded SQL is a later extraction concern; exact parser and embedded-region coverage remain a design detail for M2.
+The M1 snapshot currently discovers `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.js`, `.mjs`, and `.css` deterministically. The M1 decoder accepts strict UTF-8 only and maps byte offsets to one-based lines and zero-based UTF-16 columns. Embedded SQL is a later extraction concern; exact parser and embedded-region coverage remain a design detail for M2.
 
 ### 3.1 Current repository contract evidence
 
-The repository now has a private `package.json` with Node `>=20` and an `npm test` script, plus the internal `src/root-guard.js` module and focused test. It has no public export map, CLI entry point, callers, runtime linkage implementation, third-party dependencies, build workflow, or release artifact. API, CLI names, parser dependency, and public package metadata below remain proposed contracts.
+The repository now has a private `package.json` with Node `>=20` and an `npm test` script, plus internal `src/root-guard.js`, `src/snapshot.js`, and `src/source-map.js` modules with focused tests. It has no public export map, CLI entry point, callers, runtime linkage implementation, third-party dependencies, build workflow, or release artifact. API, CLI names, parser dependency, and public package metadata below remain proposed contracts.
 
 ## 4. Analysis contract
 
