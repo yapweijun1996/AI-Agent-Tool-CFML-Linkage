@@ -44,7 +44,7 @@ Every stage has a typed input/output boundary. Stages may emit diagnostics but n
 
 ### Stage 0 — Root guard and policy
 
-Resolve the canonical root, reject traversal and symlink escapes, load ignore rules and limits, apply explicit mappings, and freeze the `AnalysisContext`. No database, network, or CFML execution is permitted. Globe3-specific mappings are configuration rather than hardcoded rules.
+Resolve the canonical root, reject traversal and symlink escapes, load the explicit v0.1 configuration (`schema/agent-cfml-linkage-config-v0.1.schema.json`), apply mappings and limits, and freeze the `AnalysisContext`. No database, network, or CFML execution is permitted. Globe3-specific mappings are configuration rather than hardcoded rules.
 
 ### Stage 1 — Snapshot and discovery
 
@@ -116,7 +116,7 @@ Dynamic URL expressions, `evaluate`, `isDefined`, generated names, dynamic SQL i
 
 ### Stage 7 — evidence and confidence
 
-A central policy combines resolver evidence and assigns `confirmed`, `strong`, `candidate`, or `unresolved`. Confirmed requires exact syntax and a unique deterministic target. Strong permits bounded deterministic mapping or type inference. Numeric scores are telemetry only and cannot upgrade a class. Plugins cannot directly promote confidence.
+A central policy combines resolver evidence and assigns `confirmed`, `strong`, `candidate`, or `unresolved`. Confirmed requires exact syntax and a unique deterministic target. Strong permits bounded deterministic mapping or type inference. Numeric scores are telemetry only and cannot upgrade a class. Plugins cannot directly promote confidence. The policy and fixture are [`ADR-003`](docs/decisions/ADR-003-confidence-and-completeness.md) and `examples/confidence-v0.1.json`.
 
 ### Stage 8 — graph builder
 
@@ -161,11 +161,11 @@ Correctness comes first. Parse with bounded worker concurrency and merge facts i
 
 ## 7. Proposed implementation sequence
 
-The sequence is dependency-aware but not a schedule. M0 must freeze the contracts before parser or resolver implementation begins.
+The sequence is dependency-aware but not a schedule. M0's contract gate is verified; parser and resolver implementation remains blocked until the safe M1 foundation is established.
 
 | Milestone | Content | Current status |
 | --- | --- | --- |
-| M0 | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and golden-fixture contract | In progress — T-001–T-003 verified |
+| M0 | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and golden-fixture contract | Verified — T-001–T-006 |
 | M1 | Safe root guard, snapshot, decoder, discovery, cache skeleton, CLI envelope | Not started |
 | M2 | Parser adapter and normalized extraction | Not started |
 | M3 | Basic path/Application/include linkage and graph validation | Not started |

@@ -25,7 +25,7 @@
 
 ## Immediate blocker
 
-**BLOCKED — the M0 contract freeze is incomplete.** T-001–T-003 now provide validated Graph IR, Fact IR, and identity/order contract artifacts, but supported syntax boundary, configuration, parser selection criteria, limits, remaining semantics, and golden fixtures remain open before feature implementation can be accepted.
+**M0 contract gate verified.** T-001–T-006 provide validated Graph IR, Fact IR, identity/order, confidence/completeness, configuration, and fixture-layout artifacts. No analyzer runtime exists; M1 safe-foundation work is now dependency-ready.
 
 This blocks implementation tasks, not documentation maintenance.
 
@@ -36,9 +36,9 @@ This blocks implementation tasks, not documentation maintenance.
 | T-001 | Define Graph IR JSON Schema and examples | P0 | Verified | None | `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`; local schema/reference/count validation passed |
 | T-002 | Define normalized Fact IR and source-span rules | P0 | Verified | T-001 | `schema/agent-cfml-linkage-fact-v0.1.schema.json` and `examples/facts-v0.1.json`; local schema/source/count/span validation passed |
 | T-003 | Define stable IDs, ordering, freshness, and deduplication | P0 | Verified | T-001/T-002 | ADR-002 + `examples/identity-order-v0.1.json`; deterministic identity/order reference check passed |
-| T-004 | Define confidence, unresolved reasons, diagnostics, completeness | P0 | Planned | T-001/T-002 | Contract and negative tests |
-| T-005 | Define root policy, ignores, limits, configuration, and exit codes | P0 | Planned | T-001 | Safety and CLI contract tests |
-| T-006 | Create golden, negative, and adversarial fixture layout | P0 | Planned | T-001–T-005 | Versioned fixture baseline |
+| T-004 | Define confidence, unresolved reasons, diagnostics, completeness | P0 | Verified | T-001/T-002 | ADR-003 + `examples/confidence-v0.1.json`; policy invariant check passed |
+| T-005 | Define root policy, ignores, limits, configuration, and exit codes | P0 | Verified | T-001 | `schema/agent-cfml-linkage-config-v0.1.schema.json`, `examples/config-v0.1.json`, ADR-004; local policy invariant check passed |
+| T-006 | Create golden, negative, and adversarial fixture layout | P0 | Verified | T-001–T-005 | `fixtures/manifest-v0.1.json` and category/case directories; manifest/path/source-execution check passed |
 | T-010 | Implement canonical root guard and symlink/traversal rejection | P0 | Planned | T-005 | Passing containment tests |
 | T-011 | Implement deterministic discovery and snapshot fingerprint | P0 | Planned | T-005 | Snapshot/drift tests |
 | T-012 | Implement safe decoding and source maps | P1 | Planned | T-005 | Encoding/span tests |
@@ -70,4 +70,4 @@ This blocks implementation tasks, not documentation maintenance.
 - **M4–M7:** T-030–T-035 — linkage depth and queries.
 - **M8–M9:** T-040–T-044 — verification and release.
 
-T-001–T-003 are Verified. T-004–T-006 and all later tasks remain Planned. The next task is T-004, subject to the remaining M0 contract-freeze review.
+T-001–T-006 are Verified. All M1+ tasks remain Planned. The next task is T-010, the canonical root guard, followed by the remaining safe-foundation tasks.

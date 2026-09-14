@@ -23,8 +23,11 @@
 - Proposed component ownership and data flow in `ARCHITECTURE.md`.
 - Proposed epic, roadmap, task register, and test plan.
 - Repository guidance and Core SSOT rules in `AGENTS.md`.
-- Proposed security, release, project-boundary, and deterministic identity/order ADR documents.
+- Proposed security, release, project-boundary, deterministic identity/order, and confidence/completeness ADR documents.
 - Identity/order fixture in `examples/identity-order-v0.1.json`.
+- Confidence/completeness fixture in `examples/confidence-v0.1.json`.
+- Root/configuration/limits contract in `schema/agent-cfml-linkage-config-v0.1.schema.json`, `examples/config-v0.1.json`, and ADR-004.
+- Versioned golden/negative/adversarial fixture layout and manifest under `fixtures/` for T-006.
 
 ### Not claimed
 

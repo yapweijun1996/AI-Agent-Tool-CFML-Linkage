@@ -52,4 +52,4 @@ The goal is achieved only when a release has:
 
 ## State model
 
-The project must track **Planned → Implemented → Verified → Released** independently. Current state is planned only; the documentation baseline does not advance implementation state.
+The project must track **Planned → Implemented → Verified → Released** independently. The M0 contract foundation is now verified; the analyzer runtime, package, and release remain planned only.

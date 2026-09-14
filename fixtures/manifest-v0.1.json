@@ -1,0 +1,92 @@
+{
+  "schema_version": "agent-cfml-linkage-fixtures/v0.1",
+  "status": "baseline",
+  "categories": [
+    "golden",
+    "negative",
+    "adversarial"
+  ],
+  "cases": [
+    {
+      "id": "golden-core-cfml-web-surface",
+      "category": "golden",
+      "path": "golden/core-cfml-web-surface",
+      "covers": [
+        "includes",
+        "application-governance",
+        "forms",
+        "redirects",
+        "javascript-fetch",
+        "css-assets",
+        "visible-sql"
+      ],
+      "expected": "golden-graph-and-facts",
+      "source_execution": false
+    },
+    {
+      "id": "golden-cfc-inheritance-and-scope",
+      "category": "golden",
+      "path": "golden/cfc-inheritance-and-scope",
+      "covers": [
+        "cfc-inheritance",
+        "method-calls",
+        "ordered-includes",
+        "scope-flow",
+        "conditions"
+      ],
+      "expected": "golden-graph-and-facts",
+      "source_execution": false
+    },
+    {
+      "id": "negative-ambiguity-and-out-of-root",
+      "category": "negative",
+      "path": "negative/ambiguity-and-out-of-root",
+      "covers": [
+        "ambiguous-components",
+        "ambiguous-mappings",
+        "path-escape"
+      ],
+      "expected": "candidate-unresolved-or-path-rejection",
+      "source_execution": false
+    },
+    {
+      "id": "negative-malformed-and-partial",
+      "category": "negative",
+      "path": "negative/malformed-and-partial",
+      "covers": [
+        "malformed-cfml",
+        "partial-parse",
+        "unsupported-syntax"
+      ],
+      "expected": "diagnostic-and-incomplete-result",
+      "source_execution": false
+    },
+    {
+      "id": "adversarial-dynamic-and-generated",
+      "category": "adversarial",
+      "path": "adversarial/dynamic-and-generated",
+      "covers": [
+        "evaluate",
+        "generated-symbols",
+        "dynamic-url",
+        "dynamic-sql",
+        "runtime-mapping"
+      ],
+      "expected": "candidate-or-unresolved-with-expression",
+      "source_execution": false
+    },
+    {
+      "id": "adversarial-misleading-and-limits",
+      "category": "adversarial",
+      "path": "adversarial/misleading-and-limits",
+      "covers": [
+        "comments-and-strings",
+        "include-cycles",
+        "resource-limits",
+        "snapshot-drift"
+      ],
+      "expected": "no-false-facts-and-bounded-incomplete-result",
+      "source_execution": false
+    }
+  ]
+}

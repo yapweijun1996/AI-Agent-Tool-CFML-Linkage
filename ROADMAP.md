@@ -18,24 +18,25 @@
 | --- | --- | --- |
 | Repository | Initial implementation baseline plus documentation baseline | Git `main` at `1b29c0b` before this documentation commit |
 | Source implementation | Not started | No source files tracked |
-| Contracts/schema | Graph IR, Fact IR, and identity/order contract artifacts implemented and validated; runtime producers still absent | `schema/`, `examples/`, `SPEC.md`, ADR-002 |
-| Tests/fixtures | Not started | No test files tracked |
+| Contracts/schema | Graph IR, Fact IR, identity/order, confidence/completeness, and configuration artifacts implemented and validated; runtime producers still absent | `schema/`, `examples/`, `SPEC.md`, ADR-002–ADR-004 |
+| Fixture layout/manifest | Implemented and validated | `fixtures/` and `fixtures/manifest-v0.1.json`; source/golden outputs still pending |
+| Tests | Not started | No test files or test runner tracked |
 | CI/package/release | Not started | No project manifest or workflow tracked |
 | Runtime compatibility | Unknown | No local analyzer exists |
 | Core SSOT documentation | Synchronized planning baseline | `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`, `GOAL_PROMPT.md` |
 
 ## Delivery sequence
 
-The current documentation pass does not advance M0–M9. It records the pre-prototype state and makes the next contract task explicit in `PROGRESS.md`.
+The current contract pass advances M0 to a verified gate but does not advance runtime milestones M1–M9. It records the pre-prototype state and makes the next safe-foundation task explicit in `PROGRESS.md`.
 
 ### Phase 0 — Contract and safety foundation
 
 **Goal:** make the boundary testable before implementing language behavior.
 
-- M0: Graph IR, Fact IR, diagnostics, confidence, unresolved reasons, IDs, limits, and stable JSON envelope. T-001–T-003 contract slices are verified; remaining M0 contract work is open.
+- M0: Graph IR, Fact IR, diagnostics, confidence, unresolved reasons, IDs, limits, and stable JSON envelope. T-001–T-005 contract slices are verified; remaining M0 contract work is open.
 - M1: canonical root guard, path containment, ignore policy, deterministic snapshot/discovery, decoding, source maps, and CLI input validation.
 
-**Exit evidence:** reviewed contracts, negative safety tests, deterministic snapshot fixtures, and no-execution proof at the process boundary.
+**Exit evidence:** reviewed contracts, verified contract fixtures/manifest, planned negative safety tests, deterministic snapshot fixtures, and no-execution proof at the process boundary.
 
 ### Phase 1 — CFML extraction and basic linkage
 

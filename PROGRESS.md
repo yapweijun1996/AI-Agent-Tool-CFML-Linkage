@@ -27,15 +27,18 @@
 | Graph IR JSON Schema/example | Yes | Yes | Yes | No | `schema/agent-cfml-linkage-graph-v0.1.schema.json`, `examples/graph-v0.1.json`, local `jsonschema`/reference/count validation |
 | Fact IR JSON Schema/example | Yes | Yes | Yes | No | `schema/agent-cfml-linkage-fact-v0.1.schema.json`, `examples/facts-v0.1.json`, local validation |
 | Identity/order contract | Yes | Yes | Yes | No | ADR-002, `examples/identity-order-v0.1.json`, deterministic reference check |
+| Confidence/completeness policy | Yes | Yes | Yes | No | ADR-003, `examples/confidence-v0.1.json`, policy invariant check |
+| Root/configuration/limits contract | Yes | Yes | Yes | No | ADR-004, config schema/example, policy invariant check |
 | Staged architecture | Yes | No | No | No | `DESIGN.md`, `ARCHITECTURE.md` |
 | Parser/extractor/resolvers | Yes | No | No | No | No source files |
 | CLI/library/API | Yes | No | No | No | No manifest or entry point |
-| Tests/fixtures/CI | Yes | No | No | No | No test or workflow files |
+| Fixture layout/manifest | Yes | Yes | Yes | No | `fixtures/manifest-v0.1.json`, category/case directories, invariant check |
+| Tests/CI | Yes | No | No | No | No test or workflow files |
 | Package/release | Yes | No | No | No | No package, tag, or release |
 
 ## Progress basis
 
-The implementation roadmap has 10 milestones, M0–M9. **Completed: 0/10; implemented: 0/10; verified: 0/10; released: 0/10.** M0 is in progress: **T-001–T-003 are verified; T-004–T-006 remain open**. The documentation and contract artifacts are not counted as a completed implementation milestone.
+The implementation roadmap has 10 milestones, M0–M9. **M0 contract gate: verified (T-001–T-006). Runtime milestones M1–M9: implemented 0/9, verified 0/9, released 0/9.** Contract and fixture artifacts are not counted as runtime implementation progress.
 
 Core documentation coverage is now the current work product: goal, design, specification, epic, roadmap, task register, progress report, autonomous goal prompt, architecture, test plan, security, release policy, changelog, and ADR.
 
@@ -45,12 +48,12 @@ Core documentation coverage is now the current work product: goal, design, speci
 - Inspected tracked tree, Git status/history, configuration, manifests, dependencies, source, entry points, tests, scripts, CI, release files, and docs.
 - Confirmed no runnable implementation or product runtime is available.
 - Synchronized the Core SSOT documents without converting proposed runtime design into implementation claims.
-- Added and validated the Graph IR v0.1, Fact IR v0.1, and identity/order contract artifacts for T-001–T-003; these do not implement the analyzer runtime.
+- Added and validated the Graph IR v0.1, Fact IR v0.1, identity/order, confidence/completeness, root/configuration, and fixture-layout artifacts for T-001–T-006; these do not implement the analyzer runtime.
 - Preserved the boundary with external `agent-cfml-check`, `agent-code-slice`, `agent-change-impact`, and `agent-test-scope` work.
 
 ## Blockers and unresolved decisions
 
-1. **M0 contract freeze:** diagnostics, limits, configuration, parser boundary, remaining semantics, and fixture contract still require review before coding; Graph IR, Fact IR, and identity/order artifacts are verified first slices.
+1. **M1 implementation baseline:** no analyzer source exists; root guard, snapshot, decoding, source maps, CLI envelope, and cache skeleton are next. Parser choice remains an M2 decision.
 2. **Parser strategy:** parser and supported syntax subset are not selected; choose behind the adapter using fixture evidence.
 3. **Package/runtime contract:** package name, language/runtime versions, public exports, CLI commands, and CI matrix are unknown.
 4. **Compatibility evidence:** Lucee/Adobe/browser/runtime claims cannot be made until environments and fixtures exist.
@@ -72,4 +75,4 @@ These are documented planning blockers, not reasons to claim failure. No externa
 
 ## Next task / resume point
 
-**Next task: M0 / T-004–T-006 — define confidence/unresolved semantics, root policy, limits, and initial golden fixtures.** Do not begin broad resolver implementation before the remaining contracts and fixtures are reviewed.
+**Next task: M1 / T-010 — implement canonical root guard and symlink/traversal rejection.** Continue with T-011–T-014 before parser/resolver implementation.

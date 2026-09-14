@@ -37,7 +37,7 @@ The future API accepts:
 - optional configuration for ignore rules, file limits, mappings, parser selection, and resolver policy;
 - an optional target or query after graph construction.
 
-The implementation MUST canonicalize the root, reject traversal and symlink escapes, enforce root containment, freeze policy before discovery, and report rejected paths explicitly. Project-specific mappings are configuration, not hardcoded Globe3 behavior.
+The implementation MUST canonicalize the root, reject traversal and symlink escapes, enforce root containment, freeze policy before discovery, and report rejected paths explicitly. The v0.1 configuration contract is `schema/agent-cfml-linkage-config-v0.1.schema.json` with example `examples/config-v0.1.json`; its root-safety, prohibited-action, limit, output, and exit-code invariants validate locally. Project-specific mappings are configuration, not hardcoded Globe3 behavior.
 
 The analyzer SHOULD discover `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.js`, `.mjs`, `.css`, and statically relevant SQL regions. Exact extension and embedded-region coverage remains a design detail to validate during M0/M1.
 
@@ -119,9 +119,9 @@ The central policy, not individual plugins, assigns confidence:
 - `candidate`: plausible static target but ambiguity remains;
 - `unresolved`: insufficient evidence.
 
-Numeric scores are optional telemetry and never promote a confidence class. Filename similarity, LLM output, and intuition cannot create a confirmed edge.
+Numeric scores are optional telemetry and never promote a confidence class. Filename similarity, LLM output, and intuition cannot create a confirmed edge. The exact evidence gates, completeness semantics, diagnostic codes, and policy cases are defined in [`ADR-003`](docs/decisions/ADR-003-confidence-and-completeness.md) and exercised by `examples/confidence-v0.1.json`.
 
-Unresolved records are successful analysis output, not internal errors. Planned reason codes include `DYNAMIC_EXPRESSION`, `AMBIGUOUS_PATH`, `AMBIGUOUS_COMPONENT`, `AMBIGUOUS_METHOD`, `MAPPING_UNKNOWN`, `OUTSIDE_ROOT`, `GENERATED_SYMBOL`, `SQL_DYNAMIC_IDENTIFIER`, `UNSUPPORTED_SYNTAX`, and `PARSE_PARTIAL`.
+Unresolved records are successful analysis output, not internal errors. Planned reason codes include `DYNAMIC_EXPRESSION`, `AMBIGUOUS_PATH`, `AMBIGUOUS_COMPONENT`, `AMBIGUOUS_METHOD`, `MAPPING_UNKNOWN`, `OUTSIDE_ROOT`, `GENERATED_SYMBOL`, `SQL_DYNAMIC_IDENTIFIER`, `UNSUPPORTED_SYNTAX`, and `PARSE_PARTIAL`. A complete result may contain unresolved dynamic relationships; completeness instead reports whether the declared source and enabled analysis stages were safely covered.
 
 ## 5. Resolution rules
 
@@ -172,7 +172,7 @@ The first releasable implementation must have:
 
 - a frozen Graph IR and Fact IR contract;
 - deterministic root guard, discovery, parsing, extraction, resolution, graph validation, and JSON output;
-- golden fixtures for ordered includes/shared scope, CFC inheritance and calls, custom tags, forms, AJAX/fetch, redirects, SQL, Application governance, conditional routers, dynamic/generated symbols, ambiguous mappings, out-of-root paths, and malformed CFML;
+- the versioned fixture baseline at `fixtures/manifest-v0.1.json`, followed by golden fixtures for ordered includes/shared scope, CFC inheritance and calls, custom tags, forms, AJAX/fetch, redirects, SQL, Application governance, conditional routers, dynamic/generated symbols, ambiguous mappings, out-of-root paths, and malformed CFML;
 - negative tests for strings/comments resembling syntax, cycles, cache corruption, snapshot mutation, and every resource limit;
 - reproducible package, library-import, and CLI smoke checks;
 - separately evidenced engine compatibility claims before any Lucee or Adobe ColdFusion claim is published.

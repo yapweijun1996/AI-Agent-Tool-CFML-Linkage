@@ -41,7 +41,7 @@ The repository is at contract-only inception. The Graph IR schema/example contra
 - Graph IR runtime implementation (the proposed JSON Schema contract and example now exist at `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`)
 - CLI/library API
 - incremental cache and query engine
-- fixtures, golden outputs, tests, CI, or published artifacts
+- golden/negative/adversarial fixture layout and manifest now exist; fixture source inputs, golden outputs, tests, CI, and published artifacts remain unavailable
 
 A related external project, `agent-cfml-check`, is separate bounded single-file CFML checking prior art. Its external status must not be read as implementation evidence for this repository.
 
@@ -73,6 +73,8 @@ The eight Core SSOT files are `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROA
 - [`CHANGELOG.md`](CHANGELOG.md) — documentation and implementation history
 - [`docs/decisions/ADR-001-project-boundary.md`](docs/decisions/ADR-001-project-boundary.md) — product boundary decision
 - [`docs/decisions/ADR-002-deterministic-identity-and-ordering.md`](docs/decisions/ADR-002-deterministic-identity-and-ordering.md) — identity, freshness, deduplication, and ordering decision
+- [`docs/decisions/ADR-003-confidence-and-completeness.md`](docs/decisions/ADR-003-confidence-and-completeness.md) — confidence, unresolved, diagnostics, and completeness decision
+- [`docs/decisions/ADR-004-root-policy-and-limits.md`](docs/decisions/ADR-004-root-policy-and-limits.md) — root safety, limits, output, and exit-code decision
 - [`AGENTS.md`](AGENTS.md) — repository-specific contribution rules
 
 ## Non-goals
