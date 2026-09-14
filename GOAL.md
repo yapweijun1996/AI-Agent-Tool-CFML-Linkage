@@ -10,7 +10,7 @@
 | Lifecycle | Prototype / safe-foundation implementation |
 | Source of truth | This repository's Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for state |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; this pass adds documentation, not implementation |
-| Verification | Root-guard implementation and 6 focused Node tests pass locally; linkage/runtime/package-release verification is absent |
+| Verification | Root-guard/snapshot implementation and 11 focused Node tests pass locally; linkage/runtime/package-release verification is absent |
 | Limitations | Public exports/CLI, parser, full runtime matrix, deployment model, and release compatibility are not established |
 
 ## Purpose
@@ -52,4 +52,4 @@ The goal is achieved only when a release has:
 
 ## State model
 
-The project must track **Planned → Implemented → Verified → Released** independently. M0 is verified and the M1 root-guard slice is implemented/verified; the linkage analyzer, public package, and release remain incomplete/unreleased.
+The project must track **Planned → Implemented → Verified → Released** independently. M0 is verified and the M1 root-guard/snapshot slices are implemented/verified; the linkage analyzer, public package, and release remain incomplete/unreleased.

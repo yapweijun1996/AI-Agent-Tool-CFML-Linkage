@@ -30,7 +30,8 @@
 | Confidence/completeness policy | Yes | Yes | Yes | No | ADR-003, `examples/confidence-v0.1.json`, policy invariant check |
 | Root/configuration/limits contract | Yes | Yes | Yes | No | ADR-004, config schema/example, policy invariant check |
 | Staged architecture | Yes | No | No | No | `DESIGN.md`, `ARCHITECTURE.md` |
-| Root guard | Yes | Yes | Yes | No | `src/root-guard.js`, `test/root-guard.test.js`, `npm test` 6/6 |
+| Root guard | Yes | Yes | Yes | No | `src/root-guard.js`, `test/root-guard.test.js`, `npm test` 11/11 combined |
+| Snapshot/discovery | Yes | Yes | Yes | No | `src/snapshot.js`, `test/snapshot.test.js`, deterministic/drift/limit/symlink checks |
 | Parser/extractor/resolvers | Yes | No | No | No | No linkage source files |
 | CLI/library/API | Yes | No | No | No | Private `package.json` test script only; no public entry point |
 | Fixture layout/manifest | Yes | Yes | Yes | No | `fixtures/manifest-v0.1.json`, category/case directories, invariant check |
@@ -39,7 +40,7 @@
 
 ## Progress basis
 
-The implementation roadmap has 10 milestones, M0–M9. **M0 contract gate: verified (T-001–T-006). M1: T-010 verified, T-011–T-014 open; M2–M9 not started.** Runtime milestone completion remains 0/9; the root-guard slice is not a completed linkage milestone.
+The implementation roadmap has 10 milestones, M0–M9. **M0 contract gate: verified (T-001–T-006). M1: T-010/T-011 verified, T-012–T-014 open; M2–M9 not started.** Runtime milestone completion remains 0/9; the root-guard/snapshot foundation is not a completed linkage milestone.
 
 Core documentation coverage is now the current work product: goal, design, specification, epic, roadmap, task register, progress report, autonomous goal prompt, architecture, test plan, security, release policy, changelog, and ADR.
 
@@ -47,15 +48,15 @@ Core documentation coverage is now the current work product: goal, design, speci
 
 - Inspected repository rules and found the repository `AGENTS.md`; no repository `CLAUDE.md` or `CONTRIBUTING.md` exists.
 - Inspected tracked tree, Git status/history, configuration, manifests, dependencies, source, entry points, tests, scripts, CI, release files, and docs.
-- Confirmed no complete linkage implementation or product runtime is available; the root-guard foundation is runnable.
+- Confirmed no complete linkage implementation or product runtime is available; the root-guard/snapshot foundation is runnable.
 - Synchronized the Core SSOT documents without converting proposed runtime design into implementation claims.
 - Added and validated the Graph IR v0.1, Fact IR v0.1, identity/order, confidence/completeness, root/configuration, and fixture-layout artifacts for T-001–T-006.
-- Implemented and verified the Node root guard for T-010; it does not implement linkage parsing, resolution, or graph generation.
+- Implemented and verified the Node root guard and deterministic snapshot/discovery for T-010/T-011; they do not implement linkage parsing, resolution, or graph generation.
 - Preserved the boundary with external `agent-cfml-check`, `agent-code-slice`, `agent-change-impact`, and `agent-test-scope` work.
 
 ## Blockers and unresolved decisions
 
-1. **M1 continuation:** root guard is verified; deterministic discovery/snapshot, decoding/source maps, CLI envelope, and cache skeleton remain. Parser choice remains an M2 decision.
+1. **M1 continuation:** root guard and snapshot/discovery are verified; decoding/source maps, CLI envelope, and cache skeleton remain. Parser choice remains an M2 decision.
 2. **Parser strategy:** parser and supported syntax subset are not selected; choose behind the adapter using fixture evidence.
 3. **Public package/runtime contract:** Node `>=20` and a private package manifest are established for the foundation; public exports, CLI commands, CI matrix, and release metadata remain unknown.
 4. **Compatibility evidence:** Lucee/Adobe/browser/runtime claims cannot be made until environments and fixtures exist.
@@ -71,10 +72,10 @@ These are documented planning blockers, not reasons to claim failure. No externa
 | Markdown metadata/trailing-whitespace check | Passed | Documentation-only check |
 | GOAL_PROMPT character limit | Passed (1,987 characters) | Enforced at 2,000 characters |
 | Local Markdown link check | Passed | Does not validate external links |
-| Build/type/lint/unit/integration/E2E | Partial: `npm test` passed 6 root-guard tests | No linkage build/type/lint/integration/E2E suite exists |
+| Build/type/lint/unit/integration/E2E | Partial: `npm test` passed 11 root-guard/snapshot tests | No linkage build/type/lint/integration/E2E suite exists |
 | Package/import/CLI smoke | Unrun | Private manifest only; no public artifact or CLI |
 | Browser/accessibility/runtime linkage/security probes | Unrun | No user-facing product or complete analyzer exists |
 
 ## Next task / resume point
 
-**Next task: M1 / T-011 — implement deterministic discovery and snapshot fingerprinting.** Continue with T-012–T-014 before parser/resolver implementation.
+**Next task: M1 / T-012 — implement safe decoding and byte/line/column source maps.** Continue with T-013–T-014 before parser/resolver implementation.

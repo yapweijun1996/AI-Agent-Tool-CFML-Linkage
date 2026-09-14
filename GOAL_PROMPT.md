@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | Evidence-driven implementation loop |
 | Source of truth | Core SSOT plus Git/tests/runtime/release evidence |
-| Evidence | M0 contracts verified; M1 root guard and 6 tests pass |
+| Evidence | M0 contracts verified; M1 root guard/snapshot and 11 tests pass |
 | Verification | Prompt/documentation only |
 | Limitations | Parser, public API, CI, and release remain open |
 

@@ -1,6 +1,6 @@
 # Architecture: agent-cfml-linkage
 
-> **Status: PROPOSED / M1 PARTIAL.** The root-guard component exists; the remaining architecture is not implemented.
+> **Status: PROPOSED / M1 PARTIAL.** The root-guard and byte-snapshot components exist; the remaining architecture is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -9,12 +9,12 @@
 | Scope | Component boundaries, data flow, ownership, and failure behavior |
 | Source of truth | This document for proposed architecture; Git history for current code facts |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Root-guard tests pass locally; remaining architecture is unverified |
+| Verification | Root-guard/snapshot tests pass locally; remaining architecture is unverified |
 | Limitations | Parser feasibility, runtime compatibility, resource costs, and public package compatibility are unknown; M1 uses Node built-ins only |
 
 ## 1. Boundary
 
-The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1 slice currently owns only root admission and path containment; Graph IR production, linkage evidence, and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
+The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1 slice currently owns root admission, path containment, and byte snapshot/discovery; Graph IR production, linkage evidence, and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
 
 ```text
 Local source + explicit policy
@@ -34,7 +34,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Component | Owns | Must not own |
 | --- | --- | --- |
 | Root guard/policy | canonical root and path containment in the implemented M1 slice; planned ignores, limits, and frozen policy | parsing or confidence upgrades |
-| Snapshot/discovery | deterministic file set, fingerprints, drift detection | source mutation or runtime discovery |
+| Snapshot/discovery | deterministic file set, content fingerprints, metadata, symlink skipping, and drift diagnostics in M1 | source mutation or runtime discovery |
 | Decoder/source map | decoding state and coordinate conversion | linkage decisions |
 | Parser adapter | syntax trees, parser diagnostics, completeness | cross-file resolution |
 | Fact extractor | normalized Fact IR and extraction evidence | target selection |

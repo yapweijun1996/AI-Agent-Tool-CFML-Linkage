@@ -1,6 +1,6 @@
 # agent-cfml-linkage
 
-> **Status: PROPOSED / M1 IN PROGRESS.** The repository contains a safe root-guard foundation and contracts; the linkage analyzer, CLI, and release are not complete.
+> **Status: PROPOSED / M1 IN PROGRESS.** The repository contains a safe root-guard/snapshot foundation and contracts; the linkage analyzer, CLI, and release are not complete.
 
 | Field | Value |
 | --- | --- |
@@ -9,14 +9,14 @@
 | Scope | Deterministic, read-only, local-first linkage analysis for CFML web applications |
 | Repository evidence | Initial `main` commit `1b29c0b934129fcd005b0575d9b986159043fbc9` contained only `.gitattributes`; this pass adds documentation, not implementation |
 | Source of truth | Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for actual state |
-| Verification | `npm test` passes 6 focused root-guard tests; broader linkage/runtime/package/release verification is absent |
+| Verification | `npm test` passes 11 focused root-guard/snapshot tests; broader linkage/runtime/package/release verification is absent |
 | Limitations | Public API, parser, dependencies, runtime matrix, and deployment model are not established |
 
 ## Classification
 
 - **Project type:** planned hybrid NPM/library + CLI + AI-agent evidence provider.
 - **Lifecycle:** prototype / safe-foundation implementation.
-- **Current state:** M0 contracts and the M1 root guard are implemented/verified; no linkage parser, resolver, CLI, or public package exists.
+- **Current state:** M0 contracts and the M1 root guard/snapshot are implemented/verified; no linkage parser, resolver, CLI, or public package exists.
 
 ## Purpose
 
@@ -34,7 +34,7 @@ The intended output is a deterministic Graph IR/JSON document that agents can qu
 
 ## What exists today
 
-The repository is at safe-foundation inception. Graph IR/Fact IR/configuration contracts and the root guard are implemented/verified; there is still no linkage parser or resolver runtime. The following remain **planned**, not available:
+The repository is at safe-foundation inception. Graph IR/Fact IR/configuration contracts and the root guard/snapshot are implemented/verified; there is still no linkage parser or resolver runtime. The following remain **planned**, not available:
 
 - parser/extractor runtime that produces Fact IR (the Fact IR schema/example contract exists at `schema/agent-cfml-linkage-fact-v0.1.schema.json` and `examples/facts-v0.1.json`)
 - project index and multi-pass resolvers
@@ -76,6 +76,7 @@ The eight Core SSOT files are `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROA
 - [`docs/decisions/ADR-003-confidence-and-completeness.md`](docs/decisions/ADR-003-confidence-and-completeness.md) — confidence, unresolved, diagnostics, and completeness decision
 - [`docs/decisions/ADR-004-root-policy-and-limits.md`](docs/decisions/ADR-004-root-policy-and-limits.md) — root safety, limits, output, and exit-code decision
 - [`docs/decisions/ADR-005-node-foundation-runtime.md`](docs/decisions/ADR-005-node-foundation-runtime.md) — Node foundation and zero-dependency decision
+- [`docs/decisions/ADR-006-deterministic-source-snapshot.md`](docs/decisions/ADR-006-deterministic-source-snapshot.md) — deterministic discovery and snapshot decision
 - [`AGENTS.md`](AGENTS.md) — repository-specific contribution rules
 
 ## Non-goals

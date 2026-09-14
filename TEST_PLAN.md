@@ -9,7 +9,7 @@
 | Scope | Contract, determinism, safety, linkage, partial-result, and release verification |
 | Source of truth | This plan for intended verification; actual test output and CI for evidence |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | T-001–T-006 contract checks and T-010 `npm test` (6/6) passed; broader project test suite does not exist |
+| Verification | T-001–T-006 contract checks and T-010/T-011 `npm test` (11/11) passed; broader project test suite does not exist |
 | Limitations | Exact framework, parser fixtures, supported runtimes, and performance targets are not selected |
 
 ## 1. Verification principles
@@ -86,4 +86,4 @@ The current focused command is `npm test`, using Node's built-in test runner. No
 
 ## 7. Current result
 
-**T-001–T-006 and T-010 passed:** contract schemas/examples, identity/order, confidence/completeness, configuration, fixture-manifest, and root-guard containment checks pass; `npm test` reports 6 passed and 0 failed. This uses no project dependency beyond Node built-ins. Runtime producer repeatability/enforcement, linkage behavior, package smoke, browser, and engine checks remain unverified.
+**T-001–T-006 and T-010/T-011 passed:** contract schemas/examples, identity/order, confidence/completeness, configuration, fixture-manifest, root-guard containment, deterministic discovery, snapshot fingerprint, symlink, limit, and no-execution checks pass; `npm test` reports 11 passed and 0 failed. This uses no project dependency beyond Node built-ins. Runtime producer repeatability beyond the current snapshot tests, linkage behavior, package smoke, browser, and engine checks remain unverified.

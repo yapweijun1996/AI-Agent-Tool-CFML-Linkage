@@ -1,6 +1,6 @@
 # Design: agent-cfml-linkage Analysis Pipeline
 
-> **Status: PROPOSED / M1 PARTIAL.** This document describes the intended architecture; only the safe root-guard foundation has runtime evidence.
+> **Status: PROPOSED / M1 PARTIAL.** This document describes the intended architecture; only the safe root-guard and byte-snapshot foundation has runtime evidence.
 
 | Field | Value |
 | --- | --- |
@@ -9,14 +9,14 @@
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Graph/Fact/config contract checks and 6 root-guard tests pass locally; runtime stages below remain unimplemented proposals |
+| Verification | Graph/Fact/config contract checks and 11 root-guard/snapshot tests pass locally; runtime stages below remain unimplemented proposals |
 | Limitations | Parser choice, language coverage, performance, and engine compatibility remain unknown |
 
 ## 1. Design goals
 
 The analyzer should give coding agents a small, queryable, evidence-backed view of cross-file relationships without executing the application or guessing dynamic behavior. The design favors narrow stages, immutable intermediate data, explicit incompleteness, and stable output.
 
-**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains `src/root-guard.js`, `test/root-guard.test.js`, a private `package.json`, and validated contracts; parser, resolver, graph, query, CLI, caller, CI, and release architecture remain unimplemented.
+**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains `src/root-guard.js`, `src/snapshot.js`, focused tests, a private `package.json`, and validated contracts; parser, resolver, graph, query, CLI, caller, CI, and release architecture remain unimplemented.
 
 It is CFML-first: CFM/CFC structure, Application governance, includes, CFC typing, and shared scopes receive priority. HTML, JavaScript, CSS, SQL, and repository relations extend that model where static evidence is available.
 
@@ -48,7 +48,7 @@ Resolve the canonical root, reject traversal and symlink escapes, load the expli
 
 ### Stage 1 — Snapshot and discovery
 
-Walk supported source files deterministically. Record root-relative POSIX path, canonical path, bytes, mtime, encoding status, and content SHA-256. Sort before parsing. Detect snapshot drift before final output. A changed file invalidates its facts and dependent resolution products; root, configuration, or parser changes invalidate wider scopes.
+The implemented M1 snapshot walks supported source files deterministically, records root-relative POSIX path, canonical path, bytes, mtime, and content SHA-256, and sorts before later stages. It skips symlinks, reports drift/limits explicitly, and calculates a content-based project fingerprint. A changed file will later invalidate its facts and dependent resolution products; root, configuration, or parser changes invalidate wider scopes.
 
 ### Stage 2 — Decode and source map
 
@@ -166,7 +166,7 @@ The sequence is dependency-aware but not a schedule. M0's contract gate and T-01
 | Milestone | Content | Current status |
 | --- | --- | --- |
 | M0 | Freeze Graph IR, Fact IR, diagnostics, IDs, limits, and golden-fixture contract | Verified — T-001–T-006 |
-| M1 | Safe root guard, snapshot, decoder, discovery, cache skeleton, CLI envelope | In progress — T-010 verified |
+| M1 | Safe root guard, snapshot, decoder, discovery, cache skeleton, CLI envelope | In progress — T-010/T-011 verified |
 | M2 | Parser adapter and normalized extraction | Not started |
 | M3 | Basic path/Application/include linkage and graph validation | Not started |
 | M4 | CFC mappings, inheritance, instantiation, and method linkage | Not started |

@@ -9,7 +9,7 @@
 | Scope | Threat boundaries for local static analysis |
 | Source of truth | This document for proposed security requirements; implementation and tests for actual controls |
 | Evidence | Initial commit `1b29c0b`; no analyzer code exists |
-| Verification | Root-guard containment/symlink tests pass; broader security test suite does not exist |
+| Verification | Root-guard containment/symlink and snapshot no-execution tests pass; broader security test suite does not exist |
 | Limitations | Threat model, platform sandbox, dependency policy, and disclosure process require implementation-specific review |
 
 ## Security objectives

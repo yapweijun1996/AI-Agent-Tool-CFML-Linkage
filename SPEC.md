@@ -9,7 +9,7 @@
 | Scope | Static cross-file linkage analysis for CFML-first mixed web projects |
 | Source of truth | This document for the proposed contract; Git history for current code facts |
 | Evidence | Initial repository commit `1b29c0b` contained only `.gitattributes`; no implementation exists |
-| Verification | Graph/Fact/config contract checks and `npm test` root-guard tests pass; linkage contract/runtime verification is incomplete |
+| Verification | Graph/Fact/config contract checks and `npm test` root-guard/snapshot tests (11/11) pass; linkage contract/runtime verification is incomplete |
 | Limitations | Parser coverage, resolver accuracy, performance, compatibility, and release status are unverified |
 
 ## 1. Objective
@@ -37,9 +37,9 @@ The future API accepts:
 - optional configuration for ignore rules, file limits, mappings, parser selection, and resolver policy;
 - an optional target or query after graph construction.
 
-The implementation MUST canonicalize the root, reject traversal and symlink escapes, enforce root containment, freeze policy before discovery, and report rejected paths explicitly. The v0.1 configuration contract is `schema/agent-cfml-linkage-config-v0.1.schema.json` with example `examples/config-v0.1.json`; its root-safety, prohibited-action, limit, output, and exit-code invariants validate locally. The M1 root guard in `src/root-guard.js` now implements and tests this boundary; project-specific mappings are configuration, not hardcoded Globe3 behavior.
+The implementation MUST canonicalize the root, reject traversal and symlink escapes, enforce root containment, freeze policy before discovery, and report rejected paths explicitly. The v0.1 configuration contract is `schema/agent-cfml-linkage-config-v0.1.schema.json` with example `examples/config-v0.1.json`; its root-safety, prohibited-action, limit, output, and exit-code invariants validate locally. The M1 root guard in `src/root-guard.js` and byte snapshot in `src/snapshot.js` now implement and test the initial boundary; project-specific mappings are configuration, not hardcoded Globe3 behavior.
 
-The analyzer SHOULD discover `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.js`, `.mjs`, `.css`, and statically relevant SQL regions. Exact extension and embedded-region coverage remains a design detail to validate during M0/M1.
+The M1 snapshot currently discovers `.cfm`, `.cfml`, `.cfc`, `.html`, `.htm`, `.js`, `.mjs`, and `.css` deterministically. Embedded SQL is a later extraction concern; exact parser and embedded-region coverage remain a design detail for M2.
 
 ### 3.1 Current repository contract evidence
 

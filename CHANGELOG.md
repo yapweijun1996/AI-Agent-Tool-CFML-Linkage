@@ -29,6 +29,7 @@
 - Root/configuration/limits contract in `schema/agent-cfml-linkage-config-v0.1.schema.json`, `examples/config-v0.1.json`, and ADR-004.
 - Versioned golden/negative/adversarial fixture layout and manifest under `fixtures/` for T-006.
 - Node `>=20` private foundation, root guard, focused tests, and ADR-005 for T-010.
+- Deterministic byte snapshot/discovery, focused tests, and ADR-006 for T-011.
 
 ### Not claimed
 
