@@ -14,7 +14,7 @@
 
 ## 1. Boundary
 
-The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1–M3 slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, a private CLI envelope, bounded parser scanners, Fact evidence, immutable indexes, and conservative literal resolution; Bounded Graph IR production/validation is implemented in `src/graph.js`, and bounded CFC resolution is implemented in `src/cfc-resolver.js`; broader linkage resolution and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
+The planned tool owns deterministic static linkage analysis for a local CFML-first project. The implemented M1–M5 bounded slices currently own root admission, path containment, byte snapshot/discovery, strict source coordinates, a private CLI envelope, bounded parser scanners, Fact evidence, immutable indexes, and conservative literal resolution; Bounded Graph IR production/validation is implemented in `src/graph.js`, bounded CFC resolution is implemented in `src/cfc-resolver.js`, and bounded shared-scope resolution is implemented in `src/scope-resolver.js`; broader linkage resolution and bounded queries remain unimplemented. It does not execute source, perform runtime discovery, connect to services, or make generic impact or test-selection decisions.
 
 ```text
 Local source + explicit policy
@@ -39,7 +39,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Parser adapter | explicit backend boundary, bounded CFML/web structural scanners, syntax trees, parser diagnostics, completeness; default backend remains unselected | cross-file resolution |
 | Fact extractor | normalized CFML/web Fact IR and extraction evidence | target selection |
 | Project index | immutable path, symbol, mapping, application, query, and per-file fact indexes; unique/ambiguous/missing lookup states | mutable resolution state |
-| Resolver passes | bounded candidate/target resolution in `src/path-resolver.js` and `src/cfc-resolver.js`; unresolved/ambiguous states | index mutation or authoritative guessing |
+| Resolver passes | bounded candidate/target resolution in `src/path-resolver.js`, `src/cfc-resolver.js`, and `src/scope-resolver.js`; unresolved/ambiguous states | index mutation or authoritative guessing |
 | Evidence policy | evidence merge and confidence classes | parser-specific parsing |
 | Graph builder/validator | Graph IR construction, invariants, serialization readiness | generic business interpretation |
 | Cache | optional derived performance state | source of truth or stale-data authority |

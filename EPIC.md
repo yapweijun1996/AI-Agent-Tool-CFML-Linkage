@@ -1,6 +1,6 @@
 # Epic: Build the CFML-first linkage evidence provider
 
-> **Status: PROPOSED / M2–M4 IN PROGRESS.** This epic is planning material; the M1 foundation, bounded M2 parser/scanner/Fact slices, bounded M3 path/Graph slices, and bounded M4 CFC resolver are verified.
+> **Status: PROPOSED / M2–M5 IN PROGRESS.** This epic is planning material; the M1 foundation, bounded M2 parser/scanner/Fact slices, bounded M3 path/Graph slices, and bounded M4 CFC and M5 scope resolvers are verified.
 
 | Field | Value |
 | --- | --- |
@@ -8,10 +8,10 @@
 | Last updated | 2026-09-14 |
 | Scope | A local, deterministic static linkage graph for mixed CFML web projects |
 | Project type | Planned NPM/library + CLI + AI-agent evidence provider |
-| Lifecycle | Prototype / bounded M4 implementation |
+| Lifecycle | Prototype / bounded M5 implementation |
 | Source of truth | This epic for outcome and milestones; `SPEC.md` for the contract; Git history for actual completion |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
-| Verification | M0 contract checks, produced Fact/Graph IR schema validation, and 51 foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC tests pass; broader Graph linkage verification remains open |
+| Verification | M0 contract checks, produced Fact/Graph IR schema validation, and 55 foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope tests pass; broader Graph linkage verification remains open |
 | Limitations | Estimates, sequencing, parser choice, and compatibility are not validated |
 
 ## 1. Problem
@@ -47,7 +47,7 @@ Out of scope: source execution, runtime network/database access, browser automat
 | M2 Parser/extractor | Adapter and normalized facts for priority syntax | M1 | In progress — T-020–T-022 bounded subset verified |
 | M3 Basic linkage | Paths, includes, Application governance, unresolved model, graph validator, reverse callers | M2 | In progress — T-023–T-025 bounded indexes/resolution/Graph IR verified |
 | M4 CFC linkage | Mappings, inheritance, instantiation, `cfinvoke`, and conservative method resolution | M3 | In progress — T-030 bounded resolver verified |
-| M5 Globe3-critical flows | Ordered scope flow, AJAX/fetch, conditions, dynamic/generated evidence | M3 | Not started |
+| M5 Globe3-critical flows | Ordered scope flow, AJAX/fetch, conditions, dynamic/generated evidence | M3 | In progress — T-031 bounded scope flow verified |
 | M6 SQL/repository | Query/table/datasource and structurally evidenced repository edges | M3, M5 | Not started |
 | M7 Query interface | Related/callers/callees/trace/unresolved/explain/stats/impact-evidence | M3–M6 | Not started |
 | M8 Incremental performance | Dependency-aware invalidation, bounded workers, budgets, repeatability | M7 | Not started |

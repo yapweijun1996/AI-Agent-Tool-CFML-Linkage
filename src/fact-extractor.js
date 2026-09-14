@@ -108,6 +108,47 @@ function assignmentTarget(expression) {
   return target;
 }
 
+function identifierCharacter(character) {
+  if (character === undefined) return false;
+  const code = character.charCodeAt(0);
+  return (code >= 48 && code <= 57) || (code >= 65 && code <= 90) || (code >= 97 && code <= 122) || character === "_" || character === "$" || character === ".";
+}
+
+function scopeReferences(expression, excluded = null) {
+  if (typeof expression !== "string") return [];
+  const references = new Set();
+  let cursor = 0;
+  let quote = null;
+  while (cursor < expression.length) {
+    const character = expression[cursor];
+    if (quote !== null) {
+      if (character === "\\") cursor += 2;
+      else {
+        if (character === quote) quote = null;
+        cursor += 1;
+      }
+      continue;
+    }
+    if (character === "\"" || character === "'") {
+      quote = character;
+      cursor += 1;
+      continue;
+    }
+    const code = character?.charCodeAt(0) ?? 0;
+    const startsIdentifier = (code >= 65 && code <= 90) || (code >= 97 && code <= 122) || character === "_" || character === "$";
+    if (!startsIdentifier) {
+      cursor += 1;
+      continue;
+    }
+    const start = cursor;
+    cursor += 1;
+    while (cursor < expression.length && identifierCharacter(expression[cursor])) cursor += 1;
+    const reference = expression.slice(start, cursor).replace(/\.+$/u, "");
+    if (reference !== "" && reference !== excluded && !["true", "false", "null", "yes", "no", "and", "or", "not", "eq", "neq", "lt", "lte", "gt", "gte", "is", "contains", "mod"].includes(reference.toLowerCase())) references.add(reference);
+  }
+  return [...references].sort();
+}
+
 function conditionFor(node) {
   if (node.name !== "cfif" && node.name !== "cfelseif") return null;
   const expression = normalizeText(node.expression);
@@ -115,7 +156,7 @@ function conditionFor(node) {
   return {
     expression_normalized: expression.slice(0, 2048),
     source_span: node.span,
-    variables: [],
+    variables: scopeReferences(expression),
     branch_kind: "if",
     evaluation: "runtime",
   };
@@ -403,7 +444,7 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
       }
       if (node.name === "cfset") {
         const target = assignmentTarget(node.expression);
-        if (target !== null) addFact(makeFact({ file, language, node, kind: "SCOPE_WRITE", normalizedExpression: target, enclosingSymbol, extractionRuleId: "cfset-scope-write-v0.1", attributes: { target }, ordinal: factOrdinal++ }));
+        if (target !== null) addFact(makeFact({ file, language, node, kind: "SCOPE_WRITE", normalizedExpression: target, enclosingSymbol, extractionRuleId: "cfset-scope-write-v0.1", attributes: { target, references: scopeReferences(node.expression.slice(node.expression.indexOf("=") + 1)) }, ordinal: factOrdinal++ }));
         else addFact(makeDynamicFact({ file, language, node, sourceKind: "SCOPE_WRITE", expression: node.expression ?? "cfset", enclosingSymbol, ordinal: factOrdinal++ }));
         continue;
       }

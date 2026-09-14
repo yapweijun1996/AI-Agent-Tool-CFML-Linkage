@@ -1,6 +1,6 @@
 # agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M4 IN PROGRESS.** The repository contains a verified M1 safety foundation and bounded M2 parser/scanner/Fact boundary; the linkage analyzer, public API, and release are not complete.
+> **Status: PROPOSED / M2–M5 IN PROGRESS.** The repository contains a verified M1 safety foundation and bounded M2 parser/scanner/Fact boundary; the linkage analyzer, public API, and release are not complete.
 
 | Field | Value |
 | --- | --- |
@@ -9,14 +9,14 @@
 | Scope | Deterministic, read-only, local-first linkage analysis for CFML web applications |
 | Repository evidence | Initial `main` commit `1b29c0b934129fcd005b0575d9b986159043fbc9` contained only `.gitattributes`; subsequent local commits add the verified foundation, bounded extractors, indexes, resolver, and graph builder |
 | Source of truth | Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for actual state |
-| Verification | `npm test` passes 51 focused foundation/parser/scanner/Fact/index/resolution/Graph/CFC tests; bounded Fact/Graph IR validates against schema; broader linkage/runtime/package/release verification is absent |
+| Verification | `npm test` passes 55 focused foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope tests; bounded Fact/Graph IR validates against schema; broader linkage/runtime/package/release verification is absent |
 | Limitations | Public API, parser, dependencies, runtime matrix, and deployment model are not established |
 
 ## Classification
 
 - **Project type:** planned hybrid NPM/library + CLI + AI-agent evidence provider.
-- **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction, M3 bounded resolution/Graph IR, and M4 bounded CFC resolution in progress; broader resolver not started.
-- **Current state:** M0 contracts, the complete M1 foundation, bounded M2 parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, and bounded M4 CFC resolution are implemented/verified; no full parser grammar, broader resolver, public API, or released package exists.
+- **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction, M3 bounded resolution/Graph IR, and M4 bounded CFC and M5 scope resolution in progress; broader resolver not started.
+- **Current state:** M0 contracts, the complete M1 foundation, bounded M2 parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, and bounded M4 CFC and M5 scope resolution are implemented/verified; no full parser grammar, broader resolver, public API, or released package exists.
 
 ## Purpose
 
@@ -34,10 +34,10 @@ The intended output is a deterministic Graph IR/JSON document that agents can qu
 
 ## What exists today
 
-The repository has completed its verified M1 safety foundation and advanced M2 with bounded CFML/web scanners and Fact extraction behind the parser adapter. Graph IR/Fact IR/configuration contracts, the M1 foundation, bounded structural Fact extraction, immutable indexes, literal resolution, and bounded Graph construction are implemented/verified; full grammar coverage and broader resolver runtime remain absent. The following remain **planned**, not available:
+The repository has completed its verified M1 safety foundation and advanced M2 with bounded CFML/web scanners and Fact extraction behind the parser adapter. Graph IR/Fact IR/configuration contracts, the M1 foundation, bounded structural Fact extraction, immutable indexes, literal/CFC/scope resolution, and bounded Graph construction are implemented/verified; full grammar coverage and broader resolver runtime remain absent. The following remain **planned**, not available:
 
 - full parser/extractor runtime beyond the fixture-backed bounded Fact IR subset
-- broader multi-pass resolvers (bounded literal path/Application and CFC resolution are now implemented internally)
+- broader multi-pass resolvers (bounded literal path/Application, CFC, and scope resolution are now implemented internally)
 - Broader Graph IR linkage and query runtime (bounded Graph construction/validation now exists in `src/graph.js`; the proposed JSON Schema contract and example remain at `schema/agent-cfml-linkage-graph-v0.1.schema.json` and `examples/graph-v0.1.json`)
 - public CLI/library API (the private package exposes only an un-released validation envelope)
 - full incremental analysis cache and query engine
@@ -87,6 +87,7 @@ The eight Core SSOT files are `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROA
 - [`docs/decisions/ADR-014-conservative-literal-path-resolution.md`](docs/decisions/ADR-014-conservative-literal-path-resolution.md) — conservative literal path resolution decision
 - [`docs/decisions/ADR-015-bounded-graph-construction.md`](docs/decisions/ADR-015-bounded-graph-construction.md) — bounded Graph IR and reverse adjacency decision
 - [`docs/decisions/ADR-016-bounded-cfc-resolution.md`](docs/decisions/ADR-016-bounded-cfc-resolution.md) — bounded CFC/method resolution decision
+- [`docs/decisions/ADR-017-bounded-shared-scope-resolution.md`](docs/decisions/ADR-017-bounded-shared-scope-resolution.md) — bounded shared-scope resolution decision
 - [`AGENTS.md`](AGENTS.md) — repository-specific contribution rules
 
 ## Non-goals
@@ -102,4 +103,4 @@ The planned tool will not:
 
 ## Verification and limitations
 
-Foundation, bounded extraction, immutable-index, literal-resolution, bounded CFC-resolution, and bounded Graph IR verification has been run with `npm test` (51/51 passed). The private CLI envelope, cache foundation, bounded scanner, fixture-backed Fact extractor, immutable indexes, and literal resolver are tested, but no full parser grammar, broader resolver, full CLI orchestration, browser, engine, package, deployment, or release verification exists; all linkage capabilities and compatibility claims remain proposed.
+Foundation, bounded extraction, immutable-index, literal-resolution, bounded CFC/scope-resolution, and bounded Graph IR verification has been run with `npm test` (55/55 passed). The private CLI envelope, cache foundation, bounded scanner, fixture-backed Fact extractor, immutable indexes, literal/CFC/scope resolvers, and Graph builder are tested, but no full parser grammar, broader resolver, full CLI orchestration, browser, engine, package, deployment, or release verification exists; all linkage capabilities and compatibility claims remain proposed.

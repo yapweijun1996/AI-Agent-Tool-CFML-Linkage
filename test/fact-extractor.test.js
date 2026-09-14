@@ -58,6 +58,9 @@ test("extracts deterministic structural Fact IR from inert golden inputs", () =>
   assert.equal(first.facts.find((fact) => fact.kind === "INVOKE").normalized_expression, "handlers.OrderHandler.submit");
   assert.deepEqual(first.facts.find((fact) => fact.kind === "COMPONENT").attributes.implements, ["IAudited", "IOrderHandler"]);
   assert.equal(first.facts.find((fact) => fact.kind === "METHOD").enclosing_symbol, "handlers.OrderHandler");
+  assert.deepEqual(first.facts.find((fact) => fact.kind === "SCOPE_WRITE").attributes.references, ["arguments.id"]);
+  assert.deepEqual(first.facts.find((fact) => fact.kind === "SCOPE_WRITE" && fact.file.endsWith("core-cfml-web-surface/index.cfm")).attributes.references, ["form.id"]);
+  assert.deepEqual(first.facts.find((fact) => fact.kind === "CONDITION").condition.variables, ["form.usage"]);
 });
 
 test("preserves dynamic references and parser incompleteness without guessing targets", () => {

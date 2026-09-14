@@ -6,7 +6,7 @@
 
 ## Context
 
-Fact extraction and literal path resolution now produce deterministic evidence, but consumers need one Graph IR document without losing unresolved relationships. The graph contract also requires referential integrity and bounded reverse lookup support. Full CFC, scope, repository, and runtime resolution is not available yet.
+Fact extraction and literal path resolution now produce deterministic evidence, but consumers need one Graph IR document without losing unresolved relationships. The graph contract also requires referential integrity and bounded reverse lookup support. Broader CFC, scope, repository, and runtime resolution is not available yet.
 
 ## Decision
 

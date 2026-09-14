@@ -170,6 +170,12 @@ function defaultConfidence(level, reason) {
   return { level: CONFIDENCE_LEVELS.has(level) ? level : "unresolved", reason };
 }
 
+function resolutionEvidenceKind(relationType) {
+  if (relationType.startsWith("SCOPE_")) return "scope_flow";
+  if (relationType.startsWith("APPLICATION") || relationType.startsWith("REQUEST_HOOK") || ["EXTENDS", "IMPLEMENTS", "INSTANTIATES", "CFINVOKES", "CALLS_METHOD"].includes(relationType)) return "symbol_resolution";
+  return "path_resolution";
+}
+
 function confidenceReason(resolution) {
   if (resolution.resolution_kind === "exact") return "Unique exact literal path within the admitted snapshot.";
   if (resolution.resolution_kind === "extension-fallback") return "Unique bounded extension fallback within the admitted snapshot.";
@@ -293,7 +299,7 @@ export function buildGraph({ factBundle, resolutions = null, snapshot = null, ro
     else unresolved.set(record.id, record);
   }
 
-  function addEdge({ type, from, to, fact, confidence = "confirmed", reason, resolutionKind, attributes = {}, evidenceKind, resolver = DEFAULT_RESOLVER }) {
+  function addEdge({ type, from, to, fact, confidence = "confirmed", reason, resolutionKind, attributes = {}, evidenceKind, resolver = DEFAULT_RESOLVER, order = null }) {
     if (!ALLOWED_EDGE_TYPES.has(type) || !from || !to) return;
     const sourceFactIds = [fact.fact_id];
     const id = edgeId(type, from.id, to.id, sourceFactIds, fact.condition ? JSON.stringify(fact.condition) : "");
@@ -313,7 +319,8 @@ export function buildGraph({ factBundle, resolutions = null, snapshot = null, ro
       freshness: { source_fingerprint: snapshot?.source_fingerprint ?? fingerprints.get(fact.file) ?? "sha256:unknown" },
       attributes: { ...(resolutionKind ? { resolution_kind: resolutionKind } : {}), ...cloneJson(attributes) },
     };
-    if (Number.isSafeInteger(fact.attributes?.order_index)) edge.order = fact.attributes.order_index;
+    if (Number.isSafeInteger(order)) edge.order = order;
+    else if (Number.isSafeInteger(fact.attributes?.order_index)) edge.order = fact.attributes.order_index;
     edges.set(id, edge);
   }
 
@@ -326,7 +333,7 @@ export function buildGraph({ factBundle, resolutions = null, snapshot = null, ro
     const to = targetFact ? addFactNode(targetFact) : fileNode(item.to_file);
     if (!fact || !from || !to) continue;
     resolvedFactIds.add(fact.fact_id);
-    addEdge({ type: item.relation_type, from, to, fact, confidence: item.confidence, reason: confidenceReason(item), resolutionKind: item.resolution_kind, attributes: item, evidenceKind: item.relation_type.startsWith("APPLICATION") || item.relation_type.startsWith("REQUEST_HOOK") || item.relation_type === "EXTENDS" || item.relation_type === "IMPLEMENTS" || item.relation_type === "INSTANTIATES" || item.relation_type === "CFINVOKES" || item.relation_type === "CALLS_METHOD" ? "symbol_resolution" : "path_resolution", resolver: item.resolver ?? DEFAULT_RESOLVER });
+    addEdge({ type: item.relation_type, from, to, fact, confidence: item.confidence, reason: confidenceReason(item), resolutionKind: item.resolution_kind, attributes: item, evidenceKind: resolutionEvidenceKind(item.relation_type), resolver: item.resolver ?? DEFAULT_RESOLVER, order: item.order });
   }
   for (const item of resolutions?.unresolved ?? []) {
     const fact = factById.get(item.source_fact_id);

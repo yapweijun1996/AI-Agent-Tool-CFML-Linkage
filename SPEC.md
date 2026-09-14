@@ -9,7 +9,7 @@
 | Scope | Static cross-file linkage analysis for CFML-first mixed web projects |
 | Source of truth | This document for the proposed contract; Git history for current code facts |
 | Evidence | Initial repository commit `1b29c0b` contained only `.gitattributes`; current local source contains the verified foundation and bounded extractors |
-| Verification | Graph/Fact/config contract checks, produced Fact/Graph IR schema validation, and `npm test` foundation/parser/scanner/Fact/index/resolution/Graph/CFC tests (51/51) pass; linkage contract/runtime verification is incomplete |
+| Verification | Graph/Fact/config contract checks, produced Fact/Graph IR schema validation, and `npm test` foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope tests (55/55) pass; linkage contract/runtime verification is incomplete |
 | Limitations | Parser coverage, resolver accuracy, performance, compatibility, and release status are unverified |
 
 ## 1. Objective
@@ -51,7 +51,7 @@ The proposed pipeline is:
 
 `Root Guard → Snapshot/Discovery → Decode/Source Map → Parse → Fact Extraction → Project Index → Resolution Passes → Evidence/Confidence → Graph Build → Validate → Cache → Query → CLI/JSON`.
 
-Each stage has typed boundaries and may emit diagnostics. Cross-file stages consume normalized Fact IR rather than parser-specific AST nodes. No stage mutates source files. The implemented parser adapter and bounded Fact extractor do not resolve across files; they normalize parser state and emit fixture-backed structural facts only. The internal T-023 index builder creates immutable lookup indexes, T-024 provides conservative literal path/Application resolution, and T-025 builds/validates bounded Graph IR and T-030 resolves bounded literal CFC relationships without broader cross-file resolution.
+Each stage has typed boundaries and may emit diagnostics. Cross-file stages consume normalized Fact IR rather than parser-specific AST nodes. No stage mutates source files. The implemented parser adapter and bounded Fact extractor do not resolve across files; they normalize parser state and emit fixture-backed structural facts only. The internal T-023 index builder creates immutable lookup indexes, T-024 provides conservative literal path/Application resolution, and T-025 builds/validates bounded Graph IR, T-030 resolves bounded literal CFC relationships, and T-031 resolves bounded ordered scope relationships without broader cross-file resolution.
 
 ### 4.0 Fact IR contract
 
@@ -129,7 +129,7 @@ Unresolved records are successful analysis output, not internal errors. Planned 
 2. **Application resolver:** identify the nearest governing `Application.cfc`/`Application.cfm` when statically recoverable; preserve conditional filename exceptions.
 3. **CFC resolver:** resolve explicit imports/mappings, component paths, `extends`, `implements`, `cfobject`, and `cfinvoke` conservatively; bounded T-030 does not claim `new`, `createObject`, or runtime type inference.
 4. **Method resolver:** infer receiver types only from bounded evidence such as explicit types, instantiation, properties, arguments, and unique inheritance chains.
-5. **Scope resolver:** preserve ordered `cfinclude` context and emit scope-flow edges only when variable identity and order are supported. `evaluate`, `isDefined`, generated names, and unscoped page variables remain dynamic unless exactly foldable.
+5. **Scope resolver:** preserve ordered `cfinclude` context and emit scope-flow edges only when variable identity and order are supported; T-031 implements bounded produces/consumes/overrides evidence. `evaluate`, `isDefined`, generated names, and unscoped page variables remain dynamic unless exactly foldable.
 6. **Web-flow resolver:** retain normalized dynamic URL expressions and variable dependencies rather than guessing endpoints.
 7. **SQL resolver:** parse statically visible SQL and keep datasource expressions separate. SQL edges describe syntax only.
 8. **Conditional router resolver:** attach `if`, `switch`, `cfcase`, ternary, and mapping conditions; do not flatten runtime branches into unconditional calls.
