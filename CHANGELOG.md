@@ -10,7 +10,7 @@
 | Source of truth | Git history and this changelog |
 | Evidence | Initial commit `1b29c0b`; documentation baseline and M1 foundation commits follow |
 | Verification | Documentation consistency checks, bounded query/robustness/adversarial-fixture/evidence-budget checks, and `npm test` (75/75) are run during this pass |
-| Limitations | No parser/resolver release runtime, public package, CI, or release exists |
+| Limitations | No parser/resolver release runtime, public package, hosted CI run, or release exists; the read-only CI workflow is present |
 
 ## Unreleased
 
@@ -64,5 +64,5 @@
 ### Not claimed
 
 - No complete analyzer implementation has been added.
-- No full parser backend, broad resolver, graph persistence, CI workflow, public package, or release has been added; the private root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact foundation, bounded resolvers/Graph, internal query engine, and bounded analysis composition are the only runtime slices.
+- No full parser backend, broad resolver, graph persistence, public package, or release has been added; the private root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact foundation, bounded resolvers/Graph, internal query engine, bounded analysis composition, and read-only CI workflow are the only implemented runtime or automation slices.
 - No Lucee, Adobe ColdFusion, browser, database, or network verification has been performed.

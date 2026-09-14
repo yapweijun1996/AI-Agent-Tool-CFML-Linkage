@@ -34,4 +34,4 @@ The mixed web scanner skips CFML script regions while scanning bounded HTML stru
 - `fixtures/adversarial/misleading-and-limits/`
 - `test/adversarial-fixtures.test.js`
 - `src/web-scanner.js`
-- `npm test` reports 68 passed and 0 failed; no source, database, browser, network, or runtime service was accessed.
+- `npm test` reports 75 passed and 0 failed; no source, database, browser, network, or runtime service was accessed.
