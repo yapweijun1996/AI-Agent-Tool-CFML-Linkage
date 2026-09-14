@@ -9,14 +9,14 @@
 | Scope | Deterministic, read-only, local-first linkage analysis for CFML web applications |
 | Repository evidence | Initial `main` commit `1b29c0b934129fcd005b0575d9b986159043fbc9` contained only `.gitattributes`; subsequent local commits add the verified foundation, bounded extractors, indexes, resolver, and graph builder |
 | Source of truth | Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for actual state |
-| Verification | `npm test` passes 55 focused foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope tests; bounded Fact/Graph IR validates against schema; broader linkage/runtime/package/release verification is absent |
+| Verification | `npm test` passes 59 focused foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow tests; bounded Fact/Graph IR validates against schema; broader linkage/runtime/package/release verification is absent |
 | Limitations | Public API, parser, dependencies, runtime matrix, and deployment model are not established |
 
 ## Classification
 
 - **Project type:** planned hybrid NPM/library + CLI + AI-agent evidence provider.
 - **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction, M3 bounded resolution/Graph IR, and M4 bounded CFC and M5 scope resolution in progress; broader resolver not started.
-- **Current state:** M0 contracts, the complete M1 foundation, bounded M2 parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, and bounded M4 CFC and M5 scope resolution are implemented/verified; no full parser grammar, broader resolver, public API, or released package exists.
+- **Current state:** M0 contracts, the complete M1 foundation, bounded M2 parser/scanner/Fact extraction, bounded M3 resolution/Graph IR, and bounded M4 CFC, M5 scope, and bounded web-flow/condition resolution are implemented/verified; no full parser grammar, broader resolver, public API, or released package exists.
 
 ## Purpose
 
@@ -88,6 +88,7 @@ The eight Core SSOT files are `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROA
 - [`docs/decisions/ADR-015-bounded-graph-construction.md`](docs/decisions/ADR-015-bounded-graph-construction.md) — bounded Graph IR and reverse adjacency decision
 - [`docs/decisions/ADR-016-bounded-cfc-resolution.md`](docs/decisions/ADR-016-bounded-cfc-resolution.md) — bounded CFC/method resolution decision
 - [`docs/decisions/ADR-017-bounded-shared-scope-resolution.md`](docs/decisions/ADR-017-bounded-shared-scope-resolution.md) — bounded shared-scope resolution decision
+- [`docs/decisions/ADR-018-bounded-web-flow-and-condition-resolution.md`](docs/decisions/ADR-018-bounded-web-flow-and-condition-resolution.md) — bounded web-flow and condition resolution decision
 - [`AGENTS.md`](AGENTS.md) — repository-specific contribution rules
 
 ## Non-goals
@@ -103,4 +104,4 @@ The planned tool will not:
 
 ## Verification and limitations
 
-Foundation, bounded extraction, immutable-index, literal-resolution, bounded CFC/scope-resolution, and bounded Graph IR verification has been run with `npm test` (55/55 passed). The private CLI envelope, cache foundation, bounded scanner, fixture-backed Fact extractor, immutable indexes, literal/CFC/scope resolvers, and Graph builder are tested, but no full parser grammar, broader resolver, full CLI orchestration, browser, engine, package, deployment, or release verification exists; all linkage capabilities and compatibility claims remain proposed.
+Foundation, bounded extraction, immutable-index, literal-resolution, bounded CFC/scope/web-flow resolution, and bounded Graph IR verification has been run with `npm test` (59/59 passed). The private CLI envelope, cache foundation, bounded scanner, fixture-backed Fact extractor, immutable indexes, literal/CFC/scope/web-flow resolvers, and Graph builder are tested, but no full parser grammar, broader resolver, full CLI orchestration, browser, engine, package, deployment, or release verification exists; all linkage capabilities and compatibility claims remain proposed.

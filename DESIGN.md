@@ -9,14 +9,14 @@
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
-| Verification | Graph/Fact/config checks, produced Fact/Graph IR schema validation, and 55 foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope tests pass locally; broader runtime stages below remain unimplemented proposals |
+| Verification | Graph/Fact/config checks, produced Fact/Graph IR schema validation, and 59 foundation/parser/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow tests pass locally; broader runtime stages below remain unimplemented proposals |
 | Limitations | Parser choice, language coverage, performance, and engine compatibility remain unknown |
 
 ## 1. Design goals
 
 The analyzer should give coding agents a small, queryable, evidence-backed view of cross-file relationships without executing the application or guessing dynamic behavior. The design favors narrow stages, immutable intermediate data, explicit incompleteness, and stable output.
 
-**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, private CLI-envelope, cache, parser-adapter, bounded CFML/web scanners, bounded Fact extractor, immutable index, literal/CFC/scope resolver modules, and Graph builder with focused tests, a private `package.json`, and validated contracts; full parser backend, broader Fact IR, query orchestration, caller, CI, and release architecture remain unimplemented; bounded graph/CFC/scope construction is implemented.
+**Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, decoder, private CLI-envelope, cache, parser-adapter, bounded CFML/web scanners, bounded Fact extractor, immutable index, literal/CFC/scope/web-flow resolver modules, and Graph builder with focused tests, a private `package.json`, and validated contracts; full parser backend, broader Fact IR, query orchestration, caller, CI, and release architecture remain unimplemented; bounded graph/CFC/scope/web-flow construction is implemented.
 
 It is CFML-first: CFM/CFC structure, Application governance, includes, CFC typing, and shared scopes receive priority. HTML, JavaScript, CSS, SQL, and repository relations extend that model where static evidence is available.
 
@@ -106,7 +106,7 @@ They do not mutate indexes. Planned order:
 3. **CFC type:** resolve `extends`, `implements`, `new`, `createObject`, `cfobject`, `cfinvoke`, imports, and component mappings.
 4. **Method:** infer receiver types from explicit types, instantiated locals, properties, arguments, and unique inheritance chains.
 5. **Shared scope:** preserve ordered include context and emit conservative scope-flow relations.
-6. **Web flow:** connect forms, JavaScript functions, XMLHttpRequest, jQuery, `fetch`, known wrappers, and redirects.
+6. **Web flow:** connect forms, JavaScript functions, XMLHttpRequest, jQuery, `fetch`, known wrappers, redirects, and explicit condition containment (bounded T-032).
 7. **SQL:** parse visible `cfquery`/`queryExecute` SQL; separate table and datasource relations.
 8. **Conditional routing:** attach `if`, `switch`, `cfcase`, ternary, and mapping conditions without flattening runtime branches.
 9. **Repository:** identify repository/action calls only from structural evidence.
@@ -170,7 +170,7 @@ The sequence is dependency-aware but not a schedule. M0's contract gate, M1 foun
 | M2 | Parser adapter and normalized extraction | In progress — T-020–T-022 bounded parser/Fact subset verified; broader coverage open |
 | M3 | Basic path/Application/include linkage and graph validation | In progress — T-023–T-025 bounded indexes/resolution/Graph IR verified; broader linkage open |
 | M4 | CFC mappings, inheritance, instantiation, and method linkage | In progress — T-030 bounded resolver verified; broader type inference open |
-| M5 | Shared scope, AJAX/fetch, conditional routers, dynamic evidence | In progress — T-031 bounded scope resolver verified; broader flow open |
+| M5 | Shared scope, AJAX/fetch, conditional routers, dynamic evidence | In progress — T-031/T-032 bounded scope and web-flow/condition resolvers verified; broader flow open |
 | M6 | SQL, datasource, and repository linkage | Not started |
 | M7 | Query engine and bounded impact evidence | Not started |
 | M8 | Incremental invalidation, workers, budgets, repeatability | Not started |

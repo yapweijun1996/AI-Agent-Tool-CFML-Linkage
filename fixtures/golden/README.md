@@ -7,5 +7,6 @@
 | `core-cfml-web-surface` | CFML include, mapping, invocation, instantiation, custom tag, condition, and scope-write facts | Bounded Fact output with complete scanner coverage for this subset |
 | `cfc-inheritance-and-scope` | CFC component/method, instantiation, method call, ordered include scope flow, conditions | Complete with confirmed/strong edges and evidence |
 | `web-surface` | HTML forms/assets, JavaScript fetch/AJAX, CSS references, visible SQL | Bounded Fact output with explicit partial coverage |
+| `web-flow-and-conditions` | Conditional form, fetch, jQuery AJAX, XMLHttpRequest, and redirect flow with literal route targets | Bounded flow/condition Graph edges with explicit partial coverage |
 
-The current inputs support bounded M2 structural Fact extraction. Add checked-in golden Graph outputs only after the corresponding resolver and graph contracts are verified.
+The current inputs support bounded M2 structural Fact extraction and fixture-backed T-032 web-flow/condition verification. Add checked-in golden Graph outputs only after the corresponding resolver and graph contracts are verified.

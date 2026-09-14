@@ -177,7 +177,7 @@ function makeFact({ file, language, node, kind, normalizedExpression, enclosingS
   };
 }
 
-function makeDynamicFact({ file, language, node, sourceKind, expression, enclosingSymbol, ordinal }) {
+function makeDynamicFact({ file, language, node, sourceKind, expression, enclosingSymbol, condition = null, ordinal }) {
   return makeFact({
     file,
     language,
@@ -185,6 +185,7 @@ function makeDynamicFact({ file, language, node, sourceKind, expression, enclosi
     kind: "DYNAMIC_REFERENCE",
     normalizedExpression: normalizeText(expression) || `${sourceKind.toLowerCase()} dynamic reference`,
     enclosingSymbol,
+    condition,
     extractionRuleId: `dynamic-${sourceKind.toLowerCase()}-v0.1`,
     attributes: { source_kind: sourceKind, dynamic: true },
     ordinal,
@@ -236,6 +237,13 @@ function normalizeDiagnostic(item, file, index) {
   return normalized;
 }
 
+function currentCondition(stack) {
+  for (let index = stack.length - 1; index >= 0; index -= 1) {
+    if (stack[index]) return stack[index];
+  }
+  return null;
+}
+
 function parserSummary(parsedFiles, expectedCount, parserName, parserVersion) {
   const values = parsedFiles.filter(Boolean);
   const allComplete = values.length === expectedCount && values.length > 0 && values.every((item) => item.complete === true);
@@ -270,6 +278,7 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
   let complete = snapshot.complete !== false;
   let factOrdinal = 0;
   const parserResults = [];
+  let activeCondition = null;
 
   function addDiagnostic(item, file) {
     diagnostics.push(normalizeDiagnostic(item, file, diagnostics.length));
@@ -283,7 +292,7 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
       }
       return false;
     }
-    facts.push(fact);
+    facts.push(activeCondition && fact.condition === null ? { ...fact, condition: activeCondition } : fact);
     return true;
   }
 
@@ -318,11 +327,14 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
     if (!Array.isArray(nodes)) continue;
     let componentName = null;
     let methodName = null;
+    const conditionStack = [];
+    activeCondition = null;
 
     for (const node of nodes) {
       if (!node) continue;
       const enclosingSymbol = methodName ?? componentName;
       const nodeLanguage = node.kind === "HTML_FORM" ? "html" : node.kind === "JS_FETCH" || node.kind === "JS_AJAX" || node.kind === "JS_ASSET" ? "javascript" : node.kind === "CSS_REFERENCE" ? "css" : node.kind === "SQL_QUERY" ? "sql" : language;
+      activeCondition = currentCondition(conditionStack);
       if (node.kind === "HTML_FORM") {
         const action = typeof node.action === "string" ? node.action : "";
         const dynamic = node.action_dynamic === true || action === "";
@@ -335,7 +347,7 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
         const dynamic = node.target?.dynamic === true || node.expression_truncated === true || typeof target !== "string" || target.trim() === "";
         const kind = node.kind === "JS_FETCH" ? "FETCH" : "AJAX";
         if (dynamic) addFact(makeDynamicFact({ file, language: nodeLanguage, node, sourceKind: kind, expression: node.expression || `${kind.toLowerCase()} target`, enclosingSymbol, ordinal: factOrdinal++ }));
-        else addFact(makeFact({ file, language: nodeLanguage, node, kind, normalizedExpression: target, enclosingSymbol, extractionRuleId: `${kind.toLowerCase()}-target-v0.1`, attributes: { target, method: normalizeText(node.method?.value) || "GET" }, ordinal: factOrdinal++ }));
+        else addFact(makeFact({ file, language: nodeLanguage, node, kind, normalizedExpression: target, enclosingSymbol, extractionRuleId: `${kind.toLowerCase()}-target-v0.1`, attributes: { target, method: normalizeText(node.method?.value) || "GET", ...(node.wrapper ? { wrapper: node.wrapper } : {}) }, ordinal: factOrdinal++ }));
         continue;
       }
       if (node.kind === "CSS_REFERENCE") {
@@ -367,6 +379,13 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
       if (node.closing) {
         if (node.name === "cffunction") methodName = null;
         if (node.name === "cfcomponent") componentName = null;
+        if (node.name === "cfif") conditionStack.pop();
+        activeCondition = currentCondition(conditionStack);
+        continue;
+      }
+      if (node.name === "cfelse") {
+        if (conditionStack.length > 0) conditionStack[conditionStack.length - 1] = null;
+        activeCondition = currentCondition(conditionStack);
         continue;
       }
 
@@ -452,6 +471,11 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
         const condition = conditionFor(node);
         if (condition) addFact(makeFact({ file, language, node, kind: "CONDITION", normalizedExpression: condition.expression_normalized, enclosingSymbol, condition, extractionRuleId: "condition-if-v0.1", attributes: { branch_id: `${file}:${node.span.start_line}:${node.span.start_col}` }, ordinal: factOrdinal++ }));
         else addFact(makeDynamicFact({ file, language, node, sourceKind: "CONDITION", expression: node.expression ?? "condition", enclosingSymbol, ordinal: factOrdinal++ }));
+        if (node.name === "cfif") {
+          if (!node.self_closing) conditionStack.push(condition);
+        } else if (conditionStack.length > 0) conditionStack[conditionStack.length - 1] = condition;
+        else if (!node.self_closing) conditionStack.push(condition);
+        activeCondition = currentCondition(conditionStack);
         continue;
       }
     }

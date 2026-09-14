@@ -41,6 +41,7 @@
 - Bounded Graph IR construction/validation, SQL evidence nodes, unresolved preservation, immutable reverse adjacency, focused tests, and ADR-015 for T-025.
 - Bounded CFC/method mapping, inheritance, instantiation, invoke resolution, ambiguity preservation, focused tests, and ADR-016 for T-030.
 - Bounded ordered shared-scope produces/consumes/overrides resolution, Fact scope references, Graph scope-flow edges, focused tests, and ADR-017 for T-031.
+- Bounded web-flow/condition resolution for forms, redirects, fetch, known AJAX wrappers, numeric mixed-node ordering, focused fixtures/tests, and ADR-018 for T-032.
 
 ### Not claimed
 

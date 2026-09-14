@@ -9,7 +9,7 @@
 | Scope | Ordered delivery of the planned linkage analyzer |
 | Source of truth | This roadmap for sequencing; Git history and tests for completion evidence |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation, bounded extractors, indexes, resolvers, and Graph builder |
-| Verification | M0 contract gate, T-010–T-014/T-020–T-031 foundation/scanner/Fact/index/resolution/Graph/CFC/scope tests, and produced Fact/Graph IR schema validation are verified; later milestones have no evidence |
+| Verification | M0 contract gate, T-010–T-014/T-020–T-032 foundation/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow tests, and produced Fact/Graph IR schema validation are verified; later milestones have no evidence |
 | Limitations | Dates, estimates, parser selection, and release targets are intentionally not committed |
 
 ## Current state
@@ -17,17 +17,17 @@
 | Area | State | Evidence |
 | --- | --- | --- |
 | Repository | Private prototype with verified foundation and bounded extractors | Git `main` at the current local commit; no remote publication |
-| Source implementation | M1 foundation, M2 parser-adapter/bounded CFML/web scanner/Fact extractors, M3 immutable indexes/literal resolver/bounded Graph builder, and M4 bounded CFC resolver and M5 bounded scope resolver implemented; broader Graph runtime not started | `src/`, `bin/`, focused tests |
+| Source implementation | M1 foundation, M2 parser-adapter/bounded CFML/web scanner/Fact extractors, M3 immutable indexes/literal resolver/bounded Graph builder, M4 bounded CFC resolver, and M5 bounded scope/web-flow resolvers implemented; broader Graph runtime not started | `src/`, `bin/`, focused tests |
 | Contracts/schema | Graph IR, Fact IR, identity/order, confidence/completeness, and configuration artifacts implemented and validated; broader runtime producers remain absent | `schema/`, `examples/`, `SPEC.md`, ADR-002–ADR-004 |
 | Fixture layout/manifest | Implemented and validated | `fixtures/`, `fixtures/manifest-v0.1.json`, inert golden inputs, and bounded Fact expectations |
-| Focused tests | T-010–T-014/T-020–T-031 verified | `npm test`: 55 passed |
+| Focused tests | T-010–T-014/T-020–T-032 verified | `npm test`: 59 passed |
 | CI/package/release | Private package/CLI foundation only; CI/release not started | `package.json`, `bin/`; no workflow, tag, or release |
 | Runtime compatibility | Unknown | No local analyzer exists |
 | Core SSOT documentation | Synchronized planning baseline | `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`, `GOAL_PROMPT.md` |
 
 ## Delivery sequence
 
-The current pass advances M0 to a verified gate, completes M1/T-010–T-014, verifies bounded M2 parser/scanner/Fact extraction at T-020–T-022, M3 index/literal resolution/Graph IR boundaries at T-023–T-025, bounded M4 CFC resolution at T-030, and M5 scope resolution at T-031; it does not establish full grammar coverage or advance M6–M9. T-032+ remain open.
+The current pass advances M0 to a verified gate, completes M1/T-010–T-014, verifies bounded M2 parser/scanner/Fact extraction at T-020–T-022, M3 index/literal resolution/Graph IR boundaries at T-023–T-025, bounded M4 CFC resolution at T-030, and M5 scope/web-flow resolution at T-031–T-032; it does not establish full grammar coverage or advance M6–M9. T-033+ remain open.
 
 ### Phase 0 — Contract and safety foundation
 
@@ -48,7 +48,7 @@ The current pass advances M0 to a verified gate, completes M1/T-010–T-014, ver
 ### Phase 2 — CFC and Globe3-critical relationships
 
 - M4: component mappings, `extends`/`implements`, instantiation, `cfinvoke`, imports, and conservative method calls (T-030 bounded resolver verified; broader type inference remains open).
-- M5: ordered include scope flow, form/AJAX/`fetch`/redirect relations, conditional routers, dynamic expressions, and generated symbols (T-031 bounded scope resolver verified; broader flow remains open).
+- M5: ordered include scope flow, form/AJAX/`fetch`/redirect relations, conditional routers, dynamic expressions, and generated symbols (T-031–T-032 bounded scope/web-flow resolver verified; broader flow remains open).
 
 **Exit evidence:** unique and ambiguous type/method fixtures, include-order fixtures, browser-facing flow fixtures, and fail-closed dynamic cases.
 

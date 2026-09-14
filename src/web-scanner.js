@@ -355,16 +355,19 @@ function javascriptNodes(text, start, end, sourceMap, file, maxExpressionBytes) 
     let kind = null;
     let target = null;
     let method = null;
+    let wrapper = null;
     if (identifier === "fetch" && text[open] === "(") {
       kind = "JS_FETCH";
       target = firstArgument(text, open, end);
     } else if (identifier === "ajax" && before === "." && text[open] === "(") {
       kind = "JS_AJAX";
+      wrapper = "jquery-ajax";
       const callEnd = findCallEnd(text, open, end);
       target = propertyString(text, open + 1, callEnd, "url") ?? firstArgument(text, open, end);
       method = propertyString(text, open + 1, callEnd, "method") ?? propertyString(text, open + 1, callEnd, "type");
     } else if (identifier === "open" && before === "." && text[open] === "(") {
       kind = "JS_AJAX";
+      wrapper = "xhr-open";
       const first = firstArgument(text, open, end);
       const comma = text.indexOf(",", open + 1);
       const second = comma === -1 ? null : argumentFrom(text, comma + 1, end);
@@ -381,6 +384,7 @@ function javascriptNodes(text, start, end, sourceMap, file, maxExpressionBytes) 
       expression_truncated: bounded.truncated,
       target: target ?? { value: "", dynamic: true },
       ...(method ? { method } : {}),
+      ...(wrapper ? { wrapper } : {}),
       ...nodeSpan(sourceMap, identifierStart, callEnd),
     });
     cursor = callEnd;
@@ -696,9 +700,11 @@ export function createMixedStructuralScannerBackend(options = {}) {
       const cfml = isCfml ? cfmlBackend.parse(text, context) : { nodes: [], diagnostics: [], complete: true };
       const web = webBackend.parse(text, context);
       const nodes = [...(cfml.tree?.nodes ?? []), ...(web.tree?.nodes ?? [])].sort((left, right) => {
-        const leftKey = [left.byte_start ?? 0, left.byte_end ?? 0, left.kind].join("\0");
-        const rightKey = [right.byte_start ?? 0, right.byte_end ?? 0, right.kind].join("\0");
-        return leftKey < rightKey ? -1 : leftKey > rightKey ? 1 : 0;
+        const startDifference = (left.byte_start ?? 0) - (right.byte_start ?? 0);
+        if (startDifference !== 0) return startDifference;
+        const endDifference = (left.byte_end ?? 0) - (right.byte_end ?? 0);
+        if (endDifference !== 0) return endDifference;
+        return left.kind < right.kind ? -1 : left.kind > right.kind ? 1 : 0;
       });
       const diagnostics = [...(cfml.diagnostics ?? []), ...(web.diagnostics ?? [])];
       return {

@@ -30,11 +30,11 @@ test("scans inert mixed-language web fixtures without executing source", () => {
   assert.equal(parsed.every((item) => item.complete), false);
   assert.deepEqual(parsed.flatMap((item) => item.tree.nodes).filter((node) => node.kind !== "HTML_TAG").map((node) => node.kind), [
     "JS_FETCH",
-    "JS_FETCH",
     "JS_AJAX",
-    "HTML_FORM",
+    "JS_FETCH",
     "CSS_REFERENCE",
     "JS_ASSET",
+    "HTML_FORM",
     "SQL_QUERY",
     "CSS_REFERENCE",
     "CSS_REFERENCE",

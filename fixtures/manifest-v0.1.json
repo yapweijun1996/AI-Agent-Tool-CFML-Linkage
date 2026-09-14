@@ -51,6 +51,20 @@
       "source_execution": false
     },
     {
+      "id": "golden-web-flow-and-conditions",
+      "category": "golden",
+      "path": "golden/web-flow-and-conditions",
+      "covers": [
+        "web-flow",
+        "known-wrappers",
+        "conditions",
+        "conditional-routes",
+        "redirects"
+      ],
+      "expected": "golden-web-flow",
+      "source_execution": false
+    },
+    {
       "id": "negative-ambiguity-and-out-of-root",
       "category": "negative",
       "path": "negative/ambiguity-and-out-of-root",

@@ -171,6 +171,7 @@ function defaultConfidence(level, reason) {
 }
 
 function resolutionEvidenceKind(relationType) {
+  if (relationType === "ROUTES_WHEN") return "condition";
   if (relationType.startsWith("SCOPE_")) return "scope_flow";
   if (relationType.startsWith("APPLICATION") || relationType.startsWith("REQUEST_HOOK") || ["EXTENDS", "IMPLEMENTS", "INSTANTIATES", "CFINVOKES", "CALLS_METHOD"].includes(relationType)) return "symbol_resolution";
   return "path_resolution";
@@ -301,7 +302,7 @@ export function buildGraph({ factBundle, resolutions = null, snapshot = null, ro
 
   function addEdge({ type, from, to, fact, confidence = "confirmed", reason, resolutionKind, attributes = {}, evidenceKind, resolver = DEFAULT_RESOLVER, order = null }) {
     if (!ALLOWED_EDGE_TYPES.has(type) || !from || !to) return;
-    const sourceFactIds = [fact.fact_id];
+    const sourceFactIds = [fact.fact_id, ...(Array.isArray(attributes.source_fact_ids) ? attributes.source_fact_ids : [])];
     const id = edgeId(type, from.id, to.id, sourceFactIds, fact.condition ? JSON.stringify(fact.condition) : "");
     if (edges.has(id)) return;
     const edge = {

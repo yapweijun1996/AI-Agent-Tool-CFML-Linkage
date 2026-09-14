@@ -26,7 +26,7 @@ function parseSnapshot(snapshot, root = fixtureRoot) {
 
 test("extracts deterministic structural Fact IR from inert golden inputs", () => {
   const guard = createRootGuard(fixtureRoot);
-  const snapshot = createSnapshot(guard, { ignoreDirectoryNames: [".git", "node_modules", "vendor", "generated", "cache", "secrets", ".agent-cfml-linkage-cache", "web-surface"] });
+  const snapshot = createSnapshot(guard, { ignoreDirectoryNames: [".git", "node_modules", "vendor", "generated", "cache", "secrets", ".agent-cfml-linkage-cache", "web-surface", "web-flow-and-conditions"] });
   const parsed = parseSnapshot(snapshot);
   const first = extractFactBundle({ snapshot, parsedFiles: parsed, parserVersion: "cfml-structural-scanner/v0.1" });
   const second = extractFactBundle({ snapshot, parsedFiles: parseSnapshot(snapshot), parserVersion: "cfml-structural-scanner/v0.1" });

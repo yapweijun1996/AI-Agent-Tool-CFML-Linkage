@@ -8,11 +8,11 @@
 | Last updated | 2026-09-14 |
 | Scope | Evidence-driven implementation loop |
 | Source of truth | Core SSOT plus Git/tests/runtime/release evidence |
-| Evidence | M0/M1, T-023–T-025, and bounded T-030/T-031 verified; 55 tests pass |
+| Evidence | M0/M1, T-023–T-025, and bounded T-030–T-032 verified; 59 tests pass |
 | Verification | Prompt/documentation only |
 | Limitations | Parser, public API, CI, and release remain open |
 
-Work on `agent-cfml-linkage`, the Node `>=20` CFML-first static linkage prototype. M0/M1, bounded M2 extraction, T-023–T-025 index/path/Graph IR, T-030 CFC, and T-031 scope resolution are verified; private package/CLI exist, but no full parser, broader runtime, public API, CI, or release. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
+Work on `agent-cfml-linkage`, the Node `>=20` CFML-first static linkage prototype. M0/M1, bounded M2 extraction, T-023–T-025 index/path/Graph IR, T-030 CFC, T-031 scope, and bounded T-032 web-flow/condition resolution are verified; private package/CLI exist, but no full parser, broader runtime, public API, CI, or release. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
 
 Repeat:
 
