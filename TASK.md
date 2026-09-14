@@ -1,6 +1,6 @@
 # Task Register: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M9 IN PROGRESS.** T-001–T-006, T-010–T-014, T-020–T-035, and T-040–T-042 have bounded implementation and verification evidence; broader linkage remains open.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** T-001–T-006, T-010–T-014, T-020–T-035, and T-040–T-043 have bounded implementation and verification evidence; broader linkage remains open.
 
 | Field | Value |
 | --- | --- |
@@ -8,8 +8,8 @@
 | Last updated | 2026-09-14 |
 | Scope | Executable work required to implement and verify the planned analyzer |
 | Source of truth | This register for planned work; repository source, tests, runtime checks, and release evidence for actual status |
-| Evidence | Initial `HEAD` `1b29c0b`; current local HEAD includes the foundation, bounded extractors, fixtures, and tests |
-| Verification | T-001–T-006 contract checks, produced Fact/Graph IR schema validation, and T-010–T-014/T-020–T-035/T-040/T-041 foundation/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture tests pass locally (68/68) |
+| Evidence | Initial `HEAD` `1b29c0b`; current local HEAD includes the foundation, bounded extractors, fixtures, tests, and bounded package/compatibility evidence |
+| Verification | T-001–T-006 contract checks, produced Fact/Graph IR schema validation, T-010–T-014/T-020–T-035/T-040/T-041 foundation/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture tests (68/68), and bounded Node host compatibility evidence pass locally |
 | Limitations | Owners, dates, package/runtime choices, and estimates are not assigned |
 
 ## Status and completion rules
@@ -59,7 +59,7 @@ This blocks full-grammar and cross-file resolution tasks; bounded extraction and
 | T-040 | Add repeat, drift, cache, cycle, and resource-limit tests | P0 | Verified (bounded) | T-014/T-025 | `test/snapshot.test.js` repeat/content-drift/file-limit cases, `test/cache.test.js` source/config/parser/cache invalidation and corruption cases, `test/graph-query.test.js` repeat/cycle/query-limit cases, and resolver/scanner limit tests; bounded determinism and robustness evidence passes within `npm test` 65/65 |
 | T-041 | Add adversarial strings/comments, malformed, ambiguity, escape, and dynamic fixtures | P0 | Verified (bounded) | T-020–T-033 | Inert negative/adversarial fixtures under `fixtures/negative/` and `fixtures/adversarial/misleading-and-limits/`, expected bounded outputs, `test/adversarial-fixtures.test.js`, and the CFML script-region guard in `src/web-scanner.js`; ambiguity, path escape, malformed/unsupported, comment/string, and include-cycle evidence passes within `npm test` |
 | T-042 | Run focused/full tests, contract checks, lint/type checks, and package smoke | P0 | Verified (bounded) | T-040/T-041 | `npm test` 68/68; JavaScript syntax, JSON parse, fixture manifest/path/source-execution, Markdown-link, prompt-length, conservative credential, contract/example structural, CLI capabilities/version, `npm pack --dry-run`, and `git diff --check` checks pass. No lint/type scripts or Secretlint installation exist locally; no source execution, network, database, browser, or runtime access occurred. |
-| T-043 | Verify only documented engine/platform compatibility | P1 | Planned | T-042 | Environment-specific retained results |
+| T-043 | Verify only documented engine/platform compatibility | P1 | Verified (bounded) | T-042 | `docs/compatibility/node-v25.2.1-win32-x64.json` and ADR-023 retain Node `v25.2.1`/`win32`/`x64` evidence with `npm test` 68/68; Node versions other than the observed host, Lucee, Adobe ColdFusion, browser, database, network, application-runtime, and public-package compatibility remain unclaimed |
 | T-044 | Complete release traceability, security review, and documentation parity | P0 | Planned | T-042/T-043 | Release checklist + exact source/artifact identity |
 
 ## Milestone mapping
@@ -70,4 +70,4 @@ This blocks full-grammar and cross-file resolution tasks; bounded extraction and
 - **M4–M7:** T-030–T-035 — linkage depth and queries.
 - **M8–M9:** T-040–T-044 — verification and release.
 
-T-001–T-006, T-010–T-014, T-020–T-035, and T-040–T-042 are Verified for their bounded scopes. T-036–T-039 and T-043+ remain Planned; full grammar coverage and broader cross-file resolution remain open.
+T-001–T-006, T-010–T-014, T-020–T-035, and T-040–T-043 are Verified for their bounded scopes. T-036–T-039 and T-044+ remain Planned; full grammar coverage and broader cross-file resolution remain open.

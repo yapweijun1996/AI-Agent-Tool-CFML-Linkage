@@ -15,7 +15,7 @@
 ## Project classification
 
 - **Type:** planned hybrid of NPM/library, CLI, and AI-agent evidence provider.
-- **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction partial, M3 bounded literal resolution/Graph IR, M4 bounded CFC, M5 bounded scope/web-flow, M6 bounded dynamic/SQL/repository linkage, M7 bounded graph queries, M8 bounded robustness/adversarial evidence, and M9 bounded verification/package smoke partial; broader resolver not started.
+- **Lifecycle:** prototype / M1 foundation verified, M2 bounded parser/Fact extraction partial, M3 bounded literal resolution/Graph IR, M4 bounded CFC, M5 bounded scope/web-flow, M6 bounded dynamic/SQL/repository linkage, M7 bounded graph queries, M8 bounded robustness/adversarial evidence, and M9 bounded verification/package smoke/Node compatibility partial; broader resolver not started.
 - **Current product boundary:** one planned static linkage analyzer with implemented internal root-guard, snapshot, decoder, private CLI, cache, bounded parser/scanners, Fact extractor, indexes, literal resolver, Graph builder/validator, reverse adjacency, CFC resolver, scope resolver, web-flow resolver, repository resolver, graph query engine, and dynamic/generated/SQL-dynamic evidence handling; no public package boundary exists.
 - **Runtime/browser state:** not applicable yet. No product can be started or inspected, and no browser journey exists.
 
@@ -48,12 +48,12 @@
 | CLI/library/API | Yes | Yes | Yes | No | Private CLI envelope/capabilities entry; no public analysis API or released artifact |
 | Disposable cache | Yes | Yes | Yes | No | `src/cache.js`, `test/cache.test.js`, invalidation/corruption/path checks |
 | Fixture layout/manifest | Yes | Yes | Yes | No | `fixtures/manifest-v0.1.json`, category/case directories, inert web/negative/adversarial inputs and expectations, manifest/source-execution invariant check |
-| Focused tests | Yes | Yes | Yes | No | Node foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture suite: 68 passed; no CI workflow |
-| Package/release | Yes | Partial | Partial | No | Private package metadata, CLI capabilities/version smoke, and `npm pack --dry-run` pass; no published package, tag, or release |
+| Focused tests | Yes | Yes | Yes | No | Node foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture suite: 68 passed on Node `v25.2.1`; no CI workflow |
+| Package/release | Yes | Partial | Partial | No | Private package metadata, CLI capabilities/version smoke, `npm pack --dry-run`, and bounded Node host evidence pass; no published package, tag, or release |
 
 ## Progress basis
 
-The implementation roadmap has 10 milestones, M0–M9. **M0 contract gate: verified (T-001–T-006). M1: T-010–T-014 verified. M2: T-020–T-022 bounded parser/scanner/Fact subset verified; M3: T-023–T-025 bounded indexes, literal resolution, and Graph IR verified; M4: T-030 bounded CFC resolution verified; M5: T-031/T-032 bounded scope and web-flow/condition resolution verified; M6: T-033 bounded dynamic/generated/SQL-dynamic evidence preservation and T-034 bounded SQL/repository linkage verified; M7: T-035 bounded graph queries/evidence explanations verified; M8: T-040/T-041 bounded determinism/cache/cycle/limit robustness and inert adversarial safe-failure fixtures verified; M9: T-042 bounded checks and package/CLI smoke verified; T-036+ remain open. M3 started at T-023; M4 started at T-030; M5 started at T-031; M6 started at T-033; M7 started at T-035; M8 started at T-040; M9 started at T-042.** Runtime milestone completion is 1/9 (M1); M2–M9 remain partial and the bounded implementation is not a full linkage resolver.
+The implementation roadmap has 10 milestones, M0–M9. **M0 contract gate: verified (T-001–T-006). M1: T-010–T-014 verified. M2: T-020–T-022 bounded parser/scanner/Fact subset verified; M3: T-023–T-025 bounded indexes, literal resolution, and Graph IR verified; M4: T-030 bounded CFC resolution verified; M5: T-031/T-032 bounded scope and web-flow/condition resolution verified; M6: T-033 bounded dynamic/generated/SQL-dynamic evidence preservation and T-034 bounded SQL/repository linkage verified; M7: T-035 bounded graph queries/evidence explanations verified; M8: T-040/T-041 bounded determinism/cache/cycle/limit robustness and inert adversarial safe-failure fixtures verified; M9: T-042 bounded checks/package-CLI smoke and T-043 bounded Node host compatibility verified; T-036+ remain open. M3 started at T-023; M4 started at T-030; M5 started at T-031; M6 started at T-033; M7 started at T-035; M8 started at T-040; M9 started at T-042.** Runtime milestone completion is 1/9 (M1); M2–M9 remain partial and the bounded implementation is not a full linkage resolver.
 
 Core documentation coverage is now the current work product: goal, design, specification, epic, roadmap, task register, progress report, autonomous goal prompt, architecture, test plan, security, release policy, changelog, and ADR.
 
@@ -64,7 +64,7 @@ Core documentation coverage is now the current work product: goal, design, speci
 - Confirmed no complete linkage implementation or product runtime is available; the root-guard/snapshot/decoder/private CLI/cache/scanner/Fact foundation is runnable.
 - Synchronized the Core SSOT documents while retaining proposed status for unimplemented runtime stages.
 - Added and validated the Graph IR v0.1, Fact IR v0.1, identity/order, confidence/completeness, root/configuration, and fixture-layout artifacts for T-001–T-006.
-- Implemented and verified the Node root guard, deterministic snapshot/discovery, strict decoder/source map, private CLI envelope, disposable cache, fail-closed parser adapter, bounded CFML/web scanners, fixture-backed Fact extractor, immutable indexes, bounded literal/CFC/scope/web-flow/repository resolvers, dynamic/generated/SQL-dynamic evidence handling, bounded Graph IR builder/validator/reverse adjacency, immutable graph query/evidence explanation engine, inert adversarial safe-failure fixtures, and bounded check/package smoke evidence for T-010–T-014/T-020–T-035/T-040–T-042; no full parser grammar or broad linkage resolution exists.
+- Implemented and verified the Node root guard, deterministic snapshot/discovery, strict decoder/source map, private CLI envelope, disposable cache, fail-closed parser adapter, bounded CFML/web scanners, fixture-backed Fact extractor, immutable indexes, bounded literal/CFC/scope/web-flow/repository resolvers, dynamic/generated/SQL-dynamic evidence handling, bounded Graph IR builder/validator/reverse adjacency, immutable graph query/evidence explanation engine, inert adversarial safe-failure fixtures, bounded check/package smoke evidence, and Node host compatibility evidence for T-010–T-014/T-020–T-035/T-040–T-043; no full parser grammar or broad linkage resolution exists.
 - Preserved the boundary with external `agent-cfml-check`, `agent-code-slice`, `agent-change-impact`, and `agent-test-scope` work.
 
 ## Blockers and unresolved decisions
@@ -76,7 +76,7 @@ Core documentation coverage is now the current work product: goal, design, speci
 5. **M6 partial:** T-033 preserves dynamic/generated/SQL-dynamic evidence and T-034 resolves bounded visible SQL/repository structure; SQL semantics, runtime mappings, and target inference remain open.
 6. **M7 partial:** T-035 provides bounded immutable graph queries and deterministic evidence explanations; CLI wiring, broad output integration, and query contract release remain open.
 7. **M8 partial:** T-040/T-041 verify bounded repeatability, content drift, cache invalidation/corruption, cycle safety, resource limits, and inert adversarial safe-failure fixtures; in-read mutation, full output/time budgets, and orchestration remain open.
-8. **M9 partial:** T-042 verifies local checks and package/CLI smoke; no configured lint/type scripts, CI, published artifact, runtime compatibility, or release exists.
+8. **M9 partial:** T-042 verifies local checks and package/CLI smoke; T-043 verifies only Node `v25.2.1` on `win32`/`x64`; no configured lint/type scripts, CI, published artifact, CFML-engine/runtime compatibility, or release exists.
 9. **T-031/T-032/T-033/T-034 boundary:** Scope uses bounded literal include order and lexical references; web-flow uses supplied literal targets and explicit conditions; dynamic evidence preserves bounded expressions; repository actions require query evidence inside a uniquely resolved CFC method. Do not claim runtime behavior.
 10. **Public package/runtime contract:** Node `>=20`, a private package manifest, and a private CLI entry are established for the foundation; public exports, full CLI commands, CI matrix, and release metadata remain unknown.
 11. **Compatibility evidence:** Lucee/Adobe/browser/runtime claims cannot be made until environments and fixtures exist.
@@ -94,8 +94,9 @@ These are documented planning blockers, not reasons to claim failure. No externa
 | Local Markdown link check | Passed | Does not validate external links |
 | Build/type/lint/unit/integration/E2E | Partial: `npm test` passed 68 foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture tests | No broader Graph linkage build/type/lint/integration/E2E suite exists |
 | Package/import/CLI smoke | Passed (bounded) | Private CLI capabilities/version and `npm pack --dry-run` pass; package remains private and unpublished |
+| Node host compatibility | Passed (bounded) | `docs/compatibility/node-v25.2.1-win32-x64.json`; only Node `v25.2.1` on `win32`/`x64` is evidenced |
 | Browser/accessibility/runtime linkage/security probes | Unrun | No user-facing product or complete analyzer exists |
 
 ## Next task / resume point
 
-**Next task: T-043 — verify only documented engine/platform compatibility.** Preserve the parser boundary and do not claim runtime compatibility without environment evidence.
+**Next task: T-044 — complete release traceability, security review, and documentation parity.** Preserve the private/unreleased boundary and do not publish or claim broader compatibility.

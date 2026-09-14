@@ -48,6 +48,7 @@
 - Consolidated bounded repeatability, content-drift, cache invalidation/corruption, cycle-safety, and resource-limit evidence for T-040; no full orchestration or in-read mutation proof is claimed.
 - Added inert negative/adversarial fixtures and tests for ambiguity, path escape, malformed/unsupported syntax, comment/string filtering, and include cycles for T-041; no parser execution or full grammar coverage is claimed.
 - Completed bounded T-042 verification: 68 tests, contract/example checks, CLI/package smoke, syntax/fixture/document checks, and conservative credential scan pass; lint/type scripts and Secretlint are unavailable locally.
+- Recorded bounded T-043 compatibility evidence for Node `v25.2.1` on `win32`/`x64`; no Lucee, Adobe ColdFusion, cross-version, cross-platform, browser, database, network, or public-package claim is made.
 
 ### Not claimed
 

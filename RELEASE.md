@@ -9,7 +9,7 @@
 | Scope | Versioning, release gates, artifact traceability, and compatibility claims |
 | Source of truth | Git commit, validated artifacts, tests, and this release policy |
 | Evidence | `package.json` is private with Node `>=20`; no public package artifact, tag, workflow, or release exists |
-| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture tests and produced Fact/Graph schema validation pass; no release candidate exists |
+| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/robustness/adversarial-fixture tests and produced Fact/Graph schema validation plus bounded Node host evidence pass; no release candidate exists |
 | Limitations | Public exports, runtime support matrix, registry, CI, and maintainer workflow are undecided |
 
 ## Release principles
@@ -44,7 +44,7 @@ A future release candidate requires:
 
 ## Compatibility claims
 
-Do not claim full Lucee or Adobe ColdFusion compatibility from parser tests or from the existence of a related external tool. Engine claims require a defined fixture matrix, available environments, reproducible commands, and retained results. Browser, database, network, and runtime behavior are outside the analyzer's execution model.
+Do not claim full Lucee or Adobe ColdFusion compatibility from parser tests or from the existence of a related external tool. Engine claims require a defined fixture matrix, available environments, reproducible commands, and retained results. Current retained evidence is limited to Node `v25.2.1` on `win32`/`x64`; Lucee/Adobe ColdFusion remain unverified. Browser, database, network, and runtime behavior are outside the analyzer's execution model.
 
 ## Release checklist
 
@@ -61,4 +61,4 @@ Do not claim full Lucee or Adobe ColdFusion compatibility from parser tests or f
 
 ## Current release state
 
-**Unreleased.** A private foundation package manifest and root-guard/snapshot/decoder sources exist; local `npm pack --dry-run` and CLI capabilities/version smoke pass, but there is no public artifact, CI, tag, or release to verify.
+**Unreleased.** A private foundation package manifest and root-guard/snapshot/decoder sources exist; local `npm pack --dry-run`, CLI capabilities/version smoke, and bounded Node host evidence pass, but there is no public artifact, CI, tag, or release to verify.

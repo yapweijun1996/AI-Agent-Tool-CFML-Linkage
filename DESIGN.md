@@ -1,6 +1,6 @@
 # Design: agent-cfml-linkage Analysis Pipeline
 
-> **Status: PROPOSED / M2–M9 IN PROGRESS.** This document describes the intended architecture; the M1 foundation, bounded M2 parser/scanner/Fact slices, and bounded M3 resolution/Graph, M4 CFC, M5 scope/web-flow, M6 SQL/repository, M7 graph-query, M8 robustness/adversarial, and M9 check/package-smoke slices have runtime evidence.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** This document describes the intended architecture; the M1 foundation, bounded M2 parser/scanner/Fact slices, and bounded M3 resolution/Graph, M4 CFC, M5 scope/web-flow, M6 SQL/repository, M7 graph-query, M8 robustness/adversarial, and M9 check/package-smoke/Node-host-compatibility slices have runtime evidence.
 
 | Field | Value |
 | --- | --- |
@@ -175,8 +175,8 @@ The sequence is dependency-aware but not a schedule. M0's contract gate, M1 foun
 | M6 | Dynamic/generated/SQL-dynamic evidence and SQL/repository linkage | In progress — T-033 preservation and bounded T-034 SQL/repository linkage verified; broader SQL semantics remain open |
 | M7 | Query engine and bounded impact evidence | Verified — T-035 bounded query/evidence engine |
 | M8 | Incremental invalidation, workers, budgets, repeatability | In progress — T-040/T-041 bounded robustness and adversarial safe-failure evidence; orchestration remains open |
-| M9 | Golden suite, adversarial tests, package/CLI smoke, and separately evidenced engine checks | In progress — T-042 bounded checks/package smoke; compatibility remains open |
+| M9 | Golden suite, adversarial tests, package/CLI smoke, and separately evidenced engine checks | In progress — T-042 checks/package smoke and T-043 Node host evidence; broader compatibility remains open |
 
 ## 8. Design risks
 
-The principal risks are incomplete CFML grammar coverage, runtime-dependent mappings, dynamic code and URLs, ambiguous component names, shared-scope semantics, embedded language boundaries, and accidental claims of runtime correctness. The design addresses these with adapter boundaries, explicit evidence, conservative resolution, first-class unresolved records, and deterministic verification. These mitigations remain unverified until implementation exists.
+The principal risks are incomplete CFML grammar coverage, runtime-dependent mappings, dynamic code and URLs, ambiguous component names, shared-scope semantics, embedded language boundaries, and accidental claims of runtime correctness. The design addresses these with adapter boundaries, explicit evidence, conservative resolution, first-class unresolved records, and deterministic verification. Broader mitigations remain unverified until the corresponding implementation and environment evidence exists.

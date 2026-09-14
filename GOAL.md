@@ -1,6 +1,6 @@
 # Goal: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M9 IN PROGRESS.** This goal describes the intended product outcome; the M1 safety foundation, bounded M2 parser/scanner/Fact slices, bounded M3 path/Graph slices, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries, bounded M8 robustness/adversarial safe-failure evidence, and bounded M9 checks/package smoke are implemented/verified, but full linkage resolution is not implemented.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** This goal describes the intended product outcome; the M1 safety foundation, bounded M2 parser/scanner/Fact slices, bounded M3 path/Graph slices, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries, bounded M8 robustness/adversarial safe-failure evidence, and bounded M9 checks/package smoke/Node host compatibility are implemented/verified, but full linkage resolution is not implemented.
 
 | Field | Value |
 | --- | --- |
@@ -52,4 +52,4 @@ The goal is achieved only when a release has:
 
 ## State model
 
-The project must track **Planned → Implemented → Verified → Released** independently. M0/M1, bounded M2 parser/scanner/Fact extraction, bounded M3–M6 linkage, bounded M7 queries, bounded M8 robustness/adversarial safe-failure evidence, and bounded M9 checks/package smoke are verified; full parser coverage, orchestration, public package, and release remain incomplete/unreleased.
+The project must track **Planned → Implemented → Verified → Released** independently. M0/M1, bounded M2 parser/scanner/Fact extraction, bounded M3–M6 linkage, bounded M7 queries, bounded M8 robustness/adversarial safe-failure evidence, and bounded M9 checks/package smoke/Node host compatibility are verified; full parser coverage, orchestration, public package, and release remain incomplete/unreleased.
