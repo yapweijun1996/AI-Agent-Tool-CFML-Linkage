@@ -60,6 +60,7 @@
 - Added T-047 `.github/workflows/ci.yml`, a least-privilege Node 20.x/22.x/24.x test matrix with no publish/deploy step; hosted workflow execution remains unverified.
 - Implemented T-048 bounded library evidence-budget enforcement through `max_evidence`, with deterministic partial evidence, explicit `RESOURCE_LIMIT` incomplete results, focused coverage, and ADR-025; library output/time budgets remain open.
 - Refreshed the retained T-043 Node host evidence and ADR-023 to the current 75-test run; the historical T-044 audit remains tied to its original source commit.
+- Corrected the EPIC lifecycle metadata to reflect the current bounded M9 implementation state; full parser, broader linkage, and release work remain open.
 
 ### Not claimed
 

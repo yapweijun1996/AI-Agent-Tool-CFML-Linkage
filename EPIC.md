@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | A local, deterministic static linkage graph for mixed CFML web projects |
 | Project type | Planned NPM/library + CLI + AI-agent evidence provider |
-| Lifecycle | Prototype / bounded M7 implementation |
+| Lifecycle | Prototype / bounded M9 implementation |
 | Source of truth | This epic for outcome and milestones; `SPEC.md` for the contract; Git history for actual completion |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
 | Verification | M0 contract checks, produced Fact/Graph/analysis IR schema validation, and 75 foundation/parser-adapter/scanner/Fact/index/resolution/Graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query/orchestration/robustness/adversarial-fixture/CLI-query/configuration/evidence-budget tests pass; broader Graph linkage verification remains open |
