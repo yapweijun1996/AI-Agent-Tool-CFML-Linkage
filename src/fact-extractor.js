@@ -310,13 +310,14 @@ function parserSummary(parsedFiles, expectedCount, parserName, parserVersion) {
  * Extract bounded structural facts from parser-adapter results. This does not
  * resolve paths, symbols, mappings, or graph edges across files.
  */
-export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT_TOOL_VERSION, parserName = "cfml-parser-adapter", maxFacts = MAX_FACTS } = {}) {
+export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT_TOOL_VERSION, parserName = "cfml-parser-adapter", maxFacts = MAX_FACTS, shouldStop = () => false } = {}) {
   if (!snapshot || !Array.isArray(snapshot.files) || snapshot.files.length === 0) {
     throw new TypeError("snapshot must contain at least one source file");
   }
   if (!Array.isArray(parsedFiles)) throw new TypeError("parsedFiles must be an array");
   if (typeof toolVersion !== "string" || toolVersion.trim() === "") throw new TypeError("toolVersion must be a non-empty string");
   if (!Number.isSafeInteger(maxFacts) || maxFacts <= 0) throw new TypeError("maxFacts must be a positive safe integer");
+  if (typeof shouldStop !== "function") throw new TypeError("shouldStop must be a function");
 
   const files = [...snapshot.files].sort((left, right) => left.path < right.path ? -1 : left.path > right.path ? 1 : 0);
   const parsedByFile = new Map();
@@ -348,6 +349,10 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
   }
 
   for (const sourceFile of files) {
+    if (shouldStop(`facts:${sourceFile.path}`)) {
+      complete = false;
+      break;
+    }
     const file = sourceFile.path;
     const language = languageForPath(file);
     const parsed = parsedByFile.get(file);
@@ -382,6 +387,10 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
     activeCondition = null;
 
     for (const node of nodes) {
+      if (shouldStop(`facts:${file}`)) {
+        complete = false;
+        break;
+      }
       if (!node) continue;
       const enclosingSymbol = methodName ?? componentName;
       const nodeLanguage = node.kind === "HTML_FORM" ? "html" : node.kind === "JS_FETCH" || node.kind === "JS_AJAX" || node.kind === "JS_ASSET" ? "javascript" : node.kind === "CSS_REFERENCE" ? "css" : node.kind === "SQL_QUERY" ? "sql" : language;
@@ -537,7 +546,8 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
     }
   }
 
-  factOrdinal = appendRepositoryActionFacts(facts, addFact, factOrdinal);
+  if (!shouldStop("facts:repository-actions")) factOrdinal = appendRepositoryActionFacts(facts, addFact, factOrdinal);
+  else complete = false;
 
   facts.sort((left, right) => {
     const leftKey = [left.file, left.span.start_line, left.span.start_col, left.span.end_line, left.span.end_col, left.kind, left.fact_id].join("\0");

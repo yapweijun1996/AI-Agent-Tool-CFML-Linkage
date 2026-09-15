@@ -23,6 +23,6 @@ When the cap is exceeded, evidence arrays are conservatively reduced to the allo
 
 ## Consequences
 
-The private library and CLI now share the configured evidence budget. A low cap can leave some records with incomplete evidence; the explicit diagnostic and incomplete status prevent that result from being treated as fully covered. Output-size and wall-time budgets remain separate, later work.
+The private library and CLI now share the configured evidence budget. A low cap can leave some records with incomplete evidence; the explicit diagnostic and incomplete status prevent that result from being treated as fully covered. Output-size and wall-time budgets remain separate boundaries.
 
-This decision does not add parser coverage, runtime behavior, graph persistence, or a public release API. The separate T-049 edge budget is enforced on the final Graph edge set; T-037 now provides bounded private-library serialized-output enforcement, while wall-time and cross-budget enforcement remain open. The package remains private and non-executing.
+This decision does not add parser coverage, runtime behavior, graph persistence, or a public release API. The separate T-049 edge budget is enforced on the final Graph edge set; T-037 provides bounded private-library serialized-output enforcement, T-038 provides the cooperative wall-time boundary, and T-039 verifies bounded cross-budget behavior. The package remains private and non-executing.

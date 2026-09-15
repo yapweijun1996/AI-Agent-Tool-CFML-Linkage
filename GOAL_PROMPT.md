@@ -1,6 +1,6 @@
 # Autonomous Goal Prompt
 
-> **Status: PROPOSED / M2–M9 IN PROGRESS.** Future-work contract.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** Future-work contract; T-037–T-039 bounded private-library budget contracts are verified.
 
 | Field | Value |
 | --- | --- |
@@ -8,11 +8,11 @@
 | Last updated | 2026-09-15 |
 | Scope | Evidence-driven implementation loop |
 | Source | Core SSOT plus Git/tests/runtime/release evidence |
-| Evidence | M0/M1; bounded T-023–T-037, T-040–T-046, T-048–T-051 verified; T-038–T-039 defined; T-047 set; 79 pass |
+| Evidence | M0/M1; bounded T-023–T-039, T-040–T-046, T-048–T-051 verified; T-047 set; 79 pass |
 | Verification | Prompt/documentation only |
-| Limitations | T-038–T-039, parser, persistence, release, CI, and runtime remain open |
+| Limitations | Parser, persistence, release, CI, and runtime remain open |
 
-Work on `agent-cfml-linkage`, Node `>=20` CFML-first static linkage prototype. Verified: M0/M1, bounded M2–M9 slices, and T-037/T-045–T-051; T-038–T-039 are next planned work, while T-047 lacks hosted evidence. Keep private APIs; parser, persistence, CI, and release remain open. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
+Work on `agent-cfml-linkage`, Node `>=20` CFML-first static linkage prototype. Verified: M0/M1, bounded M2–M9 slices including T-037–T-039/T-045–T-051; T-047 lacks hosted evidence. Keep private APIs; parser, persistence, CI, and release remain open. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
 
 Repeat:
 

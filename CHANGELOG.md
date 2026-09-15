@@ -9,7 +9,7 @@
 | Scope | Changes in this repository |
 | Source of truth | Git history and this changelog |
 | Evidence | Initial commit `1b29c0b`; documentation baseline and M1 foundation commits follow |
-| Verification | Documentation consistency checks and retained bounded query/robustness/adversarial-fixture/evidence/edge-budget/ignore-policy/hidden-file-policy/`npm test` (79/79) evidence are recorded; the current pass refreshes the prompt-to-artifact audit baseline without executing project source |
+| Verification | Documentation consistency checks and retained bounded query/robustness/adversarial-fixture/evidence/edge-budget/ignore-policy/hidden-file-policy/wall-time/cross-budget/`npm test` (79/79) evidence are recorded; the current pass refreshes the prompt-to-artifact audit baseline without executing project source |
 | Limitations | No parser/resolver release runtime, public package, hosted CI run, or release exists; the read-only CI workflow is present |
 
 ## Unreleased
@@ -66,8 +66,10 @@
 - Corrected the EPIC lifecycle metadata to reflect the current bounded M9 implementation state; full parser, broader linkage, and release work remain open.
 - Added `docs/audits/prompt-to-artifact-v0.1.json`, mapping the explicit execution loop, Core SSOT files, named deliverables, checks, gates, success criteria, and blockers; the audit deliberately records the overall goal as incomplete.
 - Refreshed the prompt-to-artifact audit's audited-source baseline to local commit `3de60e2` and synchronized its observed branch distance; no product or release completion claim was added.
-- Defined T-037–T-039 as the next bounded private-library serialized-output budget, wall-time budget, and unified budget-regression work in ADR-029; T-038–T-039 remain planned and unimplemented.
+- Defined T-037–T-039 as bounded private-library serialized-output, wall-time, and unified budget-regression work in ADR-029; T-037/T-038/T-039 are now implemented and verified for their bounded scopes.
 - Implemented bounded T-037 private-library serialization through `src/output.js` and `serializeAnalysis`, sharing exact UTF-8 output-budget accounting with the CLI and returning explicit `OUTPUT_LIMIT` incomplete evidence without arbitrary JSON truncation.
+- Implemented bounded T-038 private-library wall-time enforcement through a monotonic clock, cooperative discovery/parse/Fact loop checkpoints, stage-boundary resolver checks, preserved partial evidence, and deterministic `TIME_LIMIT` diagnostics; synchronous parser calls remain non-preemptive.
+- Added bounded T-039 analyzer/CLI regression coverage for combined budgets, deterministic partial results, explicit diagnostic ownership/details, JSON round-trip shape, Graph validation, and no-execution behavior.
 
 ### Not claimed
 

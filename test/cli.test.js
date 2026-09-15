@@ -107,6 +107,18 @@ test("runs the bounded analysis pipeline after validating the root", () => {
     assert.equal(edgeLimitedResult.stdout.data.graph.stats.edge_count, 1);
     assert.equal(edgeLimitedResult.stdout.data.graph.diagnostics.some((item) => item.code === "RESOURCE_LIMIT" && item.details?.max_edges === 1), true);
 
+    const combinedConfig = JSON.parse(fs.readFileSync(path.join(root, "config.json"), "utf8"));
+    combinedConfig.limits.max_edges = 1;
+    combinedConfig.limits.max_evidence = 1;
+    combinedConfig.limits.max_output_bytes = 52428800;
+    fs.writeFileSync(path.join(root, "config.json"), JSON.stringify(combinedConfig), "utf8");
+    const combinedResult = runCli(["analyze", "--config", "config.json"], root);
+    assert.equal(combinedResult.exitCode, 3);
+    assert.equal(combinedResult.stdout.status, "incomplete");
+    assert.equal(combinedResult.stdout.data.graph.complete, false);
+    assert.equal(combinedResult.stdout.data.graph.diagnostics.some((item) => item.code === "RESOURCE_LIMIT" && item.details?.max_edges === 1), true);
+    assert.equal(combinedResult.stdout.data.graph.diagnostics.some((item) => item.code === "RESOURCE_LIMIT" && item.details?.max_evidence === 1), true);
+
     const boundedConfig = JSON.parse(fs.readFileSync(path.join(root, "config.json"), "utf8"));
     boundedConfig.limits.max_edges = 1000000;
     boundedConfig.limits.max_evidence = 1000000;

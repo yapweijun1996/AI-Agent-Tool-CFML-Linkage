@@ -9,7 +9,7 @@
 | Scope | Component boundaries, data flow, ownership, and failure behavior |
 | Source of truth | This document for proposed architecture; Git history for current code facts |
 | Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
-| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/resolver/dynamic-evidence/SQL-repository/query/serialization/robustness/adversarial-fixture/evidence-budget/edge-budget tests pass locally; remaining architecture is unverified |
+| Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/resolver/dynamic-evidence/SQL-repository/query/serialization/wall-time/cross-budget/robustness/adversarial-fixture/evidence-budget/edge-budget tests pass locally; remaining architecture is unverified |
 | Limitations | Parser feasibility, runtime compatibility, resource costs, and public package compatibility are unknown; M1 uses Node built-ins only |
 
 ## 1. Boundary
@@ -46,7 +46,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Query engine | immutable GraphSnapshot, exact selectors, bounded deterministic traversal, evidence slices, and explanations in `src/graph-query.js` | model-written relationships, target guessing, or runtime execution |
 | CLI/library | private invocation, stable envelope, stderr separation, bounded `analyze`/`index`, and private `analyzeProject` export | execution of analyzed source, query-command persistence, or public release |
 
-Core owns stable IDs, confidence policy, root safety, validation, and output contracts. T-037 implements the private-library serialization owner with exact UTF-8 output accounting; T-038 assigns monotonic wall-time checkpoints to orchestration and T-039 assigns cross-budget parity to the test/contract layer, both still planned. Plugins are intentionally subordinate to those invariants.
+Core owns stable IDs, confidence policy, root safety, validation, and output contracts. T-037 implements the private-library serialization owner with exact UTF-8 output accounting; T-038 assigns monotonic wall-time checkpoints to orchestration and T-039 assigns cross-budget parity to the test/contract layer. Plugins are intentionally subordinate to those invariants.
 
 ## 3. Data flow
 
@@ -98,7 +98,7 @@ The architecture treats incomplete analysis as data:
 - out-of-root targets are rejected;
 - snapshot drift invalidates completeness;
 - resource caps return `complete=false` and identify the exhausted budget; discovery applies configured ignore globs and hidden-file policy before source reads, and the graph stage enforces the configured edge cap in deterministic edge order and evidence-item cap in deterministic edge, unresolved-record, and node order;
-- T-037 implements the private-library serialized-output cap; T-038–T-039 specify but do not yet implement the wall-time cap or cross-budget regression contract;
+- T-037 implements the private-library serialized-output cap; T-038 implements the private-library monotonic wall-time cap with cooperative stage/loop checkpoints and partial results; T-039 verifies the bounded cross-budget regression contract;
 - cache corruption causes rebuild, never trusted stale output.
 
 An internal invariant or serialization failure is different: it is an internal error and must not be represented as a clean analysis.

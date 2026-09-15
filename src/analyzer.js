@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
+import { performance } from "node:perf_hooks";
 import path from "node:path";
 
 import { resolveCfcLinks } from "./cfc-resolver.js";
@@ -68,6 +69,41 @@ function limitsFrom(config, options) {
     maxResolverRecords: normalizePositiveLimit(options.maxResolverRecords ?? configured.max_edges, "maxResolverRecords", DEFAULT_MAX_RESOLVER_RECORDS),
     maxEvidence: normalizePositiveLimit(options.maxEvidence ?? configured.max_evidence, "maxEvidence", DEFAULT_MAX_EVIDENCE),
     maxTraversalDepth: normalizePositiveLimit(options.maxTraversalDepth ?? configured.max_traversal_depth, "maxTraversalDepth", 32),
+    maxWallTimeMs: normalizePositiveLimit(options.maxWallTimeMs ?? configured.max_wall_time_ms, "maxWallTimeMs", undefined),
+  };
+}
+
+function createTimeBudget(maxWallTimeMs, now = () => performance.now()) {
+  if (maxWallTimeMs === undefined) return { check: () => null };
+  if (typeof now !== "function") throw new TypeError("clock must be a function");
+  const startedAt = now();
+  if (!Number.isFinite(startedAt)) throw new TypeError("clock must return a finite number");
+  let diagnostic = null;
+  return {
+    check(stage) {
+      if (diagnostic !== null) return diagnostic;
+      const current = now();
+      if (!Number.isFinite(current)) throw new TypeError("clock must return a finite number");
+      if (current - startedAt >= maxWallTimeMs) {
+        diagnostic = {
+          code: "TIME_LIMIT",
+          severity: "error",
+          message: `Wall-time limit exceeded: ${maxWallTimeMs} ms.`,
+          details: { max_wall_time_ms: maxWallTimeMs, stage },
+        };
+      }
+      return diagnostic;
+    },
+  };
+}
+
+function appendFactDiagnostic(factBundle, item) {
+  const diagnostics = sortDiagnostics([...factBundle.diagnostics, item]);
+  return {
+    ...factBundle,
+    complete: false,
+    diagnostics,
+    stats: { ...factBundle.stats, diagnostic_count: diagnostics.length },
   };
 }
 
@@ -99,9 +135,10 @@ function parserResultForReadFailure(file, parserVersion, error) {
   return parserResultForFailure(file, parserVersion, "FILE_READ_ERROR", `Unable to read source file: ${error?.code ?? "unknown"}.`);
 }
 
-function parseSnapshot({ snapshot, rootGuard, parser, parserVersion }) {
+function parseSnapshot({ snapshot, rootGuard, parser, parserVersion, shouldStop = () => false }) {
   const diagnostics = [];
   const parsedFiles = snapshot.files.map((file) => {
+    if (shouldStop(`parse:${file.path}`)) return null;
     let bytes;
     let before;
     let after;
@@ -279,6 +316,8 @@ export function analyzeProject({
   maxResolverRecords,
   maxEvidence,
   maxTraversalDepth,
+  maxWallTimeMs,
+  clock,
 } = {}) {
   if (typeof rootPath !== "string" || rootPath.trim() === "") throw new TypeError("rootPath must be a non-empty string");
   if (parserAdapter !== null && (!parserAdapter || typeof parserAdapter.parse !== "function")) throw new TypeError("parserAdapter must expose parse(bytes, file) or be null");
@@ -288,7 +327,14 @@ export function analyzeProject({
   if (typeof parserName !== "string" || parserName.trim() === "") throw new TypeError("parserName must be a non-empty string");
   if (!snapshotOptions || typeof snapshotOptions !== "object" || Array.isArray(snapshotOptions)) throw new TypeError("snapshotOptions must be an object");
 
-  const limits = limitsFrom(config, { ...snapshotOptions, maxFacts, maxEdges, maxResolverRecords, maxEvidence, maxTraversalDepth });
+  const limits = limitsFrom(config, { ...snapshotOptions, maxFacts, maxEdges, maxResolverRecords, maxEvidence, maxTraversalDepth, maxWallTimeMs });
+  const timeBudget = createTimeBudget(limits.maxWallTimeMs, clock ?? undefined);
+  let timeLimit = null;
+  const checkTime = (stage) => {
+    if (timeLimit !== null) return false;
+    timeLimit = timeBudget.check(stage);
+    return timeLimit === null;
+  };
   const extensions = extensionsFor(config, snapshotOptions);
   const ignoreGlobs = snapshotOptions.ignoreGlobs ?? config?.ignore?.globs;
   const hiddenFilePolicy = snapshotOptions.hiddenFilePolicy ?? config?.ignore?.hidden_files;
@@ -301,7 +347,9 @@ export function analyzeProject({
     ...(limits.maxFiles ? { maxFiles: limits.maxFiles } : {}),
     ...(limits.maxFileBytes ? { maxFileBytes: limits.maxFileBytes } : {}),
     ...(limits.maxTotalBytes ? { maxTotalBytes: limits.maxTotalBytes } : {}),
+    shouldStop: (stage) => !checkTime(`snapshot:${stage}`),
   });
+  checkTime("snapshot:complete");
   if (snapshot.files.length === 0) {
     const error = new Error("No supported source files were discovered beneath the analysis root.");
     error.code = "NO_SOURCE_FILES";
@@ -309,26 +357,80 @@ export function analyzeProject({
   }
 
   const parser = parserAdapter ?? createParserAdapter({ backend: parserBackend, parserVersion });
-  const parsed = parseSnapshot({ snapshot, rootGuard, parser, parserVersion });
-  const extracted = extractFactBundle({ snapshot, parsedFiles: parsed.parsedFiles, toolVersion, parserName, maxFacts: limits.maxFacts });
-  const factBundle = attachSnapshotDiagnostics(extracted, snapshot, parsed.diagnostics);
+  const parsed = timeLimit === null && checkTime("parse:start")
+    ? parseSnapshot({ snapshot, rootGuard, parser, parserVersion, shouldStop: (stage) => !checkTime(stage) })
+    : { parsedFiles: [], diagnostics: [] };
+  checkTime("parse:complete");
+  const extracted = extractFactBundle({
+    snapshot,
+    parsedFiles: timeLimit === null ? parsed.parsedFiles : [],
+    toolVersion,
+    parserName,
+    maxFacts: limits.maxFacts,
+    shouldStop: (stage) => !checkTime(stage),
+  });
+  checkTime("facts:complete");
+  let factBundle = attachSnapshotDiagnostics(extracted, snapshot, parsed.diagnostics);
+  const timeLimitDiagnostic = () => timeLimit === null ? null : {
+    id: `diagnostic:${hash(["time-limit", timeLimit.details.max_wall_time_ms, timeLimit.details.stage])}`,
+    ...timeLimit,
+  };
+  const appendTimeLimitToFactBundle = () => {
+    const diagnostic = timeLimitDiagnostic();
+    if (diagnostic !== null && !factBundle.diagnostics.some((item) => item.id === diagnostic.id)) factBundle = appendFactDiagnostic(factBundle, diagnostic);
+  };
+  appendTimeLimitToFactBundle();
   const indexes = buildProjectIndexes({ factBundle, snapshot });
 
-  const pathResolution = resolveLiteralPaths({ factBundle, indexes, rootGuard });
-  const cfcResolution = resolveCfcLinks({ factBundle, indexes });
-  const baseResolutions = mergeResolutionResults(factBundle, [pathResolution, cfcResolution]);
-  const scopeResolution = resolveScopeLinks({
-    factBundle,
-    resolutions: baseResolutions,
-    indexes,
-    maxEvents: limits.maxResolverRecords,
-    maxDepth: limits.maxTraversalDepth,
-    maxRecords: limits.maxResolverRecords,
-  });
-  const webFlowResolution = resolveWebFlowLinks({ factBundle, resolutions: baseResolutions, maxRecords: limits.maxResolverRecords });
-  const repositoryResolution = resolveRepositoryLinks({ factBundle, cfcResolution, maxRecords: limits.maxResolverRecords });
-  const resolutions = mergeResolutionResults(factBundle, [pathResolution, cfcResolution, scopeResolution, webFlowResolution, repositoryResolution]);
-  const graph = buildGraph({ factBundle, resolutions, snapshot, rootGuard, toolVersion, maxEdges: limits.maxEdges, maxEvidence: limits.maxEvidence, ...(createdAt === undefined ? {} : { createdAt }) });
+  let pathResolution = null;
+  let cfcResolution = null;
+  let scopeResolution = null;
+  let webFlowResolution = null;
+  let repositoryResolution = null;
+  if (timeLimit === null && checkTime("path-resolution:start")) {
+    pathResolution = resolveLiteralPaths({ factBundle, indexes, rootGuard });
+    checkTime("path-resolution:complete");
+  }
+  if (timeLimit === null && checkTime("cfc-resolution:start")) {
+    cfcResolution = resolveCfcLinks({ factBundle, indexes });
+    checkTime("cfc-resolution:complete");
+  }
+  const baseResolutions = mergeResolutionResults(factBundle, [pathResolution, cfcResolution].filter(Boolean));
+  if (timeLimit === null && checkTime("scope-resolution:start")) {
+    scopeResolution = resolveScopeLinks({
+      factBundle,
+      resolutions: baseResolutions,
+      indexes,
+      maxEvents: limits.maxResolverRecords,
+      maxDepth: limits.maxTraversalDepth,
+      maxRecords: limits.maxResolverRecords,
+    });
+    checkTime("scope-resolution:complete");
+  }
+  if (timeLimit === null && checkTime("web-flow-resolution:start")) {
+    webFlowResolution = resolveWebFlowLinks({ factBundle, resolutions: baseResolutions, maxRecords: limits.maxResolverRecords });
+    checkTime("web-flow-resolution:complete");
+  }
+  if (timeLimit === null && checkTime("repository-resolution:start")) {
+    repositoryResolution = resolveRepositoryLinks({ factBundle, cfcResolution, maxRecords: limits.maxResolverRecords });
+    checkTime("repository-resolution:complete");
+  }
+  let resolutions = mergeResolutionResults(factBundle, [pathResolution, cfcResolution, scopeResolution, webFlowResolution, repositoryResolution].filter(Boolean));
+  const markResolutionTimeLimit = () => {
+    if (timeLimit !== null && resolutions.complete === true) resolutions = { ...resolutions, complete: false };
+  };
+  checkTime("graph:start");
+  appendTimeLimitToFactBundle();
+  markResolutionTimeLimit();
+  let graph = buildGraph({ factBundle, resolutions, snapshot, rootGuard, toolVersion, maxEdges: limits.maxEdges, maxEvidence: limits.maxEvidence, ...(createdAt === undefined ? {} : { createdAt }) });
+  checkTime("graph:complete");
+  appendTimeLimitToFactBundle();
+  markResolutionTimeLimit();
+  const graphTimeLimit = timeLimitDiagnostic();
+  if (graphTimeLimit !== null && !graph.diagnostics.some((item) => item.id === graphTimeLimit.id)) {
+    const diagnostics = sortDiagnostics([...graph.diagnostics, graphTimeLimit]);
+    graph = { ...graph, complete: false, diagnostics, stats: { ...graph.stats, diagnostic_count: diagnostics.length } };
+  }
   const reverseAdjacency = buildReverseAdjacency(graph);
 
   return {
@@ -346,7 +448,7 @@ export function analyzeProject({
       resolution_count: resolutions.stats.resolution_count,
       resolver_unresolved_count: resolutions.stats.unresolved_count,
       resolver_diagnostic_count: resolutions.stats.diagnostic_count,
-      parsed_file_count: parsed.parsedFiles.length,
+      parsed_file_count: parsed.parsedFiles.filter(Boolean).length,
     },
   };
 }

@@ -128,6 +128,8 @@ export function createSnapshot(rootGuard, options = {}) {
   const maxFiles = normalizePositiveLimit(options.maxFiles, DEFAULT_LIMITS.maxFiles, "maxFiles");
   const maxFileBytes = normalizePositiveLimit(options.maxFileBytes, DEFAULT_LIMITS.maxFileBytes, "maxFileBytes");
   const maxTotalBytes = normalizePositiveLimit(options.maxTotalBytes, DEFAULT_LIMITS.maxTotalBytes, "maxTotalBytes");
+  const shouldStop = options.shouldStop ?? (() => false);
+  if (typeof shouldStop !== "function") throw new TypeError("shouldStop must be a function");
   const files = [];
   const diagnostics = [];
   let totalBytes = 0;
@@ -135,6 +137,11 @@ export function createSnapshot(rootGuard, options = {}) {
   let stoppedByLimit = false;
 
   function walk(directoryPath, relativeDirectory) {
+    if (shouldStop(relativeDirectory || ".")) {
+      complete = false;
+      stoppedByLimit = true;
+      return;
+    }
     let entries;
     try {
       entries = fs.readdirSync(directoryPath, { withFileTypes: true }).sort((left, right) => compareNames(left.name, right.name));
@@ -146,6 +153,11 @@ export function createSnapshot(rootGuard, options = {}) {
 
     for (const entry of entries) {
       const relativePath = relativeDirectory ? `${relativeDirectory}/${entry.name}` : entry.name;
+      if (shouldStop(relativePath)) {
+        complete = false;
+        stoppedByLimit = true;
+        return;
+      }
 
       if (entry.isDirectory()) {
         const ignoredByGlob = ignoreGlobs.some((glob) => glob.test(relativePath) || glob.test(`${relativePath}/`));

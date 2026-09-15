@@ -35,7 +35,7 @@ test("runs the bounded stages in order and exposes graph evidence", () => {
   assert.equal(Object.isFrozen(result.reverse_adjacency), true);
 });
 
-test("produces repeatable aggregate output and enforces the library serialization budget", () => {
+test("preserves deterministic combined budgets and the serialization boundary", () => {
   const first = analyze("golden/web-flow-and-conditions");
   const second = analyze("golden/web-flow-and-conditions");
   assert.deepEqual(first.fact_bundle, second.fact_bundle);
@@ -54,6 +54,25 @@ test("produces repeatable aggregate output and enforces the library serializatio
   assert.equal(limited.bytes, serialized.bytes);
   assert.equal(limited.diagnostics[0].code, "OUTPUT_LIMIT");
   assert.equal(limited.diagnostics[0].details.max_output_bytes, serialized.bytes - 1);
+
+  const bounded = analyze("golden/sql-and-repository", { config: { limits: { max_edges: 1, max_evidence: 1 } } });
+  const boundedAgain = analyze("golden/sql-and-repository", { config: { limits: { max_edges: 1, max_evidence: 1 } } });
+  assert.equal(bounded.complete, false);
+  assert.equal(bounded.graph.complete, false);
+  assert.equal(bounded.graph.diagnostics.some((item) => item.code === "RESOURCE_LIMIT" && item.details?.max_edges === 1), true);
+  assert.equal(bounded.graph.diagnostics.some((item) => item.code === "RESOURCE_LIMIT" && item.details?.max_evidence === 1), true);
+  assert.deepEqual(bounded, boundedAgain);
+  assert.deepEqual(validateGraph(bounded.graph), []);
+  const boundedJson = serializeAnalysis(bounded, { maxOutputBytes: 50_000_000 });
+  assert.equal(boundedJson.complete, true);
+  const restored = JSON.parse(boundedJson.json);
+  assert.equal(restored.complete, false);
+  assert.equal(restored.graph.complete, false);
+  assert.deepEqual(Object.keys(restored).sort(), ["complete", "diagnostics", "fact_bundle", "graph", "resolutions", "reverse_adjacency", "schema_version", "stats", "tool"].sort());
+  const outputLimited = serializeAnalysis(bounded, { maxOutputBytes: 300 });
+  assert.equal(outputLimited.complete, false);
+  assert.equal(outputLimited.json, null);
+  assert.equal(outputLimited.diagnostics[0].code, "OUTPUT_LIMIT");
 });
 
 test("enforces the configured library evidence budget deterministically", () => {
@@ -126,7 +145,7 @@ test("applies the configured language and fact limits without executing source",
   assert.equal(fs.existsSync(path.resolve("fixtures/golden/web-surface/client.js")), true);
 });
 
-test("marks a source mutation during parsing incomplete", () => {
+test("marks source mutation and wall-time limit results incomplete", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "agent-cfml-linkage-analyzer-"));
   const sourcePath = path.join(root, "page.cfm");
   fs.writeFileSync(sourcePath, "<cfset request.value = 1>\n", "utf8");
@@ -150,6 +169,33 @@ test("marks a source mutation during parsing incomplete", () => {
     });
     assert.equal(result.complete, false);
     assert.equal(result.fact_bundle.diagnostics.some((item) => item.code === "SNAPSHOT_DRIFT"), true);
+
+    fs.writeFileSync(sourcePath, "<cfset request.value = 1>\n", "utf8");
+    let clockValue = 0;
+    let parseCalled = false;
+    const limited = analyzeProject({
+      rootPath: root,
+      parserBackend: {
+        version: "test-time-budget-backend/v0.1",
+        parse() {
+          parseCalled = true;
+          return { tree: { kind: "TEST_DOCUMENT", nodes: [] }, complete: true, diagnostics: [] };
+        },
+      },
+      parserVersion: "test-time-budget-backend/v0.1",
+      parserName: "test-time-budget-backend",
+      config: { limits: { max_wall_time_ms: 3 } },
+      clock: () => clockValue++,
+      createdAt: "2026-09-14T00:00:00.000Z",
+    });
+    assert.equal(parseCalled, false);
+    assert.equal(limited.complete, false);
+    assert.equal(limited.graph.complete, false);
+    assert.equal(limited.resolutions.complete, false);
+    assert.equal(limited.fact_bundle.diagnostics.some((item) => item.code === "TIME_LIMIT"), true);
+    assert.equal(limited.graph.diagnostics.some((item) => item.code === "TIME_LIMIT" && item.details?.max_wall_time_ms === 3), true);
+    assert.equal(limited.graph.diagnostics.find((item) => item.code === "TIME_LIMIT")?.details?.stage, "snapshot:complete");
+    assert.deepEqual(validateGraph(limited.graph), []);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }

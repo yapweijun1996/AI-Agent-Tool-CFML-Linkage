@@ -21,4 +21,4 @@ The private CLI passes its validated `limits.max_edges` to both the bounded reso
 
 The library Graph IR now honors the declared final edge budget with deterministic partial output and explicit incompleteness. A capped result cannot be treated as a complete graph, and its reverse adjacency remains referentially consistent with the retained edge set.
 
-This decision does not add parser coverage, runtime behavior, graph persistence, library wall-time or cross-budget enforcement, or a public release API. T-037 separately provides bounded private-library serialized-output enforcement. The package remains private and non-executing.
+This decision does not add parser coverage, runtime behavior, graph persistence, or a public release API. T-037 separately provides bounded private-library serialized-output enforcement and T-038 provides the cooperative wall-time boundary. The package remains private and non-executing.
