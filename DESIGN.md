@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Version | 0.1 |
-| Last updated | 2026-09-14 |
+| Last updated | 2026-09-15 |
 | Scope | A deterministic staged compiler-like pipeline for CFML-first web linkage |
 | Source of truth | This document for design intent; Git history for current implementation facts |
 | Evidence | Initial `main` commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
@@ -18,7 +18,7 @@ The analyzer should give coding agents a small, queryable, evidence-backed view 
 
 **Evidence boundary:** most components and flows remain proposed runtime modules. The repository contains root-guard, snapshot, configured ignore-glob/hidden-file policies, decoder, bounded CLI/library orchestration, cache, parser-adapter, bounded CFML/web scanners, bounded Fact extractor, immutable index, literal/CFC/scope/web-flow/repository resolver modules, dynamic/generated/SQL evidence handling, Graph builder, and bounded graph query engine with focused tests, a private `package.json`, and validated contracts; full parser backend, broader Fact IR, caller, hosted CI verification, and release architecture remain unimplemented; the read-only CI workflow is defined, while bounded graph/CFC/scope/web-flow/dynamic-evidence/SQL-repository/query construction, T-036 composition, T-049 Graph edge-budget enforcement, T-050 ignore-glob enforcement, and T-051 hidden-file-policy enforcement are implemented.
 
-It is CFML-first: CFM/CFC structure, Application governance, includes, CFC typing, and shared scopes receive priority. HTML, JavaScript, CSS, SQL, and repository relations extend that model where static evidence is available.
+It is CFML-first: CFM/CFC structure, Application governance, includes, CFC typing, and shared scopes receive priority. HTML, JavaScript, CSS, SQL, and repository relations extend that model where static evidence is available. T-037 implements the bounded private-library serialized-output boundary; T-038–T-039 define the remaining wall-time and cross-budget tranche.
 
 ## 2. Pipeline
 
@@ -141,7 +141,7 @@ Selectors are exact node IDs or exact path/canonical-name/name values; ambiguous
 
 ### Stage 12 — CLI and library boundary
 
-The implemented private CLI boundary emits one stable JSON envelope on stdout and human diagnostics on stderr; it exposes `capabilities`, help, version, input validation, bounded `analyze`/`index` commands, and bounded query commands. `src/analyzer.js` composes the bounded stages and `src/index.js` exports `analyzeProject`, `queryGraph`, `createGraphSnapshot`, and the explicit mixed scanner backend under the private package `exports` boundary. The `agent-cfml-linkage-analysis/v0.1` result contains Fact IR, merged resolution evidence, Graph IR, immutable reverse adjacency, diagnostics, and stats. Query commands run a fresh bounded analysis, map their command to the immutable query engine, and return its bounded result under the stable envelope; graph persistence, full parser coverage, and public release remain open. Proposed commands are `capabilities`, `index`/`analyze`, `related`, `callers`, `callees`, `trace`, `unresolved`, `explain`, and `stats`.
+The implemented private CLI boundary emits one stable JSON envelope on stdout and human diagnostics on stderr; it exposes `capabilities`, help, version, input validation, bounded `analyze`/`index` commands, and bounded query commands. `src/analyzer.js` composes the bounded stages and `src/index.js` exports `analyzeProject`, `queryGraph`, `createGraphSnapshot`, `serializeAnalysis`, and the explicit mixed scanner backend under the private package `exports` boundary. The `agent-cfml-linkage-analysis/v0.1` result contains Fact IR, merged resolution evidence, Graph IR, immutable reverse adjacency, diagnostics, and stats. Query commands run a fresh bounded analysis, map their command to the immutable query engine, and return its bounded result under the stable envelope; T-037 provides the bounded private-library serializer, while T-038–T-039 define but do not implement the wall-time deadline or cross-budget regression boundary. Graph persistence, full parser coverage, and public release remain open. Proposed commands are `capabilities`, `index`/`analyze`, `related`, `callers`, `callees`, `trace`, `unresolved`, `explain`, and `stats`.
 
 Proposed exit semantics: `0` completed, `1` internal failure, `2` invalid input, `3` incomplete/unsupported/resource limit, and `4` root/path/access rejection. The private CLI uses exit `3` for an exceeded serialized output budget; exit `3` is not a clean result.
 
@@ -151,7 +151,7 @@ Plugins remain narrow and deterministic: `ParserAdapter`, `FactExtractor`, `Reso
 
 ## 5. Performance strategy
 
-Correctness comes first. Parse with bounded worker concurrency and merge facts in sorted path order. Use map/set indexes instead of all-pairs symbol comparison. Cache source hashes and Fact IR. Enforce hard caps for files, bytes, facts, edges, evidence, traversal depth, output bytes, and wall time. The snapshot stage applies the configured ignore-glob and hidden-file policies before source admission; the library graph stage enforces the configured edge and evidence caps with deterministic partial results and explicit incomplete diagnostics; the private CLI enforces the serialized output-byte cap with an explicit incomplete envelope. Library output and wall-time enforcement remain open. A cap hit returns partial evidence and identifies the exhausted budget; it never silently truncates.
+Correctness comes first. Parse with bounded worker concurrency and merge facts in sorted path order. Use map/set indexes instead of all-pairs symbol comparison. Cache source hashes and Fact IR. Enforce hard caps for files, bytes, facts, edges, evidence, traversal depth, output bytes, and wall time. The snapshot stage applies the configured ignore-glob and hidden-file policies before source admission; the library graph stage enforces the configured edge and evidence caps with deterministic partial results and explicit incomplete diagnostics; the private library and CLI use the bounded serialized output helper with an explicit incomplete envelope. T-038–T-039 define the remaining private-library wall-time and cross-budget work; enforcement remains open for those scopes until implemented and verified. A cap hit returns partial evidence and identifies the exhausted budget; it never silently truncates.
 
 ## 6. Boundary with related tools
 

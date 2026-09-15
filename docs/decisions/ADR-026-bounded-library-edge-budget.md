@@ -1,7 +1,7 @@
 # ADR-026: Enforce the bounded library Graph edge budget
 
 - **Status:** Accepted for bounded v0.1 implementation
-- **Date:** 2026-09-14
+- **Date:** 2026-09-15
 - **Scope:** T-049 final Graph edge-count enforcement in the private analysis/library pipeline
 - **Verification:** `test/analyzer.test.js` covers configured truncation, deterministic output, incomplete status, diagnostic details, Graph validation, and reverse adjacency; the full `npm test` suite passes locally
 
@@ -21,4 +21,4 @@ The private CLI passes its validated `limits.max_edges` to both the bounded reso
 
 The library Graph IR now honors the declared final edge budget with deterministic partial output and explicit incompleteness. A capped result cannot be treated as a complete graph, and its reverse adjacency remains referentially consistent with the retained edge set.
 
-This decision does not add parser coverage, runtime behavior, graph persistence, library serialized-output or wall-time enforcement, or a public release API. The package remains private and non-executing.
+This decision does not add parser coverage, runtime behavior, graph persistence, library wall-time or cross-budget enforcement, or a public release API. T-037 separately provides bounded private-library serialized-output enforcement. The package remains private and non-executing.

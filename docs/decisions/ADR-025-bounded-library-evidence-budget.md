@@ -1,7 +1,7 @@
 # ADR-025: Enforce the bounded library evidence budget
 
 - **Status:** Accepted for bounded v0.1 implementation
-- **Date:** 2026-09-14
+- **Date:** 2026-09-15
 - **Scope:** T-048 global evidence-item enforcement in the private analysis/library pipeline
 - **Verification:** `test/analyzer.test.js` covers deterministic truncation, incomplete status, diagnostic details, retained evidence count, and Graph validation; the full `npm test` suite passes locally
 
@@ -25,4 +25,4 @@ When the cap is exceeded, evidence arrays are conservatively reduced to the allo
 
 The private library and CLI now share the configured evidence budget. A low cap can leave some records with incomplete evidence; the explicit diagnostic and incomplete status prevent that result from being treated as fully covered. Output-size and wall-time budgets remain separate, later work.
 
-This decision does not add parser coverage, runtime behavior, graph persistence, or a public release API. The separate T-049 edge budget is enforced on the final Graph edge set; serialized-output and wall-time budgets remain open. The package remains private and non-executing.
+This decision does not add parser coverage, runtime behavior, graph persistence, or a public release API. The separate T-049 edge budget is enforced on the final Graph edge set; T-037 now provides bounded private-library serialized-output enforcement, while wall-time and cross-budget enforcement remain open. The package remains private and non-executing.

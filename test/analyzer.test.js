@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-import { analyzeProject } from "../src/analyzer.js";
+import { analyzeProject, serializeAnalysis } from "../src/index.js";
 import { createMixedStructuralScannerBackend } from "../src/web-scanner.js";
 import { validateGraph } from "../src/graph.js";
 
@@ -35,13 +35,25 @@ test("runs the bounded stages in order and exposes graph evidence", () => {
   assert.equal(Object.isFrozen(result.reverse_adjacency), true);
 });
 
-test("produces repeatable aggregate output for the same snapshot and options", () => {
+test("produces repeatable aggregate output and enforces the library serialization budget", () => {
   const first = analyze("golden/web-flow-and-conditions");
   const second = analyze("golden/web-flow-and-conditions");
   assert.deepEqual(first.fact_bundle, second.fact_bundle);
   assert.deepEqual(first.resolutions, second.resolutions);
   assert.deepEqual(first.graph, second.graph);
   assert.deepEqual(first.reverse_adjacency, second.reverse_adjacency);
+
+  const serialized = serializeAnalysis(first);
+  assert.equal(serialized.complete, true);
+  assert.equal(serialized.json, JSON.stringify(first));
+  assert.equal(serialized.bytes, Buffer.byteLength(serialized.json, "utf8"));
+
+  const limited = serializeAnalysis(first, { config: { limits: { max_output_bytes: serialized.bytes - 1 } } });
+  assert.equal(limited.complete, false);
+  assert.equal(limited.json, null);
+  assert.equal(limited.bytes, serialized.bytes);
+  assert.equal(limited.diagnostics[0].code, "OUTPUT_LIMIT");
+  assert.equal(limited.diagnostics[0].details.max_output_bytes, serialized.bytes - 1);
 });
 
 test("enforces the configured library evidence budget deterministically", () => {

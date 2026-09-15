@@ -36,7 +36,7 @@ Canonicalize the requested root and every discovered/reference path. Reject trav
 
 ### Resource exhaustion
 
-Use hard limits for file size/count, bytes, facts, edges, evidence, traversal depth, output bytes, concurrency, and wall time. The bounded library graph stage enforces `max_edges` and `max_evidence`, and the private CLI enforces serialized output bytes. On exhaustion, return an explicit incomplete result and budget diagnostic; never silently truncate or continue with an implied complete graph. Library output/time enforcement remains open.
+Use hard limits for file size/count, bytes, facts, edges, evidence, traversal depth, output bytes, concurrency, and wall time. The bounded library graph stage enforces `max_edges` and `max_evidence`, and the private library/CLI serializer enforces serialized output bytes. On exhaustion, return an explicit incomplete result and budget diagnostic; never silently truncate or continue with an implied complete graph. Library wall-time and cross-budget enforcement remain open.
 
 ### Sensitive data
 

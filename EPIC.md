@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Version | 0.1 |
-| Last updated | 2026-09-14 |
+| Last updated | 2026-09-15 |
 | Scope | A local, deterministic static linkage graph for mixed CFML web projects |
 | Project type | Planned NPM/library + CLI + AI-agent evidence provider |
 | Lifecycle | Prototype / bounded M9 implementation |
@@ -50,7 +50,7 @@ Out of scope: source execution, runtime network/database access, browser automat
 | M5 Globe3-critical flows | Ordered scope flow, AJAX/fetch, and conditions | M3 | In progress — T-031/T-032 bounded scope and web-flow condition flow verified |
 | M6 SQL/repository | Dynamic/generated/SQL-dynamic preservation, query/table/datasource, and structurally evidenced repository edges | M3, M5 | In progress — T-033 preservation and bounded T-034 SQL/repository resolution verified; broader SQL semantics open |
 | M7 Query interface | Related/callers/callees/includes/included-by/trace/scope-flow/tables/routes/unresolved/explain-edge/stats/impact-evidence plus bounded analysis composition | M3–M6 | In progress — T-035/T-036/T-045/T-046 verified (bounded) |
-| M8 Incremental performance | Dependency-aware invalidation, bounded workers, budgets, repeatability | M7 | In progress — T-040/T-041 bounded robustness/adversarial evidence, T-036 parser-time drift evidence, T-048 library evidence-budget, T-049 Graph edge-budget, T-050 configured ignore-glob enforcement, T-051 hidden-file-policy enforcement, and private CLI output-budget enforcement; library output/time budgets remain open |
+| M8 Incremental performance | Dependency-aware invalidation, bounded workers, budgets, repeatability | M7 | In progress — T-040/T-041 bounded robustness/adversarial evidence, T-036 parser-time drift evidence, T-037 private-library serialization, T-048 library evidence-budget, T-049 Graph edge-budget, T-050 configured ignore-glob enforcement, T-051 hidden-file-policy enforcement, and private CLI output-budget enforcement; T-038–T-039 define the remaining library wall-time and cross-budget regression work, which remains unimplemented |
 | M9 Release verification | Golden/adversarial suite, package/import/CLI smoke, engine evidence | M8 | In progress — T-042 checks/package smoke, T-043 Node host evidence, T-044 bounded release/security/parity audit, and T-047 implemented CI workflow; hosted compatibility/public release remains open |
 
 ## 5. Epic acceptance criteria
@@ -68,7 +68,7 @@ The epic is complete only when all of the following are evidenced:
 
 ## 6. Risks and blockers
 
-Current status: M0/M1 work, T-010–T-014/T-020–T-022 bounded parser/scanner/Fact extraction, T-023 immutable indexes, T-024 conservative literal resolution, T-033 dynamic/generated/SQL-dynamic evidence preservation, bounded T-034 SQL/repository linkage, bounded T-035 graph queries/evidence explanations, bounded T-036 analysis orchestration/private library and CLI entry points, bounded T-045 query-command CLI, T-046 CLI configuration enforcement, T-040/T-041 robustness/adversarial safe-failure evidence, T-048 library evidence-budget enforcement, T-049 Graph edge-budget enforcement, T-050 configured ignore-glob enforcement, T-051 hidden-file-policy enforcement, T-042 bounded checks/package smoke, T-043 bounded Node host compatibility, and T-044 bounded release/security/parity audit are verified. The root-guard/snapshot/decoder/bounded CLI/library/cache/parser/Fact/index/resolver/query foundation is the only runtime slice; full grammar, broader language coverage, graph persistence, and broader resolution remain open.
+Current status: M0/M1 work, T-010–T-014/T-020–T-022 bounded parser/scanner/Fact extraction, T-023 immutable indexes, T-024 conservative literal resolution, T-033 dynamic/generated/SQL-dynamic evidence preservation, bounded T-034 SQL/repository linkage, bounded T-035 graph queries/evidence explanations, bounded T-036 analysis orchestration/private library and CLI entry points, bounded T-037 private-library serialization, bounded T-045 query-command CLI, T-046 CLI configuration enforcement, T-040/T-041 robustness/adversarial safe-failure evidence, T-048 library evidence-budget enforcement, T-049 Graph edge-budget enforcement, T-050 configured ignore-glob enforcement, T-051 hidden-file-policy enforcement, T-042 bounded checks/package smoke, T-043 bounded Node host compatibility, and T-044 bounded release/security/parity audit are verified. T-038–T-039 are defined in ADR-029 but not implemented. The root-guard/snapshot/decoder/bounded CLI/library/cache/parser/Fact/index/resolver/query foundation is the only runtime slice; full grammar, broader language coverage, graph persistence, and broader resolution remain open.
 
 Known technical risks include runtime-computed Application mappings, dynamic `evaluate` and generated names, ambiguous components/method receivers, shared-scope semantics, embedded JavaScript/SQL parsing, and resource exhaustion. These are release risks, not reasons to guess.
 

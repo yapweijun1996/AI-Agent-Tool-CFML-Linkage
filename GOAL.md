@@ -1,11 +1,11 @@
 # Goal: agent-cfml-linkage
 
-> **Status: PROPOSED / M2–M9 IN PROGRESS.** This goal describes the intended product outcome; the M1 safety foundation, configured ignore-glob/hidden-file discovery policies, bounded M2 parser/scanner/Fact slices, bounded M3 path/Graph slices, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries, bounded M8 robustness/adversarial safe-failure/evidence/edge-budget enforcement, and bounded M9 checks/package smoke/Node host compatibility/release-parity audit are implemented/verified, but full linkage resolution is not implemented.
+> **Status: PROPOSED / M2–M9 IN PROGRESS.** This goal describes the intended product outcome; the M1 safety foundation, configured ignore-glob/hidden-file discovery policies, bounded M2 parser/scanner/Fact slices, bounded M3 path/Graph slices, bounded M4 CFC, M5 scope/web-flow, M6 dynamic/generated/SQL/repository linkage, bounded M7 graph queries, bounded M8 robustness/adversarial safe-failure/evidence/edge-budget enforcement, and bounded M9 checks/package smoke/Node host compatibility/release-parity audit are implemented/verified. T-038–T-039 now have defined but unimplemented library budget scope; T-037 is implemented for its bounded private-library serialization scope; full linkage resolution is not implemented.
 
 | Field | Value |
 | --- | --- |
 | Version | 0.1 |
-| Last updated | 2026-09-14 |
+| Last updated | 2026-09-15 |
 | Project type | Planned NPM/library + CLI + AI-agent evidence provider; CFML-first static analyzer |
 | Lifecycle | Prototype / safe-foundation implementation |
 | Source of truth | This repository's Core SSOT documents for intent; Git, tests, runtime checks, and release artifacts for state |
@@ -52,4 +52,4 @@ The goal is achieved only when a release has:
 
 ## State model
 
-The project must track **Planned → Implemented → Verified → Released** independently. M0/M1, configured ignore-glob/hidden-file discovery policies, bounded M2 parser/scanner/Fact extraction, bounded M3–M6 linkage, bounded M7 queries/orchestration, bounded M8 robustness/adversarial safe-failure/edge-budget evidence, and bounded M9 checks/package smoke/Node host compatibility/release-parity audit and the T-047 CI workflow and T-048–T-051 library/discovery policies are implemented; full parser coverage, graph persistence, public package, and release remain incomplete/unreleased; bounded query-command integration is verified.
+The project must track **Planned → Implemented → Verified → Released** independently. M0/M1, configured ignore-glob/hidden-file discovery policies, bounded M2 parser/scanner/Fact extraction, bounded M3–M6 linkage, bounded M7 queries/orchestration, bounded M8 robustness/adversarial safe-failure/edge-budget evidence, and bounded M9 checks/package smoke/Node host compatibility/release-parity audit and the T-047 CI workflow and T-048–T-051 library/discovery policies are implemented; T-038–T-039 are defined Planned work for the remaining library wall-time/cross-budget boundary; T-037 is verified for bounded private-library serialization; full parser coverage, graph persistence, public package, and release remain incomplete/unreleased; bounded query-command integration is verified.

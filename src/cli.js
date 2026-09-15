@@ -4,6 +4,7 @@ import path from "node:path";
 import { analyzeProject } from "./analyzer.js";
 import { queryGraph, validateQueryRequest } from "./graph-query.js";
 import { createMixedStructuralScannerBackend } from "./web-scanner.js";
+import { serializeBoundedJson } from "./output.js";
 import { createRootGuard, RootGuardError } from "./root-guard.js";
 
 const TOOL_NAME = "agent-cfml-linkage";
@@ -244,16 +245,16 @@ function stderrFor(diagnostics) {
 
 function result(command, status, diagnostics, data, exitCode, { maxOutputBytes = null, incompleteExitCode = exitCode } = {}) {
   let output = envelope(command, status, diagnostics, data);
-  let stdout = `${JSON.stringify(output)}\n`;
+  let serialized = serializeBoundedJson(output, { maxBytes: maxOutputBytes, trailingText: "\n" });
   let outputDiagnostics = diagnostics;
   let finalExitCode = exitCode;
-  if (maxOutputBytes !== null && Buffer.byteLength(stdout, "utf8") > maxOutputBytes) {
-    outputDiagnostics = [diagnostic("OUTPUT_LIMIT", "error", `JSON output exceeded configured maximum of ${maxOutputBytes} bytes.`)];
+  if (!serialized.complete) {
+    outputDiagnostics = serialized.diagnostics.map((item) => diagnostic(item.code, item.severity, item.message, item.details));
     output = envelope(command, "incomplete", outputDiagnostics, null);
-    stdout = `${JSON.stringify(output)}\n`;
+    serialized = serializeBoundedJson(output, { trailingText: "\n" });
     finalExitCode = incompleteExitCode;
   }
-  return { exitCode: finalExitCode, envelope: output, stdout, stderr: stderrFor(outputDiagnostics) };
+  return { exitCode: finalExitCode, envelope: output, stdout: serialized.output, stderr: stderrFor(outputDiagnostics) };
 }
 
 /**

@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Version | 0.1 |
-| Last updated | 2026-09-14 |
+| Last updated | 2026-09-15 |
 | Scope | Evidence-driven implementation loop |
 | Source | Core SSOT plus Git/tests/runtime/release evidence |
-| Evidence | M0/M1; bounded T-023–T-036, T-040–T-046, T-048–T-051 verified; T-047 set; 79 pass |
+| Evidence | M0/M1; bounded T-023–T-037, T-040–T-046, T-048–T-051 verified; T-038–T-039 defined; T-047 set; 79 pass |
 | Verification | Prompt/documentation only |
-| Limitations | Parser, persistence, release, hosted CI, and runtime compatibility remain open |
+| Limitations | T-038–T-039, parser, persistence, release, CI, and runtime remain open |
 
-Work on `agent-cfml-linkage`, Node `>=20` CFML-first static linkage prototype. Verified: M0/M1, bounded M2, T-023–T-036 linkage/query/orchestration, T-040–T-044 robustness/checks/Node/audit, T-045 query CLI, T-046 config/T-048–T-051 budgets; T-047 defined; private APIs exist; parser, persistence, hosted CI, and release remain open. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
+Work on `agent-cfml-linkage`, Node `>=20` CFML-first static linkage prototype. Verified: M0/M1, bounded M2–M9 slices, and T-037/T-045–T-051; T-038–T-039 are next planned work, while T-047 lacks hosted evidence. Keep private APIs; parser, persistence, CI, and release remain open. Core SSOT: `GOAL.md`, `DESIGN.md`, `SPEC.md`, `EPIC.md`, `ROADMAP.md`, `TASK.md`, `PROGRESS.md`.
 
 Repeat:
 

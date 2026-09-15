@@ -1,7 +1,7 @@
 # ADR-027: Apply configured ignore globs during deterministic discovery
 
 - **Status:** Accepted for bounded v0.1 implementation
-- **Date:** 2026-09-14
+- **Date:** 2026-09-15
 - **Scope:** T-050 root-relative ignore-pattern handling in snapshot discovery
 - **Verification:** `test/snapshot.test.js`, `test/analyzer.test.js`, and `test/cli.test.js` cover recursive matching, configuration forwarding, deterministic retained files, and the CLI validation boundary
 
@@ -17,4 +17,4 @@ Matching directories are pruned before descending, and matching regular files ar
 
 ## Consequences
 
-Configured dependency, generated, cache, secret-like, and project-specific paths can be excluded deterministically without executing or reading their source. Ignore patterns only exclude paths; there is no negation, filesystem glob expansion, or case-folding in this bounded slice. The separate dot-prefixed hidden-file policy is covered by ADR-028; generated-file detection, broader glob semantics, and the remaining library output/time budgets remain open.
+Configured dependency, generated, cache, secret-like, and project-specific paths can be excluded deterministically without executing or reading their source. Ignore patterns only exclude paths; there is no negation, filesystem glob expansion, or case-folding in this bounded slice. The separate dot-prefixed hidden-file policy is covered by ADR-028; generated-file detection, broader glob semantics, and the remaining library wall-time/cross-budget work remain open.

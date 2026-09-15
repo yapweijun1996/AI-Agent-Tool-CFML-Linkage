@@ -66,6 +66,8 @@
 - Corrected the EPIC lifecycle metadata to reflect the current bounded M9 implementation state; full parser, broader linkage, and release work remain open.
 - Added `docs/audits/prompt-to-artifact-v0.1.json`, mapping the explicit execution loop, Core SSOT files, named deliverables, checks, gates, success criteria, and blockers; the audit deliberately records the overall goal as incomplete.
 - Refreshed the prompt-to-artifact audit's audited-source baseline to local commit `3de60e2` and synchronized its observed branch distance; no product or release completion claim was added.
+- Defined T-037–T-039 as the next bounded private-library serialized-output budget, wall-time budget, and unified budget-regression work in ADR-029; T-038–T-039 remain planned and unimplemented.
+- Implemented bounded T-037 private-library serialization through `src/output.js` and `serializeAnalysis`, sharing exact UTF-8 output-budget accounting with the CLI and returning explicit `OUTPUT_LIMIT` incomplete evidence without arbitrary JSON truncation.
 
 ### Not claimed
 
