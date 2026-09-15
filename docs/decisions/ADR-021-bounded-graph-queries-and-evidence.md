@@ -31,7 +31,7 @@ The query envelope is `agent-cfml-linkage-query/v0.1`. T-045 wires the bounded q
 ## Verification
 
 - `test/graph-query.test.js` exercises immutable snapshots, exact selectors, all declared operations, evidence slices, deterministic explanations, unresolved filtering, traversal/result/depth/visited limits, ambiguity, invalid options, and result immutability.
-- `npm test` reports 79 passed; the query module re-copies even snapshot-shaped input before freezing, validates bounded request arrays, is syntax-checked, and uses no third-party dependency or runtime/service access.
+- `npm test` reports 95 passed; the query module re-copies even snapshot-shaped input before freezing, validates bounded request arrays, is syntax-checked, and uses no third-party dependency or runtime/service access.
 
 ## Limitations
 

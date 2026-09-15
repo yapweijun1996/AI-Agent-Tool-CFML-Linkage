@@ -10,6 +10,7 @@ const CFML_EXTENSIONS = new Set([".cfm", ".cfml", ".cfc"]);
 const JAVASCRIPT_EXTENSIONS = new Set([".js", ".mjs"]);
 const CSS_EXTENSIONS = new Set([".css"]);
 const SQL_EXTENSIONS = new Set([".sql"]);
+const CFML_DYNAMIC_SCOPE_NAMES = new Set(["application", "arguments", "attributes", "caller", "cgi", "client", "cookie", "form", "local", "request", "server", "session", "this", "url", "variables"]);
 
 function startsWithInsensitiveAt(text, value, offset) {
   if (offset + value.length > text.length) return false;
@@ -393,8 +394,255 @@ function javascriptNodes(text, start, end, sourceMap, file, maxExpressionBytes) 
   return nodes;
 }
 
-function sqlTokens(text, start, end) {
-  const tokens = [];
+function qualifiedIdentifierAt(text, start, end) {
+  let cursor = skipJavaScriptTrivia(text, start, end);
+  const segments = [];
+  while (cursor < end && isIdentifierStart(text[cursor])) {
+    const segmentStart = cursor;
+    cursor += 1;
+    while (cursor < end && isIdentifierCharacter(text[cursor])) cursor += 1;
+    segments.push(text.slice(segmentStart, cursor));
+    const dot = skipJavaScriptTrivia(text, cursor, end);
+    if (text[dot] !== ".") {
+      cursor = dot;
+      break;
+    }
+    cursor = skipJavaScriptTrivia(text, dot + 1, end);
+  }
+  return segments.length > 0 ? { segments, value: segments.join("."), end: cursor } : null;
+}
+
+function isStaticCfmlComponent(segments) {
+  return segments.length >= 2 && !CFML_DYNAMIC_SCOPE_NAMES.has(segments[0].toLowerCase());
+}
+
+function namedStringArgument(text, start, end, name) {
+  let cursor = start;
+  while (cursor < end) {
+    cursor = skipJavaScriptTrivia(text, cursor, end);
+    if (cursor >= end) break;
+    if (text[cursor] === "\"" || text[cursor] === "'" || text[cursor] === "`") {
+      cursor = skipJavaScriptString(text, cursor, end);
+      continue;
+    }
+    if (!isIdentifierStart(text[cursor])) {
+      cursor += 1;
+      continue;
+    }
+    const argumentStart = cursor;
+    cursor += 1;
+    while (cursor < end && isIdentifierCharacter(text[cursor])) cursor += 1;
+    if (text.slice(argumentStart, cursor).toLowerCase() !== name.toLowerCase()) continue;
+    const separator = skipJavaScriptTrivia(text, cursor, end);
+    if (text[separator] !== "=" && text[separator] !== ":") continue;
+    const valueStart = skipJavaScriptTrivia(text, separator + 1, end);
+    const value = parseQuoted(text, valueStart, end);
+    return { found: true, value: value?.value ?? null, start: valueStart, end: value?.end ?? valueStart };
+  }
+  return { found: false, value: null };
+}
+
+function firstNamedStringArgument(text, start, end, names) {
+  for (const name of names) {
+    const argument = namedStringArgument(text, start, end, name);
+    if (argument.found) return argument;
+  }
+  return { found: false, value: null };
+}
+
+function staticInvokeArguments(text, open, end) {
+  const first = parseQuoted(text, skipJavaScriptTrivia(text, open + 1, end), end);
+  if (first) {
+    const comma = skipJavaScriptTrivia(text, first.end, end);
+    if (text[comma] === ",") {
+      const second = parseQuoted(text, skipJavaScriptTrivia(text, comma + 1, end), end);
+      if (second) return { component: first.value, method: second.value };
+    }
+  }
+  const component = namedStringArgument(text, open + 1, end, "component");
+  const method = namedStringArgument(text, open + 1, end, "method");
+  if (component.found || method.found) return { component: component.value, method: method.value };
+  return null;
+}
+
+function locationArguments(text, open, end) {
+  const first = parseQuoted(text, skipJavaScriptTrivia(text, open + 1, end), end);
+  if (first) return { url: first.value };
+  const named = namedStringArgument(text, open + 1, end, "url");
+  return { url: named.found ? named.value : null };
+}
+
+function createObjectArguments(text, open, end) {
+  const firstStart = skipJavaScriptTrivia(text, open + 1, end);
+  const first = parseQuoted(text, firstStart, end);
+  if (first) {
+    if (first.value.trim().toLowerCase() !== "component") return null;
+    const comma = skipJavaScriptTrivia(text, first.end, end);
+    if (text[comma] !== ",") return { component: null };
+    const secondStart = skipJavaScriptTrivia(text, comma + 1, end);
+    const second = parseQuoted(text, secondStart, end);
+    return { component: second?.value ?? null };
+  }
+  const type = namedStringArgument(text, open + 1, end, "type");
+  const component = namedStringArgument(text, open + 1, end, "class");
+  if (type.found && type.value !== null && type.value.trim().toLowerCase() !== "component") return null;
+  if (type.found || component.found) return { component: component.value };
+  return { component: null };
+}
+
+function cfscriptNodes(text, start, end, sourceMap, file, maxExpressionBytes) {
+  const nodes = [];
+  let cursor = start;
+  while (cursor < end) {
+    if (text[cursor] === "\"" || text[cursor] === "'" || text[cursor] === "`") {
+      cursor = skipJavaScriptString(text, cursor, end);
+      continue;
+    }
+    if (text.startsWith("//", cursor)) {
+      const lineEnd = text.indexOf("\n", cursor + 2);
+      cursor = lineEnd === -1 ? end : lineEnd + 1;
+      continue;
+    }
+    if (text.startsWith("/*", cursor)) {
+      const close = text.indexOf("*/", cursor + 2);
+      cursor = close === -1 ? end : close + 2;
+      continue;
+    }
+    if (!isIdentifierStart(text[cursor])) {
+      cursor += 1;
+      continue;
+    }
+
+    const identifierStart = cursor;
+    const identifier = qualifiedIdentifierAt(text, cursor, end);
+    if (!identifier) {
+      cursor += 1;
+      continue;
+    }
+    cursor = identifier.end;
+    const keyword = identifier.segments.length === 1 ? identifier.segments[0].toLowerCase() : "";
+    if (keyword === "include") {
+      const target = parseQuoted(text, skipJavaScriptTrivia(text, cursor, end), end);
+      if (target) {
+        const bounded = boundedValue(text.slice(identifierStart, target.end), maxExpressionBytes);
+        nodes.push({ kind: "CFML_SCRIPT_INCLUDE", target: target.value, expression: bounded.value, expression_truncated: bounded.truncated, ...nodeSpan(sourceMap, identifierStart, target.end) });
+        cursor = target.end;
+      }
+      continue;
+    }
+    if (keyword === "location") {
+      const open = skipJavaScriptTrivia(text, cursor, end);
+      if (text[open] === "(") {
+        const callEnd = findCallEnd(text, open, end);
+        if (callEnd > open && text[callEnd - 1] === ")") {
+          const args = locationArguments(text, open, callEnd - 1);
+          const bounded = boundedValue(text.slice(identifierStart, callEnd), maxExpressionBytes);
+          nodes.push({ kind: "CFML_SCRIPT_REDIRECT", url: args.url, expression: bounded.value, expression_truncated: bounded.truncated, ...nodeSpan(sourceMap, identifierStart, callEnd) });
+          cursor = callEnd;
+        }
+      }
+      continue;
+    }
+    if (["cfinclude", "cfmodule", "cfobject"].includes(keyword)) {
+      const open = skipJavaScriptTrivia(text, cursor, end);
+      if (text[open] === "(") {
+        const callEnd = findCallEnd(text, open, end);
+        if (callEnd > open && text[callEnd - 1] === ")") {
+          const argument = keyword === "cfinclude"
+            ? firstNamedStringArgument(text, open + 1, callEnd - 1, ["template"])
+            : keyword === "cfmodule"
+              ? firstNamedStringArgument(text, open + 1, callEnd - 1, ["name", "template"])
+              : firstNamedStringArgument(text, open + 1, callEnd - 1, ["component"]);
+          if (argument.found) {
+            const bounded = boundedValue(text.slice(identifierStart, callEnd), maxExpressionBytes);
+            nodes.push({ kind: keyword === "cfinclude" ? "CFML_SCRIPT_INCLUDE" : keyword === "cfmodule" ? "CFML_SCRIPT_CUSTOM_TAG" : "CFML_SCRIPT_INSTANTIATE", ...(keyword === "cfmodule" ? { target: argument.value } : keyword === "cfobject" ? { creation_kind: "cfobject", component: argument.value } : { target: argument.value }), expression: bounded.value, expression_truncated: bounded.truncated, ...nodeSpan(sourceMap, identifierStart, callEnd) });
+            cursor = callEnd;
+          }
+        }
+      }
+      continue;
+    }
+    if (keyword === "new" && identifier.segments.length === 1) {
+      const component = qualifiedIdentifierAt(text, cursor, end);
+      const open = component ? skipJavaScriptTrivia(text, component.end, end) : -1;
+      if (component && isStaticCfmlComponent(component.segments) && text[open] === "(") {
+        const callEnd = findCallEnd(text, open, end);
+        if (callEnd > open && text[callEnd - 1] === ")") {
+          const bounded = boundedValue(text.slice(identifierStart, callEnd), maxExpressionBytes);
+          nodes.push({ kind: "CFML_SCRIPT_INSTANTIATE", component: component.value, expression: bounded.value, expression_truncated: bounded.truncated, ...nodeSpan(sourceMap, identifierStart, callEnd) });
+          cursor = callEnd;
+        }
+      }
+      continue;
+    }
+    if (keyword === "invoke" || keyword === "cfinvoke") {
+      const open = skipJavaScriptTrivia(text, cursor, end);
+      if (text[open] === "(") {
+        const callEnd = findCallEnd(text, open, end);
+        const args = callEnd > open && text[callEnd - 1] === ")" ? staticInvokeArguments(text, open, callEnd - 1) : null;
+        if (args) {
+          const bounded = boundedValue(text.slice(identifierStart, callEnd), maxExpressionBytes);
+          nodes.push({ kind: "CFML_SCRIPT_INVOKE", ...(keyword === "cfinvoke" ? { invoke_kind: "cfinvoke" } : {}), component: args.component, method: args.method, expression: bounded.value, expression_truncated: bounded.truncated, ...nodeSpan(sourceMap, identifierStart, callEnd) });
+          cursor = callEnd;
+        }
+      }
+      continue;
+    }
+    if (keyword === "createobject") {
+      const open = skipJavaScriptTrivia(text, cursor, end);
+      if (text[open] === "(") {
+        const callEnd = findCallEnd(text, open, end);
+        const args = callEnd > open && text[callEnd - 1] === ")" ? createObjectArguments(text, open, callEnd - 1) : null;
+        if (args) {
+          const bounded = boundedValue(text.slice(identifierStart, callEnd), maxExpressionBytes);
+          nodes.push({ kind: "CFML_SCRIPT_INSTANTIATE", creation_kind: "createObject", component: args.component, expression: bounded.value, expression_truncated: bounded.truncated, ...nodeSpan(sourceMap, identifierStart, callEnd) });
+          cursor = callEnd;
+        }
+      }
+      continue;
+    }
+    if (isStaticCfmlComponent(identifier.segments) && identifier.segments.length >= 3) {
+      const open = skipJavaScriptTrivia(text, cursor, end);
+      if (text[open] === "(") {
+        const callEnd = findCallEnd(text, open, end);
+        if (callEnd > open && text[callEnd - 1] === ")") {
+          const bounded = boundedValue(text.slice(identifierStart, callEnd), maxExpressionBytes);
+          nodes.push({ kind: "CFML_SCRIPT_INVOKE", component: identifier.segments.slice(0, -1).join("."), method: identifier.segments.at(-1), expression: bounded.value, expression_truncated: bounded.truncated, ...nodeSpan(sourceMap, identifierStart, callEnd) });
+          cursor = callEnd;
+        }
+      }
+    }
+  }
+  return nodes;
+}
+
+function parseSqlQuoted(text, start, end) {
+  const quote = text[start];
+  if (quote !== "\"" && quote !== "'" && quote !== "`") return null;
+  let cursor = start + 1;
+  let value = "";
+  while (cursor < end) {
+    const character = text[cursor];
+    if (character === "\\" && cursor + 1 < end) {
+      value += text[cursor + 1];
+      cursor += 2;
+      continue;
+    }
+    if (character === quote) {
+      if (text[cursor + 1] === quote) {
+        value += quote;
+        cursor += 2;
+        continue;
+      }
+      return { value, end: cursor + 1 };
+    }
+    value += character;
+    cursor += 1;
+  }
+  return null;
+}
+
+function skipSqlTrivia(text, start, end) {
   let cursor = start;
   while (cursor < end) {
     if (isWhitespace(text[cursor])) {
@@ -411,21 +659,119 @@ function sqlTokens(text, start, end) {
       cursor = blockEnd === -1 ? end : blockEnd + 2;
       continue;
     }
-    if (text[cursor] === "\"" || text[cursor] === "'" || text[cursor] === "`") {
-      const parsed = parseQuoted(text, cursor, end);
+    break;
+  }
+  return cursor;
+}
+
+function sqlIdentifierPart(text, start, end) {
+  if (text[start] === "\"" || text[start] === "`") {
+    const parsed = parseSqlQuoted(text, start, end);
+    return parsed ? { value: parsed.value, end: parsed.end } : null;
+  }
+  if (text[start] === "[") {
+    const close = text.indexOf("]", start + 1);
+    if (close < 0 || close >= end) return null;
+    return { value: text.slice(start + 1, close), end: close + 1 };
+  }
+  const match = /[A-Za-z0-9_$-]/u.test(text[start] ?? "") ? /^[A-Za-z0-9_$-]+/u.exec(text.slice(start, end)) : null;
+  return match ? { value: match[0], end: start + match[0].length } : null;
+}
+
+function sqlTokens(text, start, end) {
+  const tokens = [];
+  let cursor = start;
+  while (cursor < end) {
+    cursor = skipSqlTrivia(text, cursor, end);
+    if (cursor >= end) break;
+    if (text[cursor] === "'") {
+      const parsed = parseSqlQuoted(text, cursor, end);
       cursor = parsed?.end ?? end;
       continue;
     }
     const tokenStart = cursor;
-    while (cursor < end && /[A-Za-z0-9_$.-]/u.test(text[cursor])) cursor += 1;
-    if (cursor > tokenStart) tokens.push({ value: text.slice(tokenStart, cursor).toLowerCase(), start: tokenStart, end: cursor });
-    else cursor += 1;
+    const first = sqlIdentifierPart(text, cursor, end);
+    if (!first) {
+      cursor += 1;
+      continue;
+    }
+    let value = first.value;
+    cursor = first.end;
+    while (cursor < end && text[cursor] === ".") {
+      const next = sqlIdentifierPart(text, cursor + 1, end);
+      if (!next) break;
+      value += `.${next.value}`;
+      cursor = next.end;
+    }
+    tokens.push({ value: value.toLowerCase(), start: tokenStart, end: cursor });
   }
   return tokens;
 }
 
+function sqlIdentifierAt(text, start, end) {
+  const cursor = skipSqlTrivia(text, start, end);
+  const identifier = sqlIdentifierPart(text, cursor, end);
+  return identifier ? { value: identifier.value.toLowerCase(), end: identifier.end } : null;
+}
+
+function skipSqlParenthesized(text, start, end) {
+  if (text[start] !== "(") return start;
+  let depth = 0;
+  let cursor = start;
+  while (cursor < end) {
+    if (text[cursor] === "\"" || text[cursor] === "'" || text[cursor] === "`") {
+      const parsed = parseSqlQuoted(text, cursor, end);
+      cursor = parsed?.end ?? end;
+      continue;
+    }
+    if (text.startsWith("--", cursor)) {
+      const lineEnd = text.indexOf("\n", cursor + 2);
+      cursor = lineEnd === -1 ? end : lineEnd + 1;
+      continue;
+    }
+    if (text.startsWith("/*", cursor)) {
+      const blockEnd = text.indexOf("*/", cursor + 2);
+      cursor = blockEnd === -1 ? end : blockEnd + 2;
+      continue;
+    }
+    if (text[cursor] === "(") depth += 1;
+    if (text[cursor] === ")") {
+      depth -= 1;
+      if (depth === 0) return cursor + 1;
+    }
+    cursor += 1;
+  }
+  return end;
+}
+
+function sqlCteNames(text, start, end) {
+  const names = new Set();
+  let cursor = skipSqlTrivia(text, start, end);
+  const withKeyword = sqlIdentifierAt(text, cursor, end);
+  if (!withKeyword || withKeyword.value !== "with") return names;
+  cursor = withKeyword.end;
+  const recursive = sqlIdentifierAt(text, cursor, end);
+  if (recursive?.value === "recursive") cursor = recursive.end;
+  while (cursor < end) {
+    const alias = sqlIdentifierAt(text, cursor, end);
+    if (!alias) break;
+    cursor = skipSqlTrivia(text, alias.end, end);
+    if (text[cursor] === "(") cursor = skipSqlParenthesized(text, cursor, end);
+    const asKeyword = sqlIdentifierAt(text, cursor, end);
+    if (!asKeyword || asKeyword.value !== "as") break;
+    cursor = skipSqlTrivia(text, asKeyword.end, end);
+    if (text[cursor] !== "(") break;
+    cursor = skipSqlParenthesized(text, cursor, end);
+    names.add(alias.value);
+    cursor = skipSqlTrivia(text, cursor, end);
+    if (text[cursor] !== ",") break;
+    cursor += 1;
+  }
+  return names;
+}
+
 function isDynamicSqlIdentifier(text, token) {
-  return text[token.start - 1] === "#" || text[token.end] === "#";
+  return text[token.start - 1] === "#" || text[token.end] === "#" || token.value.includes("#");
 }
 
 function dynamicSqlExpression(text, token, end) {
@@ -437,18 +783,94 @@ function dynamicSqlExpression(text, token, end) {
   return text.slice(start, finish).trim().slice(0, 256) || `#${token.value}#`;
 }
 
+function tableReferenceIndex(tokens, keywordIndex) {
+  let candidate = keywordIndex + 1;
+  while (["cross", "full", "inner", "lateral", "left", "natural", "only", "outer", "right"].includes(tokens[candidate]?.value)) candidate += 1;
+  return candidate;
+}
+
+function sqlStatementRanges(text, start, end) {
+  const ranges = [];
+  let statementStart = start;
+  let cursor = start;
+  const addRange = (statementEnd) => {
+    let trimmedStart = statementStart;
+    while (trimmedStart < statementEnd && isWhitespace(text[trimmedStart])) trimmedStart += 1;
+    let trimmedEnd = statementEnd;
+    while (trimmedEnd > trimmedStart && isWhitespace(text[trimmedEnd - 1])) trimmedEnd -= 1;
+    if (trimmedStart < trimmedEnd) ranges.push({ start: trimmedStart, end: trimmedEnd });
+  };
+  while (cursor < end) {
+    if (cursor === start || text[cursor - 1] === "\n") {
+      const lineEnd = text.indexOf("\n", cursor);
+      const batchEnd = lineEnd === -1 ? end : lineEnd;
+      if (/^\s*GO(?:\s+\d+)?\s*(?:--.*)?$/iu.test(text.slice(cursor, batchEnd))) {
+        addRange(cursor);
+        statementStart = lineEnd === -1 ? end : lineEnd + 1;
+        cursor = statementStart;
+        continue;
+      }
+    }
+    if (text[cursor] === "\"" || text[cursor] === "'" || text[cursor] === "`") {
+      const quoted = parseSqlQuoted(text, cursor, end);
+      cursor = quoted?.end ?? end;
+      continue;
+    }
+    if (text.startsWith("--", cursor)) {
+      const lineEnd = text.indexOf("\n", cursor + 2);
+      cursor = lineEnd === -1 ? end : lineEnd + 1;
+      continue;
+    }
+    if (text.startsWith("/*", cursor)) {
+      const blockEnd = text.indexOf("*/", cursor + 2);
+      cursor = blockEnd === -1 ? end : blockEnd + 2;
+      continue;
+    }
+    if (text[cursor] === ";") {
+      addRange(cursor);
+      statementStart = cursor + 1;
+    }
+    cursor += 1;
+  }
+  addRange(end);
+  return ranges.length > 0 ? ranges : [{ start, end }];
+}
+
 function sqlTableReferences(text, start, end) {
   const tokens = sqlTokens(text, start, end);
+  const cteNames = sqlCteNames(text, start, end);
   const tables = [];
   const dynamicTables = [];
   for (let index = 0; index < tokens.length; index += 1) {
     const keyword = tokens[index].value;
     let tableIndex = -1;
-    if (keyword === "from" || keyword === "join" || keyword === "update" || keyword === "into") tableIndex = index + 1;
-    else if (keyword === "delete" && tokens[index + 1]?.value === "from") tableIndex = index + 2;
+    if (keyword === "from" || keyword === "join" || keyword === "update" || keyword === "into" || keyword === "references") tableIndex = tableReferenceIndex(tokens, index);
+    else if (keyword === "delete" && tokens[index + 1]?.value === "from") tableIndex = tableReferenceIndex(tokens, index + 1);
+    else if (["alter", "create", "drop", "truncate"].includes(keyword)) {
+      let candidate = index + 1;
+      if (keyword === "create" && ["or", "replace"].includes(tokens[candidate]?.value)) candidate += 2;
+      while (["global", "local", "temporary", "temp"].includes(tokens[candidate]?.value)) candidate += 1;
+      if (tokens[candidate]?.value === "table") {
+        candidate += 1;
+        while (["if", "not", "exists", "only", "temporary", "temp"].includes(tokens[candidate]?.value)) candidate += 1;
+        tableIndex = candidate;
+      }
+    } else if (keyword === "using" && tokens[0]?.value === "merge") tableIndex = tableReferenceIndex(tokens, index);
+    else if (keyword === "lock" && tokens[index + 1]?.value === "table") tableIndex = tableReferenceIndex(tokens, index + 1);
+    else if (keyword === "comment" && tokens[index + 1]?.value === "on" && tokens[index + 2]?.value === "table") tableIndex = tableReferenceIndex(tokens, index + 2);
+    else if (["grant", "revoke"].includes(keyword)) {
+      const onIndex = tokens.findIndex((token, tokenIndex) => tokenIndex > index && token.value === "on");
+      if (onIndex >= 0 && tokens[onIndex + 1]?.value === "table") tableIndex = tableReferenceIndex(tokens, onIndex + 1);
+    } else if (["analyze", "cluster", "copy"].includes(keyword)) tableIndex = tableReferenceIndex(tokens, index);
+    else if (keyword === "vacuum") {
+      const candidate = tokens[index + 1]?.value === "analyze" ? index + 2 : index + 1;
+      tableIndex = tableReferenceIndex(tokens, candidate - 1);
+    } else if (keyword === "reindex") {
+      tableIndex = tokens[index + 1]?.value === "table" ? tableReferenceIndex(tokens, index + 1) : tableReferenceIndex(tokens, index);
+    }
     if (tableIndex < 0 || !tokens[tableIndex]) continue;
     const tableToken = tokens[tableIndex];
-    if (tableToken.value === "select" || tableToken.value === "(") continue;
+    if (tableToken.value === "select" || tableToken.value === "(" || cteNames.has(tableToken.value) || (tokens[0]?.value === "copy" && keyword === "from" && ["stdin", "stdout"].includes(tableToken.value))) continue;
     if (isDynamicSqlIdentifier(text, tableToken)) dynamicTables.push(dynamicSqlExpression(text, tableToken, end));
     else tables.push(tableToken.value);
   }
@@ -532,13 +954,16 @@ function queryExecuteNodes(text, start, end, sourceMap, file, maxExpressionBytes
       continue;
     }
     const sqlStart = skipJavaScriptTrivia(text, open + 1, callEnd - 1);
-    const sql = parseQuoted(text, sqlStart, callEnd - 1);
+    const positionalSql = parseQuoted(text, sqlStart, callEnd - 1);
+    const namedSql = namedStringArgument(text, sqlStart, callEnd - 1, "sql");
+    const sql = positionalSql ?? (namedSql.found ? namedSql : null);
+    const staticSql = sql !== null && typeof sql.value === "string";
     if (nodes.length >= limit) {
       limited = true;
       break;
     }
     const bounded = boundedValue(text.slice(identifierStart, callEnd), maxExpressionBytes);
-    if (!sql) {
+    if (!staticSql) {
       nodes.push(sqlNode(text, identifierStart, callEnd, sourceMap, file, {
         statement_kind: "queryExecute",
         dynamic_sql: true,
@@ -547,12 +972,13 @@ function queryExecuteNodes(text, start, end, sourceMap, file, maxExpressionBytes
         expression_truncated: bounded.truncated,
       }, sqlStart, sqlStart));
     } else {
+      const sqlValueStart = sql.start ?? sqlStart;
       nodes.push(sqlNode(text, identifierStart, callEnd, sourceMap, file, {
         statement_kind: "queryExecute",
         ...queryExecuteDatasource(text, sql.end, callEnd - 1),
         expression: bounded.value,
         expression_truncated: bounded.truncated,
-      }, sqlStart + 1, sql.end - 1));
+      }, sqlValueStart + 1, sql.end - 1));
     }
     cursor = callEnd;
   }
@@ -607,6 +1033,13 @@ function scanHtml(text, sourceMap, file, maxNodes, maxAttributeBytes, maxExpress
         complete = false;
         break;
       }
+      for (const child of cfscriptNodes(text, parsed.next, closeStart, sourceMap, file, maxExpressionBytes)) {
+        if (!addNode(nodes, child, diagnostics, maxNodes, file, sourceMap, child.byte_start)) {
+          complete = false;
+          break;
+        }
+      }
+      if (!complete) break;
       cursor = closeStart;
       continue;
     }
@@ -780,8 +1213,15 @@ function scanJavaScript(text, sourceMap, file, maxNodes, maxExpressionBytes) {
 }
 
 function scanSql(text, sourceMap, file, maxNodes) {
-  const nodes = [sqlNode(text, 0, text.length, sourceMap, file, { statement_kind: "visible_sql" })].slice(0, maxNodes);
-  const diagnostics = maxNodes < 1 ? [diagnostic("RESOURCE_LIMIT", "error", `Web parser node limit exceeded: ${maxNodes}.`, file, sourceMap, 0)] : text.trim() === "" ? [] : [diagnostic("UNSUPPORTED_SYNTAX", "warning", "SQL coverage is limited to visible table references.", file, sourceMap, 0, text.length)];
+  const ranges = sqlStatementRanges(text, 0, text.length);
+  const allNodes = ranges.map((range) => sqlNode(text, range.start, range.end, sourceMap, file, { statement_kind: "visible_sql" }, range.start, range.end));
+  const nodes = allNodes.slice(0, maxNodes);
+  const diagnostics = [];
+  if (maxNodes < 1 || allNodes.length > maxNodes) {
+    const limitOffset = ranges[maxNodes]?.start ?? text.length;
+    diagnostics.push(diagnostic("RESOURCE_LIMIT", "error", `Web parser node limit exceeded: ${maxNodes}.`, file, sourceMap, limitOffset));
+  }
+  if (text.trim() !== "") diagnostics.push(diagnostic("UNSUPPORTED_SYNTAX", "warning", "SQL coverage is limited to visible table references.", file, sourceMap, 0, text.length));
   return { nodes, diagnostics, complete: diagnostics.length === 0 };
 }
 
@@ -792,7 +1232,8 @@ function extensionFor(file) {
 /**
  * Scan bounded web-language structures without evaluating any source.
  * The scanner emits evidence nodes for forms, client calls, CSS references,
- * visible SQL table names, and literal-first-argument queryExecute calls; it is not a browser or language runtime.
+ * visible SQL table names, literal-first-argument queryExecute calls, and bounded
+ * CFScript linkage forms; it is not a browser or language runtime.
  */
 export function createWebScannerBackend({ maxNodes = DEFAULT_MAX_NODES, maxAttributeBytes = DEFAULT_MAX_ATTRIBUTE_BYTES, maxExpressionBytes = DEFAULT_MAX_EXPRESSION_BYTES } = {}) {
   for (const [value, name] of [[maxNodes, "maxNodes"], [maxAttributeBytes, "maxAttributeBytes"], [maxExpressionBytes, "maxExpressionBytes"]]) {
@@ -827,6 +1268,7 @@ export function createWebScannerBackend({ maxNodes = DEFAULT_MAX_NODES, maxAttri
 export function createMixedStructuralScannerBackend(options = {}) {
   const cfmlBackend = createCfmlScannerBackend(options);
   const webBackend = createWebScannerBackend(options);
+  const maxNodes = options.maxNodes ?? DEFAULT_MAX_NODES;
   return Object.freeze({
     version: "mixed-structural-scanner/v0.1",
     parse(text, context) {
@@ -834,17 +1276,30 @@ export function createMixedStructuralScannerBackend(options = {}) {
       const isCfml = extension === ".cfm" || extension === ".cfml" || extension === ".cfc";
       const cfml = isCfml ? cfmlBackend.parse(text, context) : { nodes: [], diagnostics: [], complete: true };
       const web = webBackend.parse(text, context);
-      const nodes = [...(cfml.tree?.nodes ?? []), ...(web.tree?.nodes ?? [])].sort((left, right) => {
+      const allNodes = [...(cfml.tree?.nodes ?? []), ...(web.tree?.nodes ?? [])].sort((left, right) => {
         const startDifference = (left.byte_start ?? 0) - (right.byte_start ?? 0);
         if (startDifference !== 0) return startDifference;
         const endDifference = (left.byte_end ?? 0) - (right.byte_end ?? 0);
         if (endDifference !== 0) return endDifference;
         return left.kind < right.kind ? -1 : left.kind > right.kind ? 1 : 0;
       });
+      const nodes = allNodes.slice(0, maxNodes);
       const diagnostics = [...(cfml.diagnostics ?? []), ...(web.diagnostics ?? [])];
+      let complete = cfml.complete === true && web.complete === true;
+      if (allNodes.length > maxNodes) {
+        const limitNode = allNodes[maxNodes];
+        diagnostics.push({
+          code: "RESOURCE_LIMIT",
+          severity: "error",
+          file: context.file,
+          message: `Mixed parser node limit exceeded: ${maxNodes}.`,
+          ...(limitNode?.span ? { span: limitNode.span } : {}),
+        });
+        complete = false;
+      }
       return {
         tree: { kind: "MIXED_STRUCTURAL_DOCUMENT", backend: "mixed-structural-scanner/v0.1", nodes },
-        complete: cfml.complete === true && web.complete === true,
+        complete,
         diagnostics,
       };
     },

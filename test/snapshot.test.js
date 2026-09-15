@@ -47,6 +47,21 @@ test("discovers supported files in sorted order and ignores configured default d
   }
 });
 
+test("applies the bounded generated-directory policy before source admission", () => {
+  const root = makeTemporaryProject();
+  try {
+    const guard = createRootGuard(root);
+    const ignored = createSnapshot(guard, { generatedFilePolicy: "ignore" });
+    assert.equal(ignored.files.some((file) => file.path === "generated/output.cfm"), false);
+    const included = createSnapshot(guard, { generatedFilePolicy: "include" });
+    assert.equal(included.files.some((file) => file.path === "generated/output.cfm"), true);
+    const explicitlyIgnored = createSnapshot(guard, { generatedFilePolicy: "include", ignoreGlobs: ["generated/**"] });
+    assert.equal(explicitlyIgnored.files.some((file) => file.path === "generated/output.cfm"), false);
+  } finally {
+    removeTemporaryProject(root);
+  }
+});
+
 test("applies configured ignore policies without changing deterministic discovery", () => {
   const root = makeTemporaryProject();
   try {

@@ -82,10 +82,20 @@ function uniqueFacts(values) {
   return [...byId.values()].sort(compareFacts);
 }
 
-function mappingFacts(indexes) {
+function mappingFacts(indexes, configuredMappings = {}) {
   const values = [];
   for (const facts of Object.values(indexes.mappingIndex ?? {})) values.push(...facts);
-  return uniqueFacts(values);
+  const configured = configuredMappings && typeof configuredMappings === "object" && !Array.isArray(configuredMappings)
+    ? Object.entries(configuredMappings).map(([prefix, mappingPath]) => ({
+      attributes: { prefix, path: mappingPath },
+      file: "<configuration>",
+      fact_id: `config-mapping:${hash([prefix, mappingPath])}`,
+      kind: "MAPPING",
+      normalized_expression: `${prefix}=${mappingPath}`,
+      span: { start_line: 0, start_col: 0, end_line: 0, end_col: 0 },
+    }))
+    : [];
+  return uniqueFacts([...values, ...configured]);
 }
 
 function componentCandidates(indexes, name, mappings) {
@@ -137,12 +147,12 @@ function dynamicRelation(sourceKind) {
  * Fact indexes. It never evaluates expressions or chooses among ambiguous
  * candidates.
  */
-export function resolveCfcLinks({ factBundle, indexes } = {}) {
+export function resolveCfcLinks({ factBundle, indexes, configuredMappings = {} } = {}) {
   if (!factBundle || !Array.isArray(factBundle.facts)) throw new TypeError("factBundle with facts is required");
   if (!indexes || !indexes.componentIndex || !indexes.methodIndex || !indexes.mappingIndex) throw new TypeError("project indexes with component, method, and mapping indexes are required");
 
   const facts = factBundle.facts.slice().sort(compareFacts);
-  const mappings = mappingFacts(indexes);
+  const mappings = mappingFacts(indexes, configuredMappings);
   const resolutions = [];
   const unresolved = [];
   const diagnostics = [];

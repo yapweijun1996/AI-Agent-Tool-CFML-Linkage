@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | CLI arguments, JSON stdout, stderr diagnostics, exit codes, and current capability reporting |
 | Source of truth | `src/cli.js`, `bin/agent-cfml-linkage.js`, `test/cli.test.js`, this ADR, and `SPEC.md` |
-| Evidence | `npm test`: 79 passed, including capabilities, invalid input, complete config shape/value validation, root rejection, bounded analysis, query command mapping/validation, output limits, and no-execution cases |
+| Evidence | `npm test`: 95 passed, including capabilities, invalid input, complete config shape/value validation, root rejection, bounded analysis, query command mapping/validation, output limits, and no-execution cases |
 | Verification | Local Node subprocess tests pass; package-install, cross-platform, and released CLI checks remain unverified |
 | Limitations | Query commands analyze the root afresh and do not persist or accept a prior graph; bounded orchestration uses the explicit mixed structural scanner and remains private/unreleased |
 

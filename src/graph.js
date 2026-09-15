@@ -51,6 +51,7 @@ const FACT_NODE_KINDS = Object.freeze({
   QUERY: "QUERY",
   SCOPE_WRITE: "SCOPE_VARIABLE",
   CONDITION: "ROUTE_CONDITION",
+  CONTROL_FLOW: "CONTROL_FLOW",
   APPLICATION_HOOK: "APPLICATION",
   REPOSITORY_ACTION: "REPOSITORY_ACTION",
 });
@@ -163,6 +164,7 @@ function nodeSpec(fact) {
     return { kind, name, canonicalName: `${fact.file}:scope:${name}`, path: fact.file, symbol: { kind: "scope_variable", name } };
   }
   if (fact.kind === "CONDITION") return { kind, name: fact.normalized_expression, canonicalName: `${fact.file}:condition:${fact.normalized_expression}`, path: fact.file };
+  if (fact.kind === "CONTROL_FLOW") return { kind, name: fact.normalized_expression, canonicalName: `${fact.file}:control:${fact.fact_id}`, path: fact.file };
   if (fact.kind === "APPLICATION_HOOK") return { kind, name: fact.file, canonicalName: fact.file, path: fact.file, symbol: { kind: "application", name: fact.file } };
   if (fact.kind === "REPOSITORY_ACTION") {
     const name = attributes.action_name || fact.normalized_expression;

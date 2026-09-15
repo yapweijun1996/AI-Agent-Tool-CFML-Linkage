@@ -1,22 +1,39 @@
 const DEFAULT_MAX_NODES = 10_000;
 const DEFAULT_MAX_ATTRIBUTE_BYTES = 4_096;
 const EXPRESSION_TAGS = new Set(["cfabort", "cfelseif", "cfexit", "cfif", "cfreturn", "cfset", "cfthrow"]);
+// Recognition is structural only; Fact extraction remains a separate bounded stage.
 const SUPPORTED_CFML_TAGS = new Set([
   "cfabort",
+  "cfadmin",
   "cfargument",
+  "cfbreak",
+  "cfcase",
   "cfcatch",
   "cfcomponent",
+  "cfcontent",
+  "cfcontinue",
+  "cfdefaultcase",
+  "cfdirectory",
+  "cfdump",
   "cfelse",
   "cfelseif",
   "cfexit",
+  "cffeed",
   "cffunction",
+  "cfheader",
+  "cfhttp",
+  "cfhttpparam",
   "cfif",
   "cfinclude",
   "cfimport",
-  "cfinvoke",
   "cfinterface",
+  "cfinvoke",
   "cflocation",
+  "cflog",
   "cfloop",
+  "cfmail",
+  "cfmailparam",
+  "cfmailpart",
   "cfmodule",
   "cfobject",
   "cfoutput",
@@ -26,13 +43,44 @@ const SUPPORTED_CFML_TAGS = new Set([
   "cfqueryparam",
   "cfreturn",
   "cfsavecontent",
+  "cfsilent",
   "cfscript",
   "cfset",
   "cfsetting",
+  "cfswitch",
   "cfthrow",
+  "cfthread",
+  "cftransaction",
+  "cftry",
+  "cfftp",
+]);
+const BLOCK_TAGS = new Set([
+  "cfcatch",
+  "cfcomponent",
+  "cffunction",
+  "cfif",
+  "cfhttp",
+  "cfinterface",
+  "cfloop",
+  "cfmail",
+  "cfmailpart",
+  "cfoutput",
+  "cfquery",
+  "cfsavecontent",
+  "cfsilent",
+  "cfscript",
+  "cfswitch",
+  "cfthread",
   "cftransaction",
   "cftry",
 ]);
+const BRANCH_PARENT_TAGS = Object.freeze({
+  cfcase: "cfswitch",
+  cfcatch: "cftry",
+  cfdefaultcase: "cfswitch",
+  cfelse: "cfif",
+  cfelseif: "cfif",
+});
 
 function startsWithAt(text, value, offset) {
   return text.startsWith(value, offset);
@@ -270,6 +318,7 @@ export function createCfmlScannerBackend({ maxNodes = DEFAULT_MAX_NODES, maxAttr
       const diagnostics = [];
       let complete = true;
       let cursor = 0;
+      const blockStack = [];
 
       while (cursor < text.length) {
         if (startsWithAt(text, "<!---", cursor)) {
@@ -317,6 +366,22 @@ export function createCfmlScannerBackend({ maxNodes = DEFAULT_MAX_NODES, maxAttr
             diagnostics.push(diagnostic("RESOURCE_LIMIT", "warning", `Tag value exceeded the ${maxAttributeBytes}-byte bounded field limit.`, file, sourceMap, cursor, parsed.next));
             complete = false;
           }
+          const branchParent = BRANCH_PARENT_TAGS[node.name];
+          if (!node.closing && branchParent !== undefined && blockStack.at(-1) !== branchParent) {
+            diagnostics.push(diagnostic("PARSE_PARTIAL", "error", `CFML branch tag ${node.name} must occur inside ${branchParent}.`, file, sourceMap, cursor, parsed.next));
+            complete = false;
+            break;
+          }
+          if (node.closing && BLOCK_TAGS.has(node.name)) {
+            const expected = blockStack.at(-1);
+            if (expected !== node.name) {
+              diagnostics.push(diagnostic("PARSE_PARTIAL", "error", `Unexpected closing CFML tag ${node.name}; expected ${expected ?? "none"}.`, file, sourceMap, cursor, parsed.next));
+              complete = false;
+              break;
+            }
+            blockStack.pop();
+          }
+          if (!node.closing && !node.self_closing && BLOCK_TAGS.has(node.name)) blockStack.push(node.name);
           if (!addNode(nodes, node, diagnostics, maxNodes, file, sourceMap, cursor)) {
             complete = false;
             break;
@@ -363,6 +428,11 @@ export function createCfmlScannerBackend({ maxNodes = DEFAULT_MAX_NODES, maxAttr
           continue;
         }
         cursor = parsed.next;
+      }
+
+      if (complete && blockStack.length > 0) {
+        diagnostics.push(diagnostic("PARSE_PARTIAL", "error", `CFML block tag is not terminated: ${blockStack.at(-1)}.`, file, sourceMap, text.length, text.length));
+        complete = false;
       }
 
       return {

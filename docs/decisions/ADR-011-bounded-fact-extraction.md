@@ -6,10 +6,10 @@
 | --- | --- |
 | Version | 0.1 |
 | Last updated | 2026-09-14 |
-| Scope | FILE, CFML/CFC structural, mapping, include, invocation, instantiation, condition, scope-write, and dynamic facts |
+| Scope | FILE, CFML/CFC structural, mapping, include, invocation, instantiation, condition, control-flow, scope-write, and dynamic facts |
 | Source of truth | `src/fact-extractor.js`, `src/cfml-scanner.js`, `test/fact-extractor.test.js`, `fixtures/golden/expected-facts-v0.1.json`, this ADR, and `SPEC.md` |
 | Evidence | Produced fixture Fact IR validates against the Fact IR schema and repeats identically; current `npm test` includes the bounded extraction and query CLI regression suite |
-| Verification | Golden structural expectations, dynamic/opaque cases, missing parser results, fact limits, and schema validation pass locally |
+| Verification | Golden structural expectations, dynamic/opaque cases, switch/case condition evidence, bounded control-flow facts, missing parser results, fact limits, and schema validation pass locally within the 95-test suite |
 | Limitations | Full HTML/JavaScript/CSS/SQL grammar, full CFML grammar, broader cross-file resolution, and runtime semantics remain outside this bounded Fact slice |
 
 ## Decision
@@ -19,7 +19,7 @@ The Fact extractor consumes snapshot metadata and parser-adapter results only. I
 - `FILE` facts for discovered files;
 - CFML/CFC `COMPONENT` and `METHOD` facts;
 - literal `INCLUDE`, `CUSTOM_TAG`, `INSTANTIATE`, `INVOKE`, and `MAPPING` facts;
-- structural `SCOPE_WRITE` and runtime `CONDITION` facts;
+- structural `SCOPE_WRITE`, `CONTROL_FLOW`, and runtime `CONDITION` facts;
 - `DYNAMIC_REFERENCE` facts when a required value is missing, interpolated, or truncated.
 
 Facts use deterministic IDs derived from file, kind, extraction rule, source span, and local ordinal. Files, facts, and diagnostics are sorted by the contract keys. Parser diagnostics are retained, incomplete parser results make the bundle incomplete, dynamic facts are not promoted to resolved edges, and a fact limit is explicit incomplete evidence.

@@ -1,7 +1,7 @@
 # ADR-023: Bounded Node compatibility evidence
 
 - **Status:** Accepted for local v0.1 evidence
-- **Date:** 2026-09-14
+- **Date:** 2026-09-15
 - **Decision owners:** Project implementation
 
 ## Context
@@ -23,5 +23,5 @@ Record the observed Node.js host and bounded test result in a retained JSON evid
 
 - `package.json`
 - `docs/compatibility/node-v25.2.1-win32-x64.json`
-- `npm test`: 79 passed, 0 failed
+- `npm test`: 95 passed, 0 failed
 - `node --version`: `v25.2.1`

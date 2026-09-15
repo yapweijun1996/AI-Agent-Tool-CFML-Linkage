@@ -70,6 +70,7 @@ function limitsFrom(config, options) {
     maxEvidence: normalizePositiveLimit(options.maxEvidence ?? configured.max_evidence, "maxEvidence", DEFAULT_MAX_EVIDENCE),
     maxTraversalDepth: normalizePositiveLimit(options.maxTraversalDepth ?? configured.max_traversal_depth, "maxTraversalDepth", 32),
     maxWallTimeMs: normalizePositiveLimit(options.maxWallTimeMs ?? configured.max_wall_time_ms, "maxWallTimeMs", undefined),
+    maxWorkers: normalizePositiveLimit(options.maxWorkers ?? configured.max_workers, "maxWorkers", 1),
   };
 }
 
@@ -105,6 +106,21 @@ function appendFactDiagnostic(factBundle, item) {
     diagnostics,
     stats: { ...factBundle.stats, diagnostic_count: diagnostics.length },
   };
+}
+
+function configuredMappings(config) {
+  const mappings = config?.analysis?.mappings;
+  if (mappings === undefined) return {};
+  if (!mappings || typeof mappings !== "object" || Array.isArray(mappings)) throw new TypeError("analysis.mappings must be an object");
+  for (const [prefix, mappingPath] of Object.entries(mappings)) {
+    if (prefix.trim() === "" || typeof mappingPath !== "string" || mappingPath.trim() === "") throw new TypeError("analysis.mappings must contain non-empty prefix/path strings");
+  }
+  return mappings;
+}
+
+function rejectEnabledPlugins(config) {
+  const plugins = config?.analysis?.enabled_plugins;
+  if (plugins !== undefined && (!Array.isArray(plugins) || plugins.length > 0)) throw new TypeError("enabled analysis plugins are not supported by the bounded analyzer");
 }
 
 function extensionsFor(config, options) {
@@ -317,6 +333,7 @@ export function analyzeProject({
   maxEvidence,
   maxTraversalDepth,
   maxWallTimeMs,
+  maxWorkers,
   clock,
 } = {}) {
   if (typeof rootPath !== "string" || rootPath.trim() === "") throw new TypeError("rootPath must be a non-empty string");
@@ -326,8 +343,10 @@ export function analyzeProject({
   if (typeof parserVersion !== "string" || parserVersion.trim() === "") throw new TypeError("parserVersion must be a non-empty string");
   if (typeof parserName !== "string" || parserName.trim() === "") throw new TypeError("parserName must be a non-empty string");
   if (!snapshotOptions || typeof snapshotOptions !== "object" || Array.isArray(snapshotOptions)) throw new TypeError("snapshotOptions must be an object");
+  rejectEnabledPlugins(config);
+  const mappingRules = configuredMappings(config);
 
-  const limits = limitsFrom(config, { ...snapshotOptions, maxFacts, maxEdges, maxResolverRecords, maxEvidence, maxTraversalDepth, maxWallTimeMs });
+  const limits = limitsFrom(config, { ...snapshotOptions, maxFacts, maxEdges, maxResolverRecords, maxEvidence, maxTraversalDepth, maxWallTimeMs, maxWorkers });
   const timeBudget = createTimeBudget(limits.maxWallTimeMs, clock ?? undefined);
   let timeLimit = null;
   const checkTime = (stage) => {
@@ -338,12 +357,14 @@ export function analyzeProject({
   const extensions = extensionsFor(config, snapshotOptions);
   const ignoreGlobs = snapshotOptions.ignoreGlobs ?? config?.ignore?.globs;
   const hiddenFilePolicy = snapshotOptions.hiddenFilePolicy ?? config?.ignore?.hidden_files;
+  const generatedFilePolicy = snapshotOptions.generatedFilePolicy ?? config?.ignore?.generated_files;
   const rootGuard = createRootGuard(rootPath);
   const snapshot = createSnapshot(rootGuard, {
     ...snapshotOptions,
     ...(extensions ? { extensions } : {}),
     ...(ignoreGlobs !== undefined ? { ignoreGlobs } : {}),
     ...(hiddenFilePolicy !== undefined ? { hiddenFilePolicy } : {}),
+    ...(generatedFilePolicy !== undefined ? { generatedFilePolicy } : {}),
     ...(limits.maxFiles ? { maxFiles: limits.maxFiles } : {}),
     ...(limits.maxFileBytes ? { maxFileBytes: limits.maxFileBytes } : {}),
     ...(limits.maxTotalBytes ? { maxTotalBytes: limits.maxTotalBytes } : {}),
@@ -392,7 +413,7 @@ export function analyzeProject({
     checkTime("path-resolution:complete");
   }
   if (timeLimit === null && checkTime("cfc-resolution:start")) {
-    cfcResolution = resolveCfcLinks({ factBundle, indexes });
+    cfcResolution = resolveCfcLinks({ factBundle, indexes, configuredMappings: mappingRules });
     checkTime("cfc-resolution:complete");
   }
   const baseResolutions = mergeResolutionResults(factBundle, [pathResolution, cfcResolution].filter(Boolean));

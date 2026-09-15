@@ -3,7 +3,7 @@
 - **Status:** Accepted for bounded v0.1 implementation
 - **Date:** 2026-09-15
 - **Scope:** T-048 global evidence-item enforcement in the private analysis/library pipeline
-- **Verification:** `test/analyzer.test.js` covers deterministic truncation, incomplete status, diagnostic details, retained evidence count, and Graph validation; the full `npm test` suite passes locally
+- **Verification:** `test/analyzer.test.js` covers deterministic truncation, incomplete status, diagnostic details, retained evidence count, and Graph validation; the full `npm test` suite passes locally (95 tests)
 
 ## Context
 

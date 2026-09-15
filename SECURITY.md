@@ -8,7 +8,7 @@
 | Last updated | 2026-09-15 |
 | Scope | Threat boundaries for local static analysis |
 | Source of truth | This document for proposed security requirements; implementation and tests for actual controls |
-| Evidence | Current local source contains root guard, snapshot, decoder, parser/scanner, Fact extraction, bounded resolvers, dynamic-evidence, SQL, repository/action, query, orchestration, and adversarial safe-failure controls; full runtime code does not exist |
+| Evidence | Current local source contains root guard, snapshot, decoder, parser/scanner, an explicit optional Tree-sitter backend, Fact extraction, bounded resolvers, dynamic-evidence, SQL, repository/action, query, orchestration, and adversarial safe-failure controls; full runtime code does not exist |
 | Verification | Root-guard containment/symlink, snapshot no-execution and configured ignore-glob/hidden-file handling, strict-decoding, CLI safety, recognized query-command mapping/validation behavior, serialized output-byte bounds, cache path/corruption, parser/scanner no-execution, bounded Fact extraction, dynamic/generated/SQL-dynamic preservation, bounded SQL/repository linkage, vanished-snapshot-target rejection, validated/copied immutable query snapshots, query bounds, composed orchestration, re-admission, parser-time drift, library edge/evidence budgets, and diagnostic-bound tests pass; the prompt-to-artifact audit, refreshed against audited source baseline `3de60e2`, records the evidence boundaries; broader security test suite does not exist |
 | Limitations | Threat model, platform sandbox, dependency policy, and disclosure process require implementation-specific review |
 
@@ -44,7 +44,7 @@ Evidence must be bounded and preferably normalized. Do not include full source b
 
 ### Dependency and plugin risk
 
-V1 should avoid third-party plugins. Any future plugin must be explicitly enabled, versioned, bounded, and unable to override root safety, stable identity, schema validation, or confidence policy. Dependencies require review before adoption.
+V1 should avoid third-party plugins. The selected Tree-sitter parser and CFML grammar are explicitly pinned optional dependencies, loaded only when the caller selects the backend. Any future plugin must be explicitly enabled, versioned, bounded, and unable to override root safety, stable identity, schema validation, or confidence policy. Dependencies require provenance, license, installation, native-ABI, and vulnerability review before release.
 
 ## Static-analysis limitations
 
@@ -61,6 +61,7 @@ Before release, test:
 - dynamic expressions, generated names, interpolated SQL identifiers, query expressions, embedded code, and graph-query traversal bounds that must not execute or escape declared limits;
 - network/database/process instrumentation showing no prohibited access;
 - cache isolation, corruption handling, and stale-data invalidation;
+- optional Tree-sitter dependency provenance/license, native-addon installation/ABI behavior, parser-load failure, and package-boundary review;
 - plugin rejection or containment if plugins exist;
 - CI workflow permissions and action scope remain read-only with no publish/deploy step.
 

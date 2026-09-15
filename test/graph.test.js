@@ -50,6 +50,7 @@ function bundle() {
       fact({ fact_id: "file-query", kind: "FILE", file: "app/query.sql", language: "sql", expression: "source_file app/query.sql", line: 2 }),
       fact({ fact_id: "file-target", kind: "FILE", file: "app/target.cfm", expression: "source_file app/target.cfm", line: 3 }),
       fact({ fact_id: "include", kind: "INCLUDE", file: "app/page.cfm", expression: "target.cfm", attributes: { template: "target.cfm" }, line: 4 }),
+      fact({ fact_id: "control", kind: "CONTROL_FLOW", file: "app/page.cfm", expression: "return request.value", attributes: { control_kind: "return", references: ["request.value"] }, line: 4 }),
       fact({ fact_id: "dynamic", kind: "DYNAMIC_REFERENCE", file: "app/page.cfm", expression: "url.template", attributes: { source_kind: "INCLUDE", dynamic: true }, line: 5 }),
       fact({ fact_id: "query", kind: "QUERY", file: "app/query.sql", language: "sql", expression: "orders", attributes: { tables: ["orders"], datasource: "main" }, line: 6 }),
     ],
@@ -87,6 +88,7 @@ test("builds deterministic Graph IR while preserving resolved and unresolved evi
     assert.equal(graph.edges.some((edge) => edge.type === "QUERY_USES_DATASOURCE"), true);
     assert.equal(graph.nodes.some((node) => node.kind === "DATABASE_TABLE" && node.name === "orders"), true);
     assert.equal(graph.nodes.some((node) => node.kind === "DATASOURCE" && node.name === "main"), true);
+    assert.equal(graph.nodes.some((node) => node.kind === "CONTROL_FLOW" && node.name === "return request.value"), true);
     assert.equal(graph.stats.node_count, graph.nodes.length);
     assert.equal(graph.stats.edge_count, graph.edges.length);
     assert.equal(graph.stats.unresolved_count, graph.unresolved.length);

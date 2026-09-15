@@ -8,9 +8,9 @@
 | Last updated | 2026-09-15 |
 | Scope | Component boundaries, data flow, ownership, and failure behavior |
 | Source of truth | This document for proposed architecture; Git history for current code facts |
-| Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation and bounded extractors |
+| Evidence | Initial commit `1b29c0b` contained only `.gitattributes`; current local commits contain the verified foundation, bounded extractors, and an explicit host-unverified Tree-sitter CFML backend |
 | Verification | Root-guard/snapshot/decoder/CLI/cache/parser-adapter/scanner/Fact/resolver/dynamic-evidence/SQL-repository/query/serialization/wall-time/cross-budget/robustness/adversarial-fixture/evidence-budget/edge-budget tests pass locally; remaining architecture is unverified |
-| Limitations | Parser feasibility, runtime compatibility, resource costs, and public package compatibility are unknown; M1 uses Node built-ins only |
+| Limitations | Native parser loading, runtime compatibility, resource costs, and public package compatibility are unknown; the Tree-sitter dependencies are optional and the default path remains dependency-free |
 
 ## 1. Boundary
 
@@ -36,7 +36,7 @@ All consumers receive facts and evidence rather than hidden runtime assumptions.
 | Root guard/policy | canonical root, path containment, configured root-relative ignore-glob and hidden-file policies, and snapshot admission in the implemented M1 slice; config-wide policy freezing remains planned | parsing or confidence upgrades |
 | Snapshot/discovery | deterministic file set, configured ignore-glob/hidden-file matching, content fingerprints, metadata, symlink skipping, and drift diagnostics in M1 | source mutation or runtime discovery |
 | Decoder/source map | decoding state and coordinate conversion | linkage decisions |
-| Parser adapter | explicit backend boundary, bounded CFML/web structural scanners, syntax trees, parser diagnostics, completeness; default backend remains unselected | cross-file resolution |
+| Parser adapter | explicit backend boundary, bounded CFML/web structural scanners, optional Tree-sitter CFML backend, syntax trees, parser diagnostics, completeness; default backend remains unselected | cross-file resolution |
 | Fact extractor | normalized CFML/web Fact IR and extraction evidence | target selection |
 | Project index | immutable path, symbol, mapping, application, query, and per-file fact indexes; unique/ambiguous/missing lookup states | mutable resolution state |
 | Resolver passes | bounded candidate/target resolution in `src/path-resolver.js`, `src/cfc-resolver.js`, `src/scope-resolver.js`, `src/web-flow-resolver.js`, and `src/repository-resolver.js`; unresolved/ambiguous/dynamic states | index mutation or authoritative guessing |
@@ -72,6 +72,10 @@ Parsing establishes syntax and source spans. Resolvers establish only bounded cr
 ### Evidence versus confidence
 
 Resolvers submit evidence. A central policy assigns confidence. This prevents a plugin or filename heuristic from promoting its own result to `confirmed`.
+
+### Tree-sitter backend versus bounded scanner
+
+`src/tree-sitter-backend.js` is an explicit parser backend, not a default replacement. It uses the pinned optional Tree-sitter CFML grammar, converts recognized tag nodes to the existing structural tree, and preserves parser errors and script/embedded-language regions as incomplete evidence. If the native addon cannot load, the factory fails closed; the dependency-free scanner remains available. No synchronous parser call is represented as preemptively cancellable by the analyzer wall-time budget.
 
 ### Cache versus graph
 

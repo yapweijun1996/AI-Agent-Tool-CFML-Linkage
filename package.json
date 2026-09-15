@@ -15,5 +15,9 @@
   },
   "scripts": {
     "test": "node --test"
+  },
+  "optionalDependencies": {
+    "@cfmleditor/tree-sitter-cfml": "0.26.2",
+    "tree-sitter": "0.25.0"
   }
 }

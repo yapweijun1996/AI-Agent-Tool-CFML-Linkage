@@ -123,7 +123,7 @@
         },
         "generated_files": {
           "type": "string",
-          "description": "Reserved policy for generated-file handling; bounded discovery currently covers configured generated paths through ignore globs/default directories.",
+          "description": "Bounded generated-file policy: ignore or include the directory named generated; explicit ignore globs still take precedence. Other generated-file forms are not inferred.",
           "enum": [
             "include",
             "ignore"
@@ -216,7 +216,8 @@
           "$ref": "#/$defs/positiveInteger"
         },
         "max_workers": {
-          "$ref": "#/$defs/positiveInteger"
+          "$ref": "#/$defs/positiveInteger",
+          "description": "Upper bound for analyzer concurrency; the current implementation is synchronous and uses at most one worker."
         }
       }
     },

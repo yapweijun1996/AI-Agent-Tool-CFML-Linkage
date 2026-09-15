@@ -1,7 +1,7 @@
 # ADR-022: Adversarial fixture safe-failure boundary
 
 - **Status:** Accepted for bounded v0.1 implementation
-- **Date:** 2026-09-14
+- **Date:** 2026-09-15
 - **Decision owners:** Project implementation
 
 ## Context
@@ -34,4 +34,4 @@ The mixed web scanner skips CFML script regions while scanning bounded HTML stru
 - `fixtures/adversarial/misleading-and-limits/`
 - `test/adversarial-fixtures.test.js`
 - `src/web-scanner.js`
-- `npm test` reports 79 passed and 0 failed; no source, database, browser, network, or runtime service was accessed.
+- `npm test` reports 95 passed and 0 failed, including CFML block-closure and mixed-node-budget regressions; no source, database, browser, network, or runtime service was accessed.

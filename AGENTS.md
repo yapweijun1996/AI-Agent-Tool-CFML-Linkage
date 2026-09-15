@@ -8,9 +8,9 @@
 | Last updated | 2026-09-15 |
 | Scope | Repository-specific documentation and implementation rules |
 | Source of truth | This file for local project conventions; higher-priority host instructions still apply |
-| Evidence | Initial `HEAD` contained only `.gitattributes`; current local HEAD includes the verified foundation and bounded extractors plus this guidance |
-| Verification | Guidance is exercised by the private M1 foundation, bounded M2 extraction, bounded M3–M8 resolvers/Graph/query/orchestration/robustness boundary, bounded SQL/repository resolver, bounded private-library serialization/wall-time/cross-budget contracts, and 79 focused Node tests; full analyzer verification is absent |
-| Limitations | Full parser/resolver, public query-command API, public package/release, hosted CI verification, and released-runtime conventions are not yet established; a read-only CI workflow exists |
+| Evidence | Initial `HEAD` contained only `.gitattributes`; current local HEAD includes the verified foundation, bounded extractors, an explicit host-unverified Tree-sitter backend, and this guidance |
+| Verification | Guidance is exercised by the private M1 foundation, bounded M2 extraction, bounded M3–M8 resolvers/Graph/query/orchestration/robustness boundary, bounded SQL/repository resolver, bounded private-library serialization/wall-time/cross-budget contracts, and 95 focused Node tests; T-053 fake-parser coverage, bounded common-CFML scanner/extractor coverage, T-056 control-flow Facts, T-057 bounded CFScript/SQL fallback coverage, and T-058 bounded configuration-policy semantics pass, while native parser loading and full analyzer verification are absent |
+| Limitations | Native parser loading/full Fact coverage, full resolver, public query-command API, public package/release, hosted CI verification, and released-runtime conventions are not yet established; a read-only CI workflow and optional parser dependency declaration exist |
 
 ## Project boundary
 

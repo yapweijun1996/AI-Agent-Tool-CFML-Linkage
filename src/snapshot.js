@@ -102,8 +102,8 @@ function normalizeIgnoreGlobs(globs) {
   }))].map(globRegExp);
 }
 
-function normalizeFilePolicy(value, name) {
-  const policy = value ?? "include";
+function normalizeFilePolicy(value, name, fallback = "include") {
+  const policy = value ?? fallback;
   if (policy !== "include" && policy !== "ignore") throw new TypeError(`${name} must be include or ignore`);
   return policy;
 }
@@ -125,6 +125,8 @@ export function createSnapshot(rootGuard, options = {}) {
   const ignoredDirectoryNames = new Set(options.ignoreDirectoryNames ?? DEFAULT_IGNORED_DIRECTORY_NAMES);
   const ignoreGlobs = normalizeIgnoreGlobs(options.ignoreGlobs);
   const hiddenFilePolicy = normalizeFilePolicy(options.hiddenFilePolicy, "hiddenFilePolicy");
+  const generatedFilePolicy = normalizeFilePolicy(options.generatedFilePolicy, "generatedFilePolicy", "ignore");
+  if (generatedFilePolicy === "include" && options.ignoreDirectoryNames === undefined) ignoredDirectoryNames.delete("generated");
   const maxFiles = normalizePositiveLimit(options.maxFiles, DEFAULT_LIMITS.maxFiles, "maxFiles");
   const maxFileBytes = normalizePositiveLimit(options.maxFileBytes, DEFAULT_LIMITS.maxFileBytes, "maxFileBytes");
   const maxTotalBytes = normalizePositiveLimit(options.maxTotalBytes, DEFAULT_LIMITS.maxTotalBytes, "maxTotalBytes");

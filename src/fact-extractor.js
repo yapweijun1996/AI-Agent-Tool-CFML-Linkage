@@ -7,6 +7,8 @@ const FACT_SCHEMA_VERSION = "agent-cfml-linkage-fact/v0.1";
 const MAX_DIAGNOSTIC_MESSAGE = 2048;
 const MAX_FACTS = 500_000;
 const APPLICATION_HOOK_NAMES = new Set(["onApplicationEnd", "onApplicationStart", "onCFCRequest", "onError", "onMissingTemplate", "onRequest", "onRequestStart", "onSessionEnd", "onSessionStart"].map((name) => name.toLowerCase()));
+const CONDITION_BRANCH_KINDS = Object.freeze({ cfif: "if", cfelseif: "if", cfelse: "if", cfswitch: "switch", cfcase: "case", cfdefaultcase: "case" });
+const CONTROL_FLOW_TAGS = new Set(["cfbreak", "cfcatch", "cfcontinue", "cfloop", "cfreturn", "cfthrow", "cftry"]);
 
 function isWhitespace(character) {
   if (character === undefined) return false;
@@ -174,15 +176,41 @@ function scopeReferences(expression, excluded = null) {
   return [...references].sort();
 }
 
-function conditionFor(node) {
-  if (node.name !== "cfif" && node.name !== "cfelseif") return null;
-  const expression = normalizeText(node.expression);
+function conditionFor(node, previousCondition = null) {
+  const branchKind = CONDITION_BRANCH_KINDS[node.name];
+  if (!branchKind) return null;
+  if (node.name === "cfelse") {
+    const previousExpression = previousCondition?.expression_normalized;
+    return {
+      expression_normalized: (previousExpression ? `else branch for ${previousExpression}` : "else branch").slice(0, 2048),
+      source_span: node.span,
+      variables: previousCondition?.variables ?? [],
+      branch_kind: branchKind,
+      evaluation: "runtime",
+    };
+  }
+  const expressionAttribute = attribute(node, "expression")?.value;
+  const caseAttribute = attribute(node, "value")?.value;
+  const rawExpression = node.name === "cfdefaultcase" ? "default case" : node.expression ?? expressionAttribute ?? caseAttribute;
+  const expression = normalizeText(rawExpression);
   if (expression === "") return null;
   return {
     expression_normalized: expression.slice(0, 2048),
     source_span: node.span,
-    variables: scopeReferences(expression),
-    branch_kind: "if",
+    variables: node.name === "cfdefaultcase" ? [] : scopeReferences(expression),
+    branch_kind: branchKind,
+    evaluation: "runtime",
+  };
+}
+
+function combineSwitchCase(switchCondition, caseCondition, isDefaultCase = false) {
+  if (!caseCondition) return null;
+  if (!switchCondition) return caseCondition;
+  return {
+    expression_normalized: (isDefaultCase ? `default case for ${switchCondition.expression_normalized}` : `${switchCondition.expression_normalized} == ${caseCondition.expression_normalized}`).slice(0, 2048),
+    source_span: caseCondition.source_span,
+    variables: [...new Set([...(switchCondition.variables ?? []), ...(caseCondition.variables ?? [])])].sort(),
+    branch_kind: "case",
     evaluation: "runtime",
   };
 }
@@ -356,6 +384,7 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
     const file = sourceFile.path;
     const language = languageForPath(file);
     const parsed = parsedByFile.get(file);
+    activeCondition = null;
     if (!parsed) {
       complete = false;
       addDiagnostic({ code: "PARSER_RESULT_MISSING", severity: "error", message: "No parser result was supplied for the discovered source file." }, file);
@@ -384,6 +413,7 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
     let componentName = null;
     let methodName = null;
     const conditionStack = [];
+    const switchFrames = [];
     activeCondition = null;
 
     for (const node of nodes) {
@@ -395,8 +425,41 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
       const enclosingSymbol = methodName ?? componentName;
       const nodeLanguage = node.kind === "HTML_FORM" ? "html" : node.kind === "JS_FETCH" || node.kind === "JS_AJAX" || node.kind === "JS_ASSET" ? "javascript" : node.kind === "CSS_REFERENCE" ? "css" : node.kind === "SQL_QUERY" ? "sql" : language;
       activeCondition = currentCondition(conditionStack);
+      if (node.kind === "CFML_SCRIPT_INCLUDE") {
+        const target = typeof node.target === "string" ? normalizeText(node.target) : "";
+        if (target === "" || target.includes("#")) addFact(makeDynamicFact({ file, language, node, sourceKind: "INCLUDE", expression: node.expression || "cfscript include", enclosingSymbol, unresolvedReason: "DYNAMIC_EXPRESSION", ordinal: factOrdinal++ }));
+        else addFact(makeFact({ file, language, node, kind: "INCLUDE", normalizedExpression: target, enclosingSymbol, extractionRuleId: "cfscript-include-path-v0.1", attributes: { template: target, include_phase: "page" }, ordinal: factOrdinal++ }));
+        continue;
+      }
+      if (node.kind === "CFML_SCRIPT_REDIRECT") {
+        const url = typeof node.url === "string" ? normalizeText(node.url) : "";
+        if (url === "" || url.includes("#")) addFact(makeDynamicFact({ file, language, node, sourceKind: "REDIRECT", expression: node.expression || "cfscript location", enclosingSymbol, ordinal: factOrdinal++ }));
+        else addFact(makeFact({ file, language, node, kind: "REDIRECT", normalizedExpression: url, enclosingSymbol, extractionRuleId: "cfscript-location-url-v0.1", attributes: { url }, ordinal: factOrdinal++ }));
+        continue;
+      }
+      if (node.kind === "CFML_SCRIPT_INSTANTIATE") {
+        const component = typeof node.component === "string" ? normalizeText(node.component) : "";
+        const creationKind = ["createObject", "cfobject"].includes(node.creation_kind) ? node.creation_kind : "new";
+        if (component === "" || component.includes("#")) addFact(makeDynamicFact({ file, language, node, sourceKind: "INSTANTIATE", expression: node.expression || `cfscript ${creationKind}`, enclosingSymbol, unresolvedReason: "DYNAMIC_EXPRESSION", ordinal: factOrdinal++ }));
+        else addFact(makeFact({ file, language, node, kind: "INSTANTIATE", normalizedExpression: component, enclosingSymbol, extractionRuleId: creationKind === "createObject" ? "cfscript-createobject-component-v0.1" : creationKind === "cfobject" ? "cfscript-cfobject-component-v0.1" : "cfscript-new-component-v0.1", attributes: { component, ...(creationKind !== "new" ? { creation_kind: creationKind } : {}) }, ordinal: factOrdinal++ }));
+        continue;
+      }
+      if (node.kind === "CFML_SCRIPT_CUSTOM_TAG") {
+        const target = typeof node.target === "string" ? normalizeText(node.target) : "";
+        if (target === "" || target.includes("#")) addFact(makeDynamicFact({ file, language, node, sourceKind: "CUSTOM_TAG", expression: node.expression || "cfscript cfmodule", enclosingSymbol, ordinal: factOrdinal++ }));
+        else addFact(makeFact({ file, language, node, kind: "CUSTOM_TAG", normalizedExpression: `custom tag ${target}`, enclosingSymbol, extractionRuleId: "cfscript-cfmodule-name-v0.1", attributes: { name: target }, ordinal: factOrdinal++ }));
+        continue;
+      }
+      if (node.kind === "CFML_SCRIPT_INVOKE") {
+        const component = typeof node.component === "string" ? normalizeText(node.component) : "";
+        const method = typeof node.method === "string" ? normalizeText(node.method) : "";
+        const invokeKind = node.invoke_kind === "cfinvoke" ? "cfinvoke" : "invoke";
+        if (component === "" || method === "" || component.includes("#") || method.includes("#")) addFact(makeDynamicFact({ file, language, node, sourceKind: "INVOKE", expression: node.expression || `cfscript ${invokeKind}`, enclosingSymbol, unresolvedReason: "DYNAMIC_EXPRESSION", ordinal: factOrdinal++ }));
+        else addFact(makeFact({ file, language, node, kind: "INVOKE", normalizedExpression: `${component}.${method}`, enclosingSymbol, extractionRuleId: invokeKind === "cfinvoke" ? "cfscript-cfinvoke-v0.1" : "cfscript-invoke-v0.1", attributes: { component, method, ...(invokeKind === "cfinvoke" ? { invoke_kind: invokeKind } : {}) }, ordinal: factOrdinal++ }));
+        continue;
+      }
       if (node.kind === "OPAQUE_REGION") {
-        if (node.dynamic_constructs?.includes("evaluate")) addFact(makeDynamicFact({ file, language: nodeLanguage, node, sourceKind: "GENERATED_SYMBOL", expression: "evaluate(...)", enclosingSymbol, unresolvedReason: "GENERATED_SYMBOL", ordinal: factOrdinal++ }));
+        if (node.dynamic_constructs?.includes("evaluate")) addFact(makeDynamicFact({ file, language, node, sourceKind: "GENERATED_SYMBOL", expression: "evaluate(...)", enclosingSymbol, unresolvedReason: "GENERATED_SYMBOL", ordinal: factOrdinal++ }));
         continue;
       }
       if (node.kind === "HTML_FORM") {
@@ -445,15 +508,13 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
         if (node.name === "cffunction") methodName = null;
         if (node.name === "cfcomponent") componentName = null;
         if (node.name === "cfif") conditionStack.pop();
+        if (node.name === "cfswitch") {
+          const frame = switchFrames.pop();
+          if (frame) conditionStack.splice(frame.stackIndex, 1);
+        }
         activeCondition = currentCondition(conditionStack);
         continue;
       }
-      if (node.name === "cfelse") {
-        if (conditionStack.length > 0) conditionStack[conditionStack.length - 1] = null;
-        activeCondition = currentCondition(conditionStack);
-        continue;
-      }
-
       if (node.name === "cfcomponent") {
         const name = literalAttribute(node, "name");
         const extendsName = literalAttribute(node, "extends");
@@ -532,20 +593,49 @@ export function extractFactBundle({ snapshot, parsedFiles, toolVersion = DEFAULT
         else addFact(makeDynamicFact({ file, language, node, sourceKind: "SCOPE_WRITE", expression: node.expression ?? "cfset", enclosingSymbol, unresolvedReason: /(?:^|=)\s*#|[\[\]]|\bevaluate\s*\(/iu.test(node.expression ?? "") ? "GENERATED_SYMBOL" : "DYNAMIC_EXPRESSION", ordinal: factOrdinal++ }));
         continue;
       }
-      if (node.name === "cfif" || node.name === "cfelseif") {
-        const condition = conditionFor(node);
-        if (condition) addFact(makeFact({ file, language, node, kind: "CONDITION", normalizedExpression: condition.expression_normalized, enclosingSymbol, condition, extractionRuleId: "condition-if-v0.1", attributes: { branch_id: `${file}:${node.span.start_line}:${node.span.start_col}` }, ordinal: factOrdinal++ }));
-        else addFact(makeDynamicFact({ file, language, node, sourceKind: "CONDITION", expression: node.expression ?? "condition", enclosingSymbol, ordinal: factOrdinal++ }));
+      if (node.name === "cfparam") {
+        const target = literalAttribute(node, "name");
+        const defaultValue = attribute(node, "default")?.value;
+        if (target !== null) addFact(makeFact({ file, language, node, kind: "SCOPE_WRITE", normalizedExpression: target, enclosingSymbol, extractionRuleId: "cfparam-scope-write-v0.1", attributes: { target, references: scopeReferences(defaultValue) }, ordinal: factOrdinal++ }));
+        else addFact(makeDynamicFact({ file, language, node, sourceKind: "SCOPE_WRITE", expression: nodeAttributes.name ?? "cfparam name", enclosingSymbol, unresolvedReason: "DYNAMIC_EXPRESSION", ordinal: factOrdinal++ }));
+        continue;
+      }
+      if (CONTROL_FLOW_TAGS.has(node.name)) {
+        const controlKind = node.name.slice(2);
+        const expression = nodeExpression || (node.name === "cfloop" ? nodeAttributes.condition ?? nodeAttributes.query ?? nodeAttributes.index ?? "loop" : "");
+        const references = node.name === "cfreturn" ? scopeReferences(nodeExpression) : [];
+        addFact(makeFact({ file, language, node, kind: "CONTROL_FLOW", normalizedExpression: `${controlKind}${expression ? ` ${expression}` : ""}`, enclosingSymbol, extractionRuleId: `control-${controlKind}-v0.1`, attributes: { control_kind: controlKind, ...(references.length > 0 ? { references } : {}), ...(Object.keys(nodeAttributes).length > 0 ? { parameters: nodeAttributes } : {}) }, ordinal: factOrdinal++ }));
+        continue;
+      }
+      if (["cfif", "cfelseif", "cfelse", "cfswitch", "cfcase", "cfdefaultcase"].includes(node.name)) {
+        const condition = conditionFor(node, node.name === "cfelse" ? currentCondition(conditionStack) : null);
+        if (condition) addFact(makeFact({ file, language, node, kind: "CONDITION", normalizedExpression: condition.expression_normalized, enclosingSymbol, condition, extractionRuleId: `condition-${condition.branch_kind}-v0.1`, attributes: { branch_id: `${file}:${node.span.start_line}:${node.span.start_col}` }, ordinal: factOrdinal++ }));
+        else addFact(makeDynamicFact({ file, language, node, sourceKind: "CONDITION", expression: node.expression ?? nodeAttributes.expression ?? nodeAttributes.value ?? "condition", enclosingSymbol, ordinal: factOrdinal++ }));
         if (node.name === "cfif") {
           if (!node.self_closing) conditionStack.push(condition);
-        } else if (conditionStack.length > 0) conditionStack[conditionStack.length - 1] = condition;
-        else if (!node.self_closing) conditionStack.push(condition);
+        } else if (node.name === "cfelseif" || node.name === "cfelse") {
+          if (conditionStack.length > 0) conditionStack[conditionStack.length - 1] = condition;
+          else if (!node.self_closing) conditionStack.push(condition);
+        } else if (node.name === "cfswitch") {
+          if (!node.self_closing) {
+            const stackIndex = conditionStack.length;
+            conditionStack.push(condition);
+            switchFrames.push({ stackIndex, condition });
+          }
+        } else if (!node.self_closing) {
+          const frame = switchFrames.at(-1);
+          if (frame && frame.stackIndex === conditionStack.length - 1) {
+            conditionStack[frame.stackIndex] = combineSwitchCase(frame.condition, condition, node.name === "cfdefaultcase");
+          }
+        }
         activeCondition = currentCondition(conditionStack);
         continue;
       }
     }
+    activeCondition = null;
   }
 
+  activeCondition = null;
   if (!shouldStop("facts:repository-actions")) factOrdinal = appendRepositoryActionFacts(facts, addFact, factOrdinal);
   else complete = false;
 

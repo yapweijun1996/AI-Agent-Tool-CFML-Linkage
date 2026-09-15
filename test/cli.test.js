@@ -164,6 +164,8 @@ test("applies configured discovery policies before CLI analysis", () => {
     fs.writeFileSync(path.join(root, "kept.cfm"), "<cfset request.kept = true>\n", "utf8");
     fs.writeFileSync(path.join(root, "ignored.cfm"), "<cfset request.ignored = true>\n", "utf8");
     fs.writeFileSync(path.join(root, ".hidden.cfm"), "<cfset request.hidden = true>\n", "utf8");
+    fs.mkdirSync(path.join(root, "generated"), { recursive: true });
+    fs.writeFileSync(path.join(root, "generated", "output.cfm"), "<cfset request.generated = true>\n", "utf8");
     writeConfig(root, { ignore: {
       globs: ["ignored.cfm"],
       hidden_files: "ignore",
@@ -173,6 +175,16 @@ test("applies configured discovery policies before CLI analysis", () => {
     assert.equal(result.exitCode, 3);
     assert.equal(result.stdout.data.graph.snapshot.file_count, 1);
     assert.deepEqual(result.stdout.data.fact_bundle.source_files.map((file) => file.file), ["kept.cfm"]);
+
+    writeConfig(root, { ignore: {
+      globs: ["ignored.cfm"],
+      hidden_files: "ignore",
+      generated_files: "include",
+    } });
+    const included = runCli(["analyze", "--config", "config.json"], root);
+    assert.equal(included.exitCode, 3);
+    assert.equal(included.stdout.data.graph.snapshot.file_count, 2);
+    assert.deepEqual(included.stdout.data.fact_bundle.source_files.map((file) => file.file), ["generated/output.cfm", "kept.cfm"]);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
@@ -261,6 +273,8 @@ test("rejects malformed JSON and unsafe configuration before analysis", () => {
       (config) => { delete config.analysis.languages; },
       (config) => { config.analysis.languages = ["ruby"]; },
       (config) => { config.limits.max_workers = 0; },
+      (config) => { config.analysis.enabled_plugins = ["unavailable-plugin"]; },
+      (config) => { config.analysis.mappings = { "": "path" }; },
       (config) => { config.ignore.globs = ["/absolute/**"]; },
       (config) => { config.ignore.globs = ["../outside/**"]; },
       (config) => { config.exit_codes.completed = 1; },

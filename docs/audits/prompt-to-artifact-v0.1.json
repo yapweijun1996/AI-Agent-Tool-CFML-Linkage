@@ -102,7 +102,7 @@
       "requirement": "Run focused, broader, and artifact/consumer checks when applicable.",
       "status": "partial_retained_evidence",
       "evidence": ["PROGRESS.md", "TEST_PLAN.md", "RELEASE.md", "docs/audits/release-security-parity-v0.1.json"],
-      "passed_or_recorded": ["79 bounded Node tests", "schema/fixture/static checks", "npm pack --dry-run", "private package self-import", "offline packed-artifact consumer smoke", "git diff --check"],
+      "passed_or_recorded": ["79 bounded Node tests at the audited baseline", "schema/fixture/static checks", "npm pack --dry-run", "private package self-import", "offline packed-artifact consumer smoke", "git diff --check"],
       "unrun_or_unavailable": ["full parser/runtime suite", "configured lint/type scripts", "hosted CI execution", "Lucee/Adobe/browser/database/runtime compatibility"],
       "limitation": "This audit does not execute project JavaScript or application code; retained records are distinguished from checks rerun in this pass."
     },
@@ -218,7 +218,7 @@
       "requirement": "Focused, broader, artifact/consumer, security, compatibility, and release gates",
       "status": "partial",
       "evidence": ["TEST_PLAN.md", "RELEASE.md", "PROGRESS.md"],
-      "passed_or_recorded": ["79 bounded Node tests", "schema and fixture checks", "package dry-run", "offline packed-artifact consumer smoke", "private import/CLI smoke", "bounded Node host evidence", "local release/security/parity audit"],
+      "passed_or_recorded": ["79 bounded Node tests at the audited baseline", "schema and fixture checks", "package dry-run", "offline packed-artifact consumer smoke", "private import/CLI smoke", "bounded Node host evidence", "local release/security/parity audit"],
       "missing": ["full parser/runtime tests", "hosted CI run", "cross-engine compatibility", "public release gates"]
     }
   ],
@@ -230,7 +230,7 @@
       "repository tree and tracked-file inspection"
     ],
     "retained_checks_not_rerun": [
-      "npm test: 79 passed, 0 failed",
+      "npm test at the audited baseline: 79 passed, 0 failed",
       "JavaScript syntax, JSON, fixture, Markdown-link, prompt-length, package, and diff checks",
       "npm pack --dry-run and offline packed-artifact consumer smoke"
     ],

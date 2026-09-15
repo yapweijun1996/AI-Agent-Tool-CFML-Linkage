@@ -89,6 +89,141 @@ test("preserves dynamic references and parser incompleteness without guessing ta
   }
 });
 
+test("extracts switch and case conditions for common CFML control flow", () => {
+  const root = path.resolve("switch-condition-fixture");
+  fs.mkdirSync(root, { recursive: true });
+  const source = [
+    '<cfswitch expression="#form.kind#">',
+    '<cfcase value="invoice"><cfset invoice = 1></cfset>',
+    "<cfdefaultcase><cfset fallback = 1></cfset>",
+    "</cfswitch>",
+  ].join("\n");
+  fs.writeFileSync(path.join(root, "page.cfm"), source, "utf8");
+  try {
+    const guard = createRootGuard(root);
+    const snapshot = createSnapshot(guard);
+    const parsed = parseSnapshot(snapshot, root);
+    const bundle = extractFactBundle({ snapshot, parsedFiles: parsed, parserVersion: "cfml-structural-scanner/v0.1" });
+    const conditions = bundle.facts.filter((fact) => fact.kind === "CONDITION");
+    assert.equal(bundle.complete, true);
+    assert.deepEqual(conditions.map((fact) => [fact.condition.branch_kind, fact.condition.expression_normalized]), [
+      ["switch", "#form.kind#"],
+      ["case", "invoice"],
+      ["case", "default case"],
+    ]);
+    const writes = bundle.facts.filter((fact) => fact.kind === "SCOPE_WRITE");
+    assert.equal(writes.length, 2);
+    assert.equal(writes[0].condition.expression_normalized, "#form.kind# == invoice");
+    assert.equal(writes[1].condition.expression_normalized, "default case for #form.kind#");
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("extracts bounded control-flow Facts without evaluating CFML", () => {
+  const root = path.resolve("control-flow-fact-fixture");
+  fs.mkdirSync(root, { recursive: true });
+  const source = [
+    '<cfloop condition="form.ready">',
+    "<cftry>",
+    "<cfreturn request.value>",
+    '<cfcatch type="any"><cfthrow message="request.failed"></cfcatch>',
+    "</cftry>",
+    "</cfloop>",
+  ].join("\n");
+  fs.writeFileSync(path.join(root, "page.cfm"), source, "utf8");
+  try {
+    const guard = createRootGuard(root);
+    const snapshot = createSnapshot(guard);
+    const parsed = parseSnapshot(snapshot, root);
+    const bundle = extractFactBundle({ snapshot, parsedFiles: parsed, parserVersion: "cfml-structural-scanner/v0.1" });
+    const controls = bundle.facts.filter((fact) => fact.kind === "CONTROL_FLOW");
+    assert.equal(bundle.complete, true);
+    assert.deepEqual(controls.map((fact) => [fact.attributes.control_kind, fact.normalized_expression]), [
+      ["loop", "loop form.ready"],
+      ["try", "try"],
+      ["return", "return request.value"],
+      ["catch", "catch"],
+      ["throw", "throw message=\"request.failed\""],
+    ]);
+    assert.deepEqual(controls.find((fact) => fact.attributes.control_kind === "return").attributes.references, ["request.value"]);
+    assert.equal(Object.hasOwn(controls.find((fact) => fact.attributes.control_kind === "throw").attributes, "references"), false);
+    assert.deepEqual(controls.find((fact) => fact.attributes.control_kind === "loop").attributes.parameters, { condition: "form.ready" });
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("keeps condition state within one source file", () => {
+  const root = path.resolve("condition-state-fixture");
+  fs.mkdirSync(root, { recursive: true });
+  fs.writeFileSync(path.join(root, "a.cfm"), "<cfif form.ready><cfset first = 1>", "utf8");
+  fs.writeFileSync(path.join(root, "b.cfm"), "<cfset second = 1>", "utf8");
+  try {
+    const guard = createRootGuard(root);
+    const snapshot = createSnapshot(guard);
+    const parsed = parseSnapshot(snapshot, root);
+    const bundle = extractFactBundle({ snapshot, parsedFiles: parsed, parserVersion: "cfml-structural-scanner/v0.1" });
+    const nextFile = bundle.facts.find((fact) => fact.kind === "FILE" && fact.file === "b.cfm");
+    assert.equal(bundle.complete, false);
+    assert.equal(parsed.find((item) => item.file === "a.cfm").complete, false);
+    assert.equal(nextFile.condition, null);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("keeps cfelse flow facts explicitly conditioned", () => {
+  const root = path.resolve("else-condition-fixture");
+  fs.mkdirSync(root, { recursive: true });
+  const source = [
+    "<cfif form.ok>",
+    '<cfinclude template="yes.cfm">',
+    "<cfelse>",
+    '<cfinclude template="no.cfm">',
+    "</cfif>",
+  ].join("\n");
+  fs.writeFileSync(path.join(root, "page.cfm"), source, "utf8");
+  try {
+    const guard = createRootGuard(root);
+    const snapshot = createSnapshot(guard);
+    const parsed = parseSnapshot(snapshot, root);
+    const bundle = extractFactBundle({ snapshot, parsedFiles: parsed, parserVersion: "cfml-structural-scanner/v0.1" });
+    const includes = bundle.facts.filter((fact) => fact.kind === "INCLUDE");
+    const conditions = bundle.facts.filter((fact) => fact.kind === "CONDITION");
+    assert.equal(bundle.complete, true);
+    assert.equal(includes.length, 2);
+    assert.equal(includes.find((fact) => fact.normalized_expression === "yes.cfm").condition.expression_normalized, "form.ok");
+    assert.equal(includes.find((fact) => fact.normalized_expression === "no.cfm").condition.expression_normalized, "else branch for form.ok");
+    assert.equal(conditions.some((fact) => fact.condition.expression_normalized === "else branch for form.ok" && fact.condition.branch_kind === "if"), true);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("extracts literal cfparam names as bounded scope writes", () => {
+  const root = path.resolve("cfparam-fact-fixture");
+  fs.mkdirSync(root, { recursive: true });
+  const source = [
+    '<cfparam name="request.ready" default="#form.ready#">',
+    '<cfparam name="#url.name#" default="1">',
+  ].join("\n");
+  fs.writeFileSync(path.join(root, "page.cfm"), source, "utf8");
+  try {
+    const guard = createRootGuard(root);
+    const snapshot = createSnapshot(guard);
+    const parsed = parseSnapshot(snapshot, root);
+    const bundle = extractFactBundle({ snapshot, parsedFiles: parsed, parserVersion: "cfml-structural-scanner/v0.1" });
+    const write = bundle.facts.find((fact) => fact.kind === "SCOPE_WRITE");
+    assert.equal(bundle.complete, true);
+    assert.equal(write.normalized_expression, "request.ready");
+    assert.deepEqual(write.attributes.references, ["form.ready"]);
+    assert.equal(bundle.facts.some((fact) => fact.kind === "DYNAMIC_REFERENCE" && fact.attributes.source_kind === "SCOPE_WRITE"), true);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test("reports missing parser results and fact limits as incomplete evidence", () => {
   const root = path.resolve("minimal-fact-fixture");
   fs.mkdirSync(root, { recursive: true });

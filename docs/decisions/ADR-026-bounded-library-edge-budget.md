@@ -3,7 +3,7 @@
 - **Status:** Accepted for bounded v0.1 implementation
 - **Date:** 2026-09-15
 - **Scope:** T-049 final Graph edge-count enforcement in the private analysis/library pipeline
-- **Verification:** `test/analyzer.test.js` covers configured truncation, deterministic output, incomplete status, diagnostic details, Graph validation, and reverse adjacency; the full `npm test` suite passes locally
+- **Verification:** `test/analyzer.test.js` covers configured truncation, deterministic output, incomplete status, diagnostic details, Graph validation, and reverse adjacency; the full `npm test` suite passes locally (95 tests)
 
 ## Context
 

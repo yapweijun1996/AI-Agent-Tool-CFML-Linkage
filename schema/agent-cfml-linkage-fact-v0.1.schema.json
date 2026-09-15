@@ -188,6 +188,7 @@
         "SCOPE_READ",
         "SCOPE_WRITE",
         "CONDITION",
+        "CONTROL_FLOW",
         "MAPPING",
         "APPLICATION_HOOK",
         "REPOSITORY_ACTION",

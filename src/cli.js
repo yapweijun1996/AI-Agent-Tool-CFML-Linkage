@@ -194,8 +194,12 @@ function validateConfig(config) {
   requireConfigArray(config.analysis.languages, "analysis.languages", { minItems: 1 });
   if (config.analysis.languages.some((language) => !["cfml", "html", "javascript", "css", "sql"].includes(language))) invalidConfig("analysis.languages contains an unsupported language.");
   requireConfigObject(config.analysis.mappings, "analysis.mappings", [], null);
-  for (const [key, value] of Object.entries(config.analysis.mappings)) requireConfigString(value, `analysis.mappings.${key}`);
+  for (const [key, value] of Object.entries(config.analysis.mappings)) {
+    requireConfigString(key, "analysis.mappings key", 4096);
+    requireConfigString(value, `analysis.mappings.${key}`, 4096);
+  }
   requireConfigArray(config.analysis.enabled_plugins, "analysis.enabled_plugins", { maxItems: 32 });
+  if (config.analysis.enabled_plugins.length > 0) invalidConfig("analysis.enabled_plugins is unsupported until a bounded plugin loader is implemented.");
 
   const limitKeys = ["max_files", "max_file_bytes", "max_total_bytes", "max_facts", "max_edges", "max_evidence", "max_traversal_depth", "max_output_bytes", "max_wall_time_ms", "max_workers"];
   requireConfigObject(config.limits, "limits", limitKeys, new Set(limitKeys));

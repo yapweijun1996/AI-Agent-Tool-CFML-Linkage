@@ -127,10 +127,55 @@ test("scans a bounded CFML tag subset without parsing comments or executing scri
   assert.equal(result.diagnostics.some((item) => item.code === "UNSUPPORTED_SYNTAX"), true);
 });
 
+test("recognizes common switch, control, transport, and mail tags", () => {
+  const source = [
+    '<cfswitch expression="#form.type#">',
+    '<cfcase value="invoice"><cfcontinue></cfcase>',
+    "<cfdefaultcase><cfbreak></cfdefaultcase>",
+    "</cfswitch>",
+    '<cfhttp url="/health"><cfhttpparam name="x" value="1"></cfhttp>',
+    '<cfmail to="user@example.test"><cfmailpart type="text">body</cfmailpart></cfmail>',
+    '<cfinterface name="ICommon"></cfinterface>',
+    '<cfsilent><cfdump var="#form#"></cfsilent>',
+  ].join("\n");
+  const result = createParserAdapter({ backend: createCfmlScannerBackend() }).parse(Buffer.from(source, "utf8"), "common.cfm");
+  assert.deepEqual(result.tree.nodes.filter((node) => node.kind === "CFML_TAG").map((node) => node.name), [
+    "cfswitch",
+    "cfcase",
+    "cfcontinue",
+    "cfcase",
+    "cfdefaultcase",
+    "cfbreak",
+    "cfdefaultcase",
+    "cfswitch",
+    "cfhttp",
+    "cfhttpparam",
+    "cfhttp",
+    "cfmail",
+    "cfmailpart",
+    "cfmailpart",
+    "cfmail",
+    "cfinterface",
+    "cfinterface",
+    "cfsilent",
+    "cfdump",
+    "cfsilent",
+  ]);
+  assert.equal(result.diagnostics.some((item) => item.code === "UNSUPPORTED_SYNTAX"), false);
+});
+
 test("reports malformed tags, unsupported tags, field limits, and node limits", () => {
   const malformed = createParserAdapter({ backend: createCfmlScannerBackend() }).parse(Buffer.from("<cfinclude template=\"x", "utf8"), "bad.cfm");
   assert.equal(malformed.complete, false);
   assert.equal(malformed.diagnostics[0].code, "PARSE_PARTIAL");
+
+  const unclosedBlock = createParserAdapter({ backend: createCfmlScannerBackend() }).parse(Buffer.from("<cfif form.ready><cfset value = 1>", "utf8"), "unclosed.cfm");
+  assert.equal(unclosedBlock.complete, false);
+  assert.equal(unclosedBlock.diagnostics.some((item) => item.code === "PARSE_PARTIAL"), true);
+
+  const mismatchedBlock = createParserAdapter({ backend: createCfmlScannerBackend() }).parse(Buffer.from("<cfif form.ready></cfloop>", "utf8"), "mismatched.cfm");
+  assert.equal(mismatchedBlock.complete, false);
+  assert.equal(mismatchedBlock.diagnostics.some((item) => item.code === "PARSE_PARTIAL"), true);
 
   const unsupported = createParserAdapter({ backend: createCfmlScannerBackend() }).parse(Buffer.from("<cfunknown>", "utf8"), "unknown.cfm");
   assert.equal(unsupported.complete, false);

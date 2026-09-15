@@ -10,7 +10,7 @@ Existing resolvers correctly refuse most dynamic paths and symbols, but the boun
 
 ## Decision
 
-1. Detect only bounded CFML interpolation at a statically recognized SQL table position; skip SQL comments and quoted strings, retain the bounded expression, and never treat it as a table node.
+1. Detect only bounded CFML interpolation at a statically recognized SQL table position; skip SQL comments and quoted strings, retain the bounded expression, and never treat it as a table node. Static quoted/schema-qualified identifiers may be normalized, but declared CTE names are not treated as base-table Facts.
 2. Retain dynamic datasource metadata on query facts and emit `QUERY_USES_DATASOURCE` as unresolved `DYNAMIC_EXPRESSION` evidence.
 3. Classify dynamic scope assignment targets and opaque CFScript containing a code-level `evaluate(...)` call as `GENERATED_SYMBOL` evidence. Comments and strings do not create the signal.
 4. Materialize dynamic/generated/SQL-dynamic facts in Graph IR as unresolved records with their source spans, relation types, expressions, and empty candidate lists. No dynamic target is promoted to an edge.
@@ -25,4 +25,4 @@ Existing resolvers correctly refuse most dynamic paths and symbols, but the boun
 ## Verification
 
 - `test/dynamic-evidence.test.js` uses the inert `fixtures/adversarial/dynamic-and-generated/` case to verify deterministic Fact/Graph output, dynamic/generated reason codes, dynamic SQL table and datasource evidence, comment/string filtering, no guessed SQL edges, and Graph validation.
-- `npm test` reports 79 passed; syntax, JSON/manifest, Markdown-link, prompt-length, conservative credential-pattern, and diff checks remain required repository gates.
+- `npm test` reports 95 passed; syntax, JSON/manifest, Markdown-link, prompt-length, conservative credential-pattern, and diff checks remain required repository gates.

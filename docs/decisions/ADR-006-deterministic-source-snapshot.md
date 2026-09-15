@@ -8,7 +8,7 @@
 | Last updated | 2026-09-14 |
 | Scope | Discovery, source fingerprints, metadata, ignores, symlink handling, and snapshot limits |
 | Source of truth | `src/snapshot.js`, `test/snapshot.test.js`, this ADR, and `SPEC.md` |
-| Evidence | `npm test`: 79 passed, including deterministic discovery, configured ignore-glob/hidden-file policy matching, repeatability, content change, symlink, limit, and no-execution cases |
+| Evidence | `npm test`: 95 passed, including deterministic discovery, configured ignore-glob/hidden-file policy matching, repeatability, content change, symlink, limit, and no-execution cases |
 | Verification | Snapshot implementation verified locally on Node `v25.2.1`; cross-platform and parser integration remain unverified |
 | Limitations | Complete drift recovery, worker ordering, cache invalidation, and CI matrix are not implemented; richer glob syntax, generated-file detection, and filesystem-specific hidden attributes remain bounded/open |
 

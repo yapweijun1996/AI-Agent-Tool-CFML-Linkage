@@ -109,14 +109,35 @@ test("forwards configured discovery policies to deterministic snapshot discovery
   try {
     fs.writeFileSync(path.join(root, "ignored.cfm"), "<cfset request.ignored = true>\n", "utf8");
     fs.writeFileSync(path.join(root, ".hidden.cfm"), "<cfset request.hidden = true>\n", "utf8");
+    fs.mkdirSync(path.join(root, "generated"), { recursive: true });
+    fs.writeFileSync(path.join(root, "generated", "output.cfm"), "<cfset request.generated = true>\n", "utf8");
     fs.writeFileSync(path.join(root, "kept.cfm"), "<cfset request.kept = true>\n", "utf8");
     const result = analyzeProject({
       rootPath: root,
       ...scannerOptions,
-      config: { ignore: { globs: ["ignored.cfm"], hidden_files: "ignore" } },
+      config: { ignore: { globs: ["ignored.cfm"], hidden_files: "ignore", generated_files: "include" } },
     });
-    assert.deepEqual(result.graph.snapshot.file_count, 1);
-    assert.deepEqual(result.fact_bundle.source_files.map((file) => file.file), ["kept.cfm"]);
+    assert.deepEqual(result.graph.snapshot.file_count, 2);
+    assert.deepEqual(result.fact_bundle.source_files.map((file) => file.file), ["generated/output.cfm", "kept.cfm"]);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("applies configured component mappings without filename inference", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "agent-cfml-linkage-analyzer-mapping-"));
+  try {
+    fs.mkdirSync(path.join(root, "lib"), { recursive: true });
+    fs.writeFileSync(path.join(root, "lib", "Mapped.cfc"), '<cfcomponent name="lib.Mapped"></cfcomponent>\n', "utf8");
+    fs.writeFileSync(path.join(root, "page.cfm"), "<cfscript>new app.Mapped();</cfscript>\n", "utf8");
+    const result = analyzeProject({
+      rootPath: root,
+      ...scannerOptions,
+      config: { analysis: { mappings: { app: "lib" } } },
+    });
+    const resolution = result.resolutions.resolutions.find((item) => item.source_fact_id && item.relation_type === "INSTANTIATES");
+    assert.equal(resolution.resolution_kind, "mapped-component");
+    assert.equal(resolution.to_file, "lib/Mapped.cfc");
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
@@ -143,6 +164,11 @@ test("applies the configured language and fact limits without executing source",
   assert.equal(result.complete, false);
   assert.equal(result.fact_bundle.diagnostics.some((item) => item.code === "RESOURCE_LIMIT"), true);
   assert.equal(fs.existsSync(path.resolve("fixtures/golden/web-surface/client.js")), true);
+
+  const oneWorker = analyze("golden/web-surface", { config: { limits: { max_workers: 1 } } });
+  const higherWorkerLimit = analyze("golden/web-surface", { config: { limits: { max_workers: 4 } } });
+  assert.deepEqual(oneWorker.graph, higherWorkerLimit.graph);
+  assert.throws(() => analyze("golden/web-surface", { config: { limits: { max_workers: 0 } } }), /maxWorkers/u);
 });
 
 test("marks source mutation and wall-time limit results incomplete", () => {
